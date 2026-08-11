@@ -1,0 +1,19 @@
+.olgax-related-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: var(--olgax-spacing, 1rem) calc(var(--olgax-spacing, 1rem) * 2);
+  margin: 0;
+  list-style: none;
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
+}
+
+.olgax-related-pages__item a {
+  color: var(--olgax-color-primary, #18181b);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.olgax-related-pages__item a:hover {
+  text-decoration: underline;
+}

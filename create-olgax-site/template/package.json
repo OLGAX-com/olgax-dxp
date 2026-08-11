@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@olgax/components": "^0.1.0",
+    "@olgax/datasource": "^0.1.0",
     "@olgax/payload-preset": "^0.1.0",
     "@olgax/sdk": "^0.1.0",
     "@payloadcms/db-sqlite": "^3.87.1",

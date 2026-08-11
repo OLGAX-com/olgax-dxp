@@ -6,10 +6,15 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "dependencies": {
+    "@olgax/datasource": "workspace:*",
     "@olgax/sdk": "workspace:*"
   },
   "peerDependencies": {
     "@puckeditor/core": "^0.23.0",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
     "react": "^19"
   }
 }

@@ -1,0 +1,13 @@
+/* Optional dark theme - apply by adding data-theme="dark" to a wrapping element
+   (e.g. <html data-theme="dark">) or any ancestor of the rendered components.
+   Consuming apps can copy this pattern to add their own themes without forking
+   any component - every component only ever reads --olgax-* custom properties. */
+[data-theme="dark"] {
+  --olgax-color-bg: #0a0a0a;
+  --olgax-color-bg-muted: #18181b;
+  --olgax-color-text: #fafafa;
+  --olgax-color-text-muted: #a1a1aa;
+  --olgax-color-primary: #fafafa;
+  --olgax-color-primary-contrast: #0a0a0a;
+  --olgax-color-border: #27272a;
+}

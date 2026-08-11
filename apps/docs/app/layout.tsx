@@ -12,6 +12,8 @@ const nav = [
   { href: "/installation", label: "Installation" },
   { href: "/components", label: "Adding a component" },
   { href: "/sdk", label: "SDK reference" },
+  { href: "/theming", label: "Theming" },
+  { href: "/data-sources", label: "Data sources" },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
