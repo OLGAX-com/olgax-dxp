@@ -5,10 +5,25 @@ import type { CollectionConfig } from "payload";
 export const Pages: CollectionConfig = {
   slug: "pages",
   access: {
-    read: () => true,
+    // Logged-in users (the editor UI) see everything, including drafts.
+    // Anonymous/public requests only ever see published pages - the `draft`
+    // param on find/findByID does NOT filter this by itself, per Payload's
+    // docs, so this access rule is the actual enforcement point for anyone
+    // using REST/GraphQL. The Local API (used by apps/demo's own routes)
+    // bypasses access control by default, so those routes additionally
+    // filter by `_status` explicitly - see the public render route.
+    read: ({ req }) => {
+      if (req.user) return true;
+      return {
+        or: [{ _status: { equals: "published" } }, { _status: { exists: false } }],
+      };
+    },
   },
   admin: {
     useAsTitle: "title",
+  },
+  versions: {
+    drafts: true,
   },
   fields: [
     {

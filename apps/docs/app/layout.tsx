@@ -14,6 +14,7 @@ const nav = [
   { href: "/sdk", label: "SDK reference" },
   { href: "/theming", label: "Theming" },
   { href: "/data-sources", label: "Data sources" },
+  { href: "/drafts", label: "Drafts & publishing" },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

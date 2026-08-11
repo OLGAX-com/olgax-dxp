@@ -29,6 +29,9 @@ async function seed() {
       data: {
         title: "Home",
         slug: "home",
+        // Explicitly published, since new documents otherwise default to
+        // `_status: 'draft'` and wouldn't be visible on the public route.
+        _status: "published",
         data: {
           root: {},
           content: [

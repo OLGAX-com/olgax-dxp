@@ -12,9 +12,16 @@ export default async function PublicPage({
   const { slug } = await params;
   const payload = await getPayloadClient();
 
+  // Explicit `_status` filter: the Local API bypasses access control by
+  // default, and Payload's `draft` param on find/findByID does NOT filter
+  // by status on its own - this is the actual guard against showing
+  // unpublished drafts on the public route.
   const result = await payload.find({
     collection: "pages",
-    where: { slug: { equals: slug } },
+    where: {
+      slug: { equals: slug },
+      _status: { equals: "published" },
+    },
     limit: 1,
   });
 
