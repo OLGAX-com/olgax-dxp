@@ -1,0 +1,24 @@
+.olgax-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: calc(var(--olgax-spacing, 1rem) * 2);
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
+  color: var(--olgax-color-text, #18181b);
+}
+
+.olgax-faq__item {
+  padding: var(--olgax-spacing, 1rem);
+  border: 1px solid var(--olgax-color-border, #e4e4e7);
+  border-radius: var(--olgax-radius, 0.5rem);
+}
+
+.olgax-faq__question {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.olgax-faq__answer {
+  margin: 0.5rem 0 0;
+  color: var(--olgax-color-text-muted, #52525b);
+}

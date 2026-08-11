@@ -1,0 +1,25 @@
+.olgax-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--olgax-spacing, 1rem) calc(var(--olgax-spacing, 1rem) * 2);
+  border-top: 1px solid var(--olgax-color-border, #e4e4e7);
+  background: var(--olgax-color-bg-muted, #f4f4f5);
+  color: var(--olgax-color-text-muted, #52525b);
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
+  font-size: 0.875rem;
+}
+
+.olgax-footer__nav {
+  display: flex;
+  gap: var(--olgax-spacing, 1rem);
+}
+
+.olgax-footer__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.olgax-footer__link:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,49 @@
+.olgax-pricing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--olgax-spacing, 1rem);
+  padding: calc(var(--olgax-spacing, 1rem) * 2);
+}
+
+.olgax-pricing__plan {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: calc(var(--olgax-spacing, 1rem) * 1.5);
+  border: 1px solid var(--olgax-color-border, #e4e4e7);
+  border-radius: var(--olgax-radius, 0.5rem);
+  background: var(--olgax-color-bg, #fff);
+  color: var(--olgax-color-text, #18181b);
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
+}
+
+.olgax-pricing__name {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.olgax-pricing__price {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.olgax-pricing__features {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--olgax-color-text-muted, #52525b);
+  font-size: 0.9375rem;
+}
+
+.olgax-pricing__cta {
+  margin-top: auto;
+  display: inline-flex;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--olgax-radius, 0.5rem);
+  background: var(--olgax-color-primary, #18181b);
+  color: var(--olgax-color-primary-contrast, #fff);
+  font-weight: 600;
+  text-decoration: none;
+}

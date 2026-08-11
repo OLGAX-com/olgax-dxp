@@ -1,1 +1,1 @@
-Phase 0 — Spike / Proof of Concept
+Phase 1 — MVP

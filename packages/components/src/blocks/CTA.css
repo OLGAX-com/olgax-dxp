@@ -1,0 +1,28 @@
+.olgax-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--olgax-spacing, 1rem);
+  padding: calc(var(--olgax-spacing, 1rem) * 3) calc(var(--olgax-spacing, 1rem) * 2);
+  text-align: center;
+  background: var(--olgax-color-bg-muted, #f4f4f5);
+  color: var(--olgax-color-text, #18181b);
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
+  border-radius: var(--olgax-radius, 0.5rem);
+}
+
+.olgax-cta__heading {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.olgax-cta__button {
+  display: inline-flex;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--olgax-radius, 0.5rem);
+  background: var(--olgax-color-primary, #18181b);
+  color: var(--olgax-color-primary-contrast, #fff);
+  font-weight: 600;
+  text-decoration: none;
+}

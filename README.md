@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Olgax DXP
 
-## Getting Started
+An open-source, self-hostable page-building layer for **Payload CMS + Next.js**. Payload for
+content, [Puck](https://puckeditor.com) for the drag-and-drop canvas, Olgax for the parts that
+make it feel like a product.
 
-First, run the development server:
+> Status: **Phase 1 (MVP)** in progress. See `PHASE.md` and `.github/copilot-instructions.md`
+> for the full phase breakdown.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Monorepo structure
+
+```
+apps/
+  demo/               # Reference Next.js + Payload + Puck site
+  docs/               # Documentation site (not started yet)
+packages/
+  payload-preset/     # Pre-configured Payload collections (Users, Media, Pages)
+  sdk/                # registerComponent() and related developer-facing APIs
+  components/         # Default component library (Hero, Header, Footer, CTA, ...)
+create-olgax-site/    # CLI scaffolder (not started yet)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Getting started (local development)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This is a pnpm + Turborepo workspace.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm install
+cp apps/demo/.env.example apps/demo/.env   # then fill in PAYLOAD_SECRET
+pnpm --filter demo seed                    # creates an admin user + demo page
+pnpm dev                                   # runs all apps' dev servers via turbo
+```
 
-## Learn More
+Then open [http://localhost:3000](http://localhost:3000) - it links to the demo page, the Puck
+editor, and the Payload admin panel.
 
-To learn more about Next.js, take a look at the following resources:
+## Packages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [`@olgax/payload-preset`](packages/payload-preset) - reusable Payload collections
+- [`@olgax/sdk`](packages/sdk) - `registerComponent()`, the developer-facing API for adding
+  components to the Puck config
+- [`@olgax/components`](packages/components) - the default component library
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contributing
 
-## Deploy on Vercel
+See `CONTRIBUTING.md` (coming soon) and the "good first issue" label on GitHub Issues.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

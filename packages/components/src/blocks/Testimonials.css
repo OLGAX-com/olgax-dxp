@@ -1,0 +1,25 @@
+.olgax-testimonials {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--olgax-spacing, 1rem);
+  padding: calc(var(--olgax-spacing, 1rem) * 2);
+}
+
+.olgax-testimonials__item {
+  margin: 0;
+  padding: calc(var(--olgax-spacing, 1rem) * 1.5);
+  border-radius: var(--olgax-radius, 0.5rem);
+  background: var(--olgax-color-bg-muted, #f4f4f5);
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
+}
+
+.olgax-testimonials__quote {
+  margin: 0 0 0.75rem;
+  color: var(--olgax-color-text, #18181b);
+  font-style: italic;
+}
+
+.olgax-testimonials__author {
+  color: var(--olgax-color-text-muted, #52525b);
+  font-size: 0.875rem;
+}

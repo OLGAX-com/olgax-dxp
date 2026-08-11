@@ -1,0 +1,15 @@
+/* Shared, minimal design tokens. Consuming apps can override any of these
+   CSS custom properties to retheme every default component without forking
+   them (see project styling conventions in the root copilot-instructions.md). */
+:root {
+  --olgax-color-bg: #ffffff;
+  --olgax-color-bg-muted: #f4f4f5;
+  --olgax-color-text: #18181b;
+  --olgax-color-text-muted: #52525b;
+  --olgax-color-primary: #18181b;
+  --olgax-color-primary-contrast: #ffffff;
+  --olgax-color-border: #e4e4e7;
+  --olgax-font-family: system-ui, sans-serif;
+  --olgax-radius: 0.5rem;
+  --olgax-spacing: 1rem;
+}

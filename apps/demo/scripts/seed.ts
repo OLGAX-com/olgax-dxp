@@ -2,8 +2,8 @@ import { getPayload } from "payload";
 import config from "../payload.config";
 
 // One-off local dev helper: creates a first admin user and a demo `home`
-// page so the Phase 0 round-trip (Puck Data -> Payload -> render) can be
-// verified without going through the admin UI by hand.
+// page (built from the default @olgax/components library) so the
+// Payload <-> Puck round-trip can be verified without using the admin UI.
 async function seed() {
   const payload = await getPayload({ config });
 
@@ -33,14 +33,22 @@ async function seed() {
           root: {},
           content: [
             {
-              type: "HeadingBlock",
-              props: { id: "heading-1", title: "Hello from Puck + Payload" },
+              type: "Hero",
+              props: {
+                id: "hero-1",
+                heading: "Hello from Puck + Payload",
+                subheading: "This page's content lives in Payload and renders through Puck.",
+                ctaLabel: "Edit this page",
+                ctaHref: "/home/edit",
+              },
             },
             {
-              type: "TextBlock",
+              type: "CTA",
               props: {
-                id: "text-1",
-                text: "This page's content lives in Payload and renders through Puck.",
+                id: "cta-1",
+                heading: "Built with @olgax/components",
+                buttonLabel: "View admin",
+                buttonHref: "/admin",
               },
             },
           ],

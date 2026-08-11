@@ -1,0 +1,37 @@
+.olgax-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--olgax-spacing, 1rem) * 1.25);
+  padding: calc(var(--olgax-spacing, 1rem) * 5) calc(var(--olgax-spacing, 1rem) * 2);
+  text-align: center;
+  background: var(--olgax-color-bg, #fff);
+  color: var(--olgax-color-text, #18181b);
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
+}
+
+.olgax-hero__heading {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  max-width: 40ch;
+}
+
+.olgax-hero__subheading {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--olgax-color-text-muted, #52525b);
+  font-size: 1.125rem;
+}
+
+.olgax-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--olgax-radius, 0.5rem);
+  background: var(--olgax-color-primary, #18181b);
+  color: var(--olgax-color-primary-contrast, #fff);
+  font-weight: 600;
+  text-decoration: none;
+}
