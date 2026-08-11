@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local planning notes (tasks, decisions, work logs) - not for version control
+/.planning/
+
+# local sqlite database (Phase 0 spike - not for version control)
+payload.db
+payload.db-*
