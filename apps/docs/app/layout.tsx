@@ -11,6 +11,7 @@ const nav = [
   { href: "/", label: "Introduction" },
   { href: "/installation", label: "Installation" },
   { href: "/components", label: "Adding a component" },
+  { href: "/tutorial", label: "15-minute tutorial" },
   { href: "/sdk", label: "SDK reference" },
   { href: "/theming", label: "Theming" },
   { href: "/data-sources", label: "Data sources" },
