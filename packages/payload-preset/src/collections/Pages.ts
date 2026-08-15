@@ -18,6 +18,12 @@ export const Pages: CollectionConfig = {
         or: [{ _status: { equals: "published" } }, { _status: { exists: false } }],
       };
     },
+    // Editing (autosave, publish, admin panel) requires a logged-in Payload
+    // user - these are the actual enforcement point when apps pass
+    // `overrideAccess: false` to the Local API (see apps/demo/lib/actions.ts).
+    create: ({ req }) => Boolean(req.user),
+    update: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => Boolean(req.user),
   },
   admin: {
     useAsTitle: "title",

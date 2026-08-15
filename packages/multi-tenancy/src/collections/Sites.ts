@@ -5,6 +5,14 @@ export const Sites: CollectionConfig = {
   admin: {
     useAsTitle: "name",
   },
+  // Payload does not restrict access by default - only logged-in users may
+  // manage sites.
+  access: {
+    read: ({ req }) => Boolean(req.user),
+    create: ({ req }) => Boolean(req.user),
+    update: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => Boolean(req.user),
+  },
   fields: [
     {
       name: "name",

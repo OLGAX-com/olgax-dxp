@@ -9,6 +9,15 @@ export const Sections: CollectionConfig = {
   admin: {
     useAsTitle: "name",
   },
+  // Sections are only ever read/written by the editor tooling, never a
+  // public route - Payload does not restrict access by default, so this is
+  // required, not optional.
+  access: {
+    read: ({ req }) => Boolean(req.user),
+    create: ({ req }) => Boolean(req.user),
+    update: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => Boolean(req.user),
+  },
   fields: [
     {
       name: "name",

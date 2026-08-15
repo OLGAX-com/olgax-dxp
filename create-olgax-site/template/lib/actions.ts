@@ -1,7 +1,15 @@
 "use server";
 
 import type { Data } from "@puckeditor/core";
-import { getPayloadClient } from "./payload";
+import { getPayloadClient, getCurrentUser } from "./payload";
+
+async function requireEditor() {
+  const user = await getCurrentUser();
+  if (!user) {
+    throw new Error("You must be logged in to edit pages.");
+  }
+  return user;
+}
 
 async function findPageBySlug(slug: string) {
   const payload = await getPayloadClient();
@@ -17,6 +25,7 @@ async function findPageBySlug(slug: string) {
 // writes to Payload's versions table (Pages has `versions.drafts` enabled).
 // Called from PageEditor's debounced `onChange`.
 export async function saveDraftPageData(slug: string, title: string, data: Data) {
+  const user = await requireEditor();
   const { payload, existing } = await findPageBySlug(slug);
 
   if (existing) {
@@ -25,6 +34,8 @@ export async function saveDraftPageData(slug: string, title: string, data: Data)
       id: existing.id,
       data: { title, data },
       draft: true,
+      overrideAccess: false,
+      user,
     });
   } else {
     // First save for a brand-new page: Payload defaults new documents to
@@ -32,6 +43,8 @@ export async function saveDraftPageData(slug: string, title: string, data: Data)
     await payload.create({
       collection: "pages",
       data: { title, slug, data },
+      overrideAccess: false,
+      user,
     });
   }
 }
@@ -39,6 +52,7 @@ export async function saveDraftPageData(slug: string, title: string, data: Data)
 // Publishes the page - this is what the public render route shows. Called
 // from PageEditor's `onPublish`.
 export async function publishPageData(slug: string, title: string, data: Data) {
+  const user = await requireEditor();
   const { payload, existing } = await findPageBySlug(slug);
 
   if (existing) {
@@ -47,11 +61,15 @@ export async function publishPageData(slug: string, title: string, data: Data) {
       id: existing.id,
       data: { title, data, _status: "published" },
       draft: false,
+      overrideAccess: false,
+      user,
     });
   } else {
     await payload.create({
       collection: "pages",
       data: { title, slug, data, _status: "published" },
+      overrideAccess: false,
+      user,
     });
   }
 }

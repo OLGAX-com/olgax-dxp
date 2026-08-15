@@ -18,6 +18,7 @@
     "@olgax/datasource": "^0.1.0",
     "@olgax/payload-preset": "^0.1.0",
     "@olgax/sdk": "^0.1.0",
+    "@payloadcms/db-postgres": "^3.87.1",
     "@payloadcms/db-sqlite": "^3.87.1",
     "@payloadcms/next": "^3.87.1",
     "@payloadcms/richtext-lexical": "^3.87.1",

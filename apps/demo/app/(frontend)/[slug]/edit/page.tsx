@@ -1,6 +1,7 @@
+import { redirect } from "next/navigation";
 import type { Data } from "@puckeditor/core";
 import { PageEditor } from "@/components/PageEditor";
-import { getPayloadClient } from "@/lib/payload";
+import { getPayloadClient, getCurrentUser } from "@/lib/payload";
 
 export default async function EditPage({
   params,
@@ -8,6 +9,15 @@ export default async function EditPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  // The Puck editor is for logged-in Payload users only - the actions it
+  // calls also enforce this (see lib/actions.ts), but redirecting here
+  // avoids showing the editor UI at all to anonymous visitors.
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/admin/login");
+  }
+
   const payload = await getPayloadClient();
 
   // `draft: true` returns the latest draft version if one exists (falling
