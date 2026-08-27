@@ -1,4 +1,4 @@
-import { registerComponent } from "@olgax/sdk";
+import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
 import "./Hero.css";
 
 export type HeroProps = {
@@ -6,10 +6,10 @@ export type HeroProps = {
   subheading: string;
   ctaLabel: string;
   ctaHref: string;
-};
+} & ColorOverrideProps;
 
-const Hero = ({ heading, subheading, ctaLabel, ctaHref }: HeroProps) => (
-  <section className="olgax-hero">
+const Hero = ({ heading, subheading, ctaLabel, ctaHref, ...props }: HeroProps) => (
+  <section className="olgax-hero" style={colorOverrideStyle(props)}>
     <h1 className="olgax-hero__heading">{heading}</h1>
     <p className="olgax-hero__subheading">{subheading}</p>
     {ctaLabel && (
@@ -26,6 +26,7 @@ registerComponent<HeroProps>("Hero", {
     subheading: { type: "textarea" },
     ctaLabel: { type: "text" },
     ctaHref: { type: "text" },
+    ...colorOverrideFields(),
   },
   defaultProps: {
     heading: "Build pages, not pipelines",

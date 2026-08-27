@@ -1,5 +1,8 @@
 import type { ComponentConfig, DefaultComponentProps } from "@puckeditor/core";
 
+export { colorOverrideFields, colorOverrideStyle } from "./theming";
+export type { ColorOverrideProps } from "./theming";
+
 // A single shared registry that `packages/components` (and any third-party
 // component package) registers into, and that a consuming app's Puck config
 // reads from - so registering a component never requires touching the SDK.

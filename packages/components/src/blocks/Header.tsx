@@ -1,14 +1,14 @@
-import { registerComponent } from "@olgax/sdk";
+import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
 import "./Header.css";
 
 export type HeaderLink = { label: string; href: string };
 export type HeaderProps = {
   logoText: string;
   links: HeaderLink[];
-};
+} & ColorOverrideProps;
 
-const Header = ({ logoText, links }: HeaderProps) => (
-  <header className="olgax-header">
+const Header = ({ logoText, links, ...props }: HeaderProps) => (
+  <header className="olgax-header" style={colorOverrideStyle(props)}>
     <span className="olgax-header__logo">{logoText}</span>
     <nav className="olgax-header__nav">
       {links.map((link, i) => (
@@ -23,6 +23,7 @@ const Header = ({ logoText, links }: HeaderProps) => (
 registerComponent<HeaderProps>("Header", {
   fields: {
     logoText: { type: "text" },
+    ...colorOverrideFields(),
     links: {
       type: "array",
       arrayFields: {

@@ -1,13 +1,13 @@
-import { registerComponent } from "@olgax/sdk";
+import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
 import "./Testimonials.css";
 
 export type Testimonial = { quote: string; author: string };
 export type TestimonialsProps = {
   items: Testimonial[];
-};
+} & ColorOverrideProps;
 
-const Testimonials = ({ items }: TestimonialsProps) => (
-  <section className="olgax-testimonials">
+const Testimonials = ({ items, ...props }: TestimonialsProps) => (
+  <section className="olgax-testimonials" style={colorOverrideStyle(props)}>
     {items.map((item, i) => (
       <figure key={i} className="olgax-testimonials__item">
         <blockquote className="olgax-testimonials__quote">&ldquo;{item.quote}&rdquo;</blockquote>
@@ -19,6 +19,7 @@ const Testimonials = ({ items }: TestimonialsProps) => (
 
 registerComponent<TestimonialsProps>("Testimonials", {
   fields: {
+    ...colorOverrideFields(),
     items: {
       type: "array",
       arrayFields: {

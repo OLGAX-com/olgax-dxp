@@ -1,13 +1,13 @@
-import { registerComponent } from "@olgax/sdk";
+import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
 import "./FAQ.css";
 
 export type FAQItem = { question: string; answer: string };
 export type FAQProps = {
   items: FAQItem[];
-};
+} & ColorOverrideProps;
 
-const FAQ = ({ items }: FAQProps) => (
-  <section className="olgax-faq">
+const FAQ = ({ items, ...props }: FAQProps) => (
+  <section className="olgax-faq" style={colorOverrideStyle(props)}>
     {items.map((item, i) => (
       <details key={i} className="olgax-faq__item">
         <summary className="olgax-faq__question">{item.question}</summary>
@@ -19,6 +19,7 @@ const FAQ = ({ items }: FAQProps) => (
 
 registerComponent<FAQProps>("FAQ", {
   fields: {
+    ...colorOverrideFields(),
     items: {
       type: "array",
       arrayFields: {

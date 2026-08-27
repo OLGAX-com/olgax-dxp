@@ -1,14 +1,14 @@
-import { registerComponent } from "@olgax/sdk";
+import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
 import "./CTA.css";
 
 export type CTAProps = {
   heading: string;
   buttonLabel: string;
   buttonHref: string;
-};
+} & ColorOverrideProps;
 
-const CTA = ({ heading, buttonLabel, buttonHref }: CTAProps) => (
-  <section className="olgax-cta">
+const CTA = ({ heading, buttonLabel, buttonHref, ...props }: CTAProps) => (
+  <section className="olgax-cta" style={colorOverrideStyle(props)}>
     <h2 className="olgax-cta__heading">{heading}</h2>
     <a className="olgax-cta__button" href={buttonHref}>
       {buttonLabel}
@@ -21,6 +21,7 @@ registerComponent<CTAProps>("CTA", {
     heading: { type: "text" },
     buttonLabel: { type: "text" },
     buttonHref: { type: "text" },
+    ...colorOverrideFields(),
   },
   defaultProps: {
     heading: "Ready to build your site?",

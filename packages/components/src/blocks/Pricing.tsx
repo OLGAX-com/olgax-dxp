@@ -1,4 +1,4 @@
-import { registerComponent } from "@olgax/sdk";
+import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
 import "./Pricing.css";
 
 export type PricingPlan = {
@@ -10,10 +10,10 @@ export type PricingPlan = {
 };
 export type PricingProps = {
   plans: PricingPlan[];
-};
+} & ColorOverrideProps;
 
-const Pricing = ({ plans }: PricingProps) => (
-  <section className="olgax-pricing">
+const Pricing = ({ plans, ...props }: PricingProps) => (
+  <section className="olgax-pricing" style={colorOverrideStyle(props)}>
     {plans.map((plan, i) => (
       <div key={i} className="olgax-pricing__plan">
         <h3 className="olgax-pricing__name">{plan.name}</h3>
@@ -36,6 +36,7 @@ const Pricing = ({ plans }: PricingProps) => (
 
 registerComponent<PricingProps>("Pricing", {
   fields: {
+    ...colorOverrideFields(),
     plans: {
       type: "array",
       arrayFields: {

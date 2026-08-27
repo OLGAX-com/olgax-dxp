@@ -1,14 +1,14 @@
-import { registerComponent } from "@olgax/sdk";
+import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
 import "./Footer.css";
 
 export type FooterLink = { label: string; href: string };
 export type FooterProps = {
   text: string;
   links: FooterLink[];
-};
+} & ColorOverrideProps;
 
-const Footer = ({ text, links }: FooterProps) => (
-  <footer className="olgax-footer">
+const Footer = ({ text, links, ...props }: FooterProps) => (
+  <footer className="olgax-footer" style={colorOverrideStyle(props)}>
     <span className="olgax-footer__text">{text}</span>
     <nav className="olgax-footer__nav">
       {links.map((link, i) => (
@@ -23,6 +23,7 @@ const Footer = ({ text, links }: FooterProps) => (
 registerComponent<FooterProps>("Footer", {
   fields: {
     text: { type: "text" },
+    ...colorOverrideFields(),
     links: {
       type: "array",
       arrayFields: {

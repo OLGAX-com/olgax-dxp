@@ -1,13 +1,13 @@
-import { registerComponent } from "@olgax/sdk";
+import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
 import "./Gallery.css";
 
 export type GalleryImage = { src: string; alt: string };
 export type GalleryProps = {
   images: GalleryImage[];
-};
+} & ColorOverrideProps;
 
-const Gallery = ({ images }: GalleryProps) => (
-  <div className="olgax-gallery">
+const Gallery = ({ images, ...props }: GalleryProps) => (
+  <div className="olgax-gallery" style={colorOverrideStyle(props)}>
     {images.map((image, i) => (
       // eslint-disable-next-line @next/next/no-img-element -- framework-agnostic component, can't assume next/image
       <img key={i} className="olgax-gallery__image" src={image.src} alt={image.alt} />
@@ -17,6 +17,7 @@ const Gallery = ({ images }: GalleryProps) => (
 
 registerComponent<GalleryProps>("Gallery", {
   fields: {
+    ...colorOverrideFields(),
     images: {
       type: "array",
       arrayFields: {

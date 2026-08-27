@@ -35,6 +35,15 @@ import "@olgax/components/src/themes/dark.css";
 Add your own theme the same way: a CSS file scoping `--olgax-*` overrides under a selector
 your app controls (a `data-theme` attribute, a class, a media query, etc).
 
+### Per-component color overrides
+
+Every component also accepts optional `backgroundColor` / `primaryColor` / `textColor` props
+(hex colors, e.g. `"#18181b"`) - set via the same fields Puck shows for the component's own
+content. Leaving them unset falls through to the theme defaults above; setting one only affects
+that single component instance, not the rest of the page or site. This is built on
+`@olgax/sdk`'s `colorOverrideFields()`/`colorOverrideStyle()`, so any third-party component can
+opt into the same behavior.
+
 ## Components
 
 Each entry below shows the props Puck stores for that component (as it would appear in a
