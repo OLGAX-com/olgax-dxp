@@ -63,6 +63,34 @@ async function seed() {
     console.log("Demo page already exists, skipping.");
   }
 
+  const existingSections = await payload.find({
+    collection: "sections",
+    where: { name: { equals: "cta-banner" } },
+    limit: 1,
+  });
+  if (existingSections.docs.length === 0) {
+    await payload.create({
+      collection: "sections",
+      data: {
+        name: "cta-banner",
+        content: [
+          {
+            type: "CTA",
+            props: {
+              id: "cta-template-1",
+              heading: "Ready to build your site?",
+              buttonLabel: "Get started",
+              buttonHref: "/get-started",
+            },
+          },
+        ],
+      },
+    });
+    console.log("Created demo section: cta-banner (try /some-new-page/edit?section=cta-banner)");
+  } else {
+    console.log("Demo section already exists, skipping.");
+  }
+
   process.exit(0);
 }
 

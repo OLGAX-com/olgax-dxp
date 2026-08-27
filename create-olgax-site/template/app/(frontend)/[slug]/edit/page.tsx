@@ -2,13 +2,17 @@ import { redirect } from "next/navigation";
 import type { Data } from "@puckeditor/core";
 import { PageEditor } from "@/components/PageEditor";
 import { getPayloadClient, getCurrentUser } from "@/lib/payload";
+import { getSectionContent } from "@/lib/sections";
 
 export default async function EditPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ section?: string }>;
 }) {
   const { slug } = await params;
+  const { section } = await searchParams;
 
   // The Puck editor is for logged-in Payload users only - the actions it
   // calls also enforce this (see lib/actions.ts), but redirecting here
@@ -33,8 +37,18 @@ export default async function EditPage({
   });
 
   const page = result.docs[0];
-  const initialData: Data = (page?.data as Data) ?? { content: [], root: {} };
   const title = page?.title ?? slug;
+
+  let initialData: Data = (page?.data as Data) ?? { content: [], root: {} };
+
+  // Only start from a section for a brand-new page - never overwrite
+  // existing content just because a `?section=` param is present.
+  if (!page && section) {
+    const sectionContent = await getSectionContent(section);
+    if (sectionContent) {
+      initialData = { content: sectionContent, root: {} };
+    }
+  }
 
   return <PageEditor slug={slug} title={title} initialData={initialData} />;
 }
