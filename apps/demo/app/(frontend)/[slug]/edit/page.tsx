@@ -12,10 +12,12 @@ export default async function EditPage({
 
   // The Puck editor is for logged-in Payload users only - the actions it
   // calls also enforce this (see lib/actions.ts), but redirecting here
-  // avoids showing the editor UI at all to anonymous visitors.
+  // avoids showing the editor UI at all to anonymous visitors. Payload's
+  // login view/form both honor `?redirect=` (validated via its own
+  // getSafeRedirect - must be a relative path) to bounce back here after login.
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/admin/login");
+    redirect(`/admin/login?redirect=${encodeURIComponent(`/${slug}/edit`)}`);
   }
 
   const payload = await getPayloadClient();
