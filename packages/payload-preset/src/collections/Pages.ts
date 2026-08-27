@@ -49,5 +49,16 @@ export const Pages: CollectionConfig = {
       type: "json",
       required: true,
     },
+    {
+      name: "quickLinks",
+      type: "ui",
+      label: "Quick links",
+      admin: {
+        position: "sidebar",
+        components: {
+          Field: "@olgax/payload-preset/src/components/PageQuickLinks#PageQuickLinks",
+        },
+      },
+    },
   ],
 };

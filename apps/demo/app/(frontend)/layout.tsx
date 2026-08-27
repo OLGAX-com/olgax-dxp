@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getSiteSettings } from "@/lib/payload";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,12 +18,31 @@ export const metadata: Metadata = {
   description: "Payload + Puck + Next.js page-building spike",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const settings = await getSiteSettings();
+
+  // Only ever contains values that passed the SiteSettings global's hex-color
+  // validation (see packages/payload-preset), so it's safe to interpolate
+  // directly - no free-form text ever reaches this template. Blank fields are
+  // omitted entirely, letting packages/components' tokens.css defaults apply.
+  const overrides = [
+    settings.primaryColor && `--olgax-color-primary: ${settings.primaryColor};`,
+    settings.backgroundColor && `--olgax-color-bg: ${settings.backgroundColor};`,
+    settings.textColor && `--olgax-color-text: ${settings.textColor};`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      {overrides && (
+        <head>
+          <style>{`:root { ${overrides} }`}</style>
+        </head>
+      )}
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

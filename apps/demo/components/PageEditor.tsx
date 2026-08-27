@@ -20,6 +20,13 @@ export function PageEditor({
 }) {
   const autosaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const navLinkStyle = {
+    fontSize: 13,
+    fontWeight: 600,
+    marginRight: 12,
+    textDecoration: "none",
+  };
+
   return (
     <Puck
       config={config}
@@ -31,6 +38,22 @@ export function PageEditor({
         }, AUTOSAVE_DELAY_MS);
       }}
       onPublish={(data) => publishPageData(slug, title, data)}
+      overrides={{
+        // Puck's documented (if experimental) header override - not the
+        // internal/unstable AppState APIs - just injects extra links
+        // alongside the default actions (Publish button, etc.).
+        headerActions: ({ children }) => (
+          <>
+            <a href="/pages" style={navLinkStyle}>
+              All pages
+            </a>
+            <a href={`/${slug}`} target="_blank" rel="noreferrer" style={navLinkStyle}>
+              View page ↗
+            </a>
+            {children}
+          </>
+        ),
+      }}
     />
   );
 }

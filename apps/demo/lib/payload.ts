@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getPayload } from "payload";
 import { headers as nextHeaders } from "next/headers";
 import config from "@payload-config";
@@ -13,3 +14,10 @@ export async function getCurrentUser() {
   const { user } = await payload.auth({ headers: await nextHeaders() });
   return user;
 }
+
+// Fetched from the root layout on every request (for site-wide color
+// theming), so dedupe within a single render pass via React's cache().
+export const getSiteSettings = cache(async () => {
+  const payload = await getPayloadClient();
+  return payload.findGlobal({ slug: "site-settings" });
+});

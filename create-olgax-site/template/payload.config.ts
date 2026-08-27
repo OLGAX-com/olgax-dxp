@@ -6,7 +6,7 @@ import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
 
-import { Users, Media, Pages, Sections } from "@olgax/payload-preset";
+import { Users, Media, Pages, Sections, SiteSettings } from "@olgax/payload-preset";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -29,6 +29,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Pages, Sections],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
