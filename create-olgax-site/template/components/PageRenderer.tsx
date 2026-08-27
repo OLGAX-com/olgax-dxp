@@ -5,17 +5,29 @@ import type { Data } from "@puckeditor/core";
 import { config } from "@/lib/puck.config";
 import { getPayloadClient, getCurrentUser } from "@/lib/payload";
 import { EditThisPageLink } from "@/components/EditThisPageLink";
+import type { Locale } from "@/lib/i18n";
 
-// Shared by the root "/" route (renders the HOME_SLUG page) and the generic
-// "/[slug]" route - `fallback` lets the root route show a friendly first-run
-// state instead of a 404 when a fresh site has no homepage yet.
-export async function PageRenderer({ slug, fallback }: { slug: string; fallback?: ReactNode }) {
+// Shared by the root "/[locale]" route (renders the HOME_SLUG page) and the
+// generic "/[locale]/[slug]" route - `fallback` lets the root route show a
+// friendly first-run state instead of a 404 when a fresh site has no
+// homepage yet.
+export async function PageRenderer({
+  locale,
+  slug,
+  fallback,
+}: {
+  locale: Locale;
+  slug: string;
+  fallback?: ReactNode;
+}) {
   const payload = await getPayloadClient();
 
   // Explicit `_status` filter: the Local API bypasses access control by
   // default, and Payload's `draft` param on find/findByID does NOT filter
   // by status on its own - this is the actual guard against showing
-  // unpublished drafts on the public route.
+  // unpublished drafts on the public route. `locale` returns the requested
+  // locale's content, falling back to the default locale for untranslated
+  // fields (payload.config.ts's `localization.fallback: true`).
   const result = await payload.find({
     collection: "pages",
     where: {
@@ -23,6 +35,7 @@ export async function PageRenderer({ slug, fallback }: { slug: string; fallback?
       _status: { equals: "published" },
     },
     limit: 1,
+    locale,
   });
 
   const page = result.docs[0];
@@ -36,7 +49,7 @@ export async function PageRenderer({ slug, fallback }: { slug: string; fallback?
   return (
     <>
       <Render config={config} data={page.data as Data} />
-      {user && <EditThisPageLink slug={slug} />}
+      {user && <EditThisPageLink locale={locale} slug={slug} />}
     </>
   );
 }

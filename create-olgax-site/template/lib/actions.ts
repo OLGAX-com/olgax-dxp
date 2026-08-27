@@ -3,6 +3,7 @@
 import type { Data } from "@puckeditor/core";
 import { revalidatePath } from "next/cache";
 import { getPayloadClient, getCurrentUser } from "./payload";
+import type { Locale } from "./i18n";
 
 async function requireEditor() {
   const user = await getCurrentUser();
@@ -24,8 +25,10 @@ async function findPageBySlug(slug: string) {
 
 // Autosaves editor progress without touching the published/live page - only
 // writes to Payload's versions table (Pages has `versions.drafts` enabled).
-// Called from PageEditor's debounced `onChange`.
-export async function saveDraftPageData(slug: string, title: string, data: Data) {
+// Called from PageEditor's debounced `onChange`. `locale` scopes the write
+// to that locale's `title`/`data` (both `localized: true` on Pages) without
+// touching other locales' content.
+export async function saveDraftPageData(locale: Locale, slug: string, title: string, data: Data) {
   const user = await requireEditor();
   const { payload, existing } = await findPageBySlug(slug);
 
@@ -35,6 +38,7 @@ export async function saveDraftPageData(slug: string, title: string, data: Data)
       id: existing.id,
       data: { title, data },
       draft: true,
+      locale,
       overrideAccess: false,
       user,
     });
@@ -44,6 +48,7 @@ export async function saveDraftPageData(slug: string, title: string, data: Data)
     await payload.create({
       collection: "pages",
       data: { title, slug, data },
+      locale,
       overrideAccess: false,
       user,
     });
@@ -52,7 +57,7 @@ export async function saveDraftPageData(slug: string, title: string, data: Data)
 
 // Publishes the page - this is what the public render route shows. Called
 // from PageEditor's `onPublish`.
-export async function publishPageData(slug: string, title: string, data: Data) {
+export async function publishPageData(locale: Locale, slug: string, title: string, data: Data) {
   const user = await requireEditor();
   const { payload, existing } = await findPageBySlug(slug);
 
@@ -62,6 +67,7 @@ export async function publishPageData(slug: string, title: string, data: Data) {
       id: existing.id,
       data: { title, data, _status: "published" },
       draft: false,
+      locale,
       overrideAccess: false,
       user,
     });
@@ -69,6 +75,7 @@ export async function publishPageData(slug: string, title: string, data: Data) {
     await payload.create({
       collection: "pages",
       data: { title, slug, data, _status: "published" },
+      locale,
       overrideAccess: false,
       user,
     });
@@ -78,21 +85,23 @@ export async function publishPageData(slug: string, title: string, data: Data) {
 // Called from the /pages dashboard - `overrideAccess: false` + `user` means
 // Payload's own Pages access control (login required) is the real
 // enforcement, not just this action existing behind an authed page.
-export async function deletePage(id: string | number) {
+export async function deletePage(locale: Locale, id: string | number) {
   const user = await requireEditor();
   const payload = await getPayloadClient();
   await payload.delete({ collection: "pages", id, overrideAccess: false, user });
-  revalidatePath("/pages");
+  revalidatePath(`/${locale}/pages`);
 }
 
-// Copies a page's content into a brand-new draft page, appending "-copy" (or
-// "-copy-2", "-copy-3", ...) to the slug until one is free.
-export async function duplicatePage(id: string | number) {
+// Copies a page's content (for the current locale only - other locales on
+// the copy start untranslated) into a brand-new draft page, appending
+// "-copy" (or "-copy-2", "-copy-3", ...) to the slug until one is free.
+export async function duplicatePage(locale: Locale, id: string | number) {
   const user = await requireEditor();
   const payload = await getPayloadClient();
   const original = await payload.findByID({
     collection: "pages",
     id,
+    locale,
     overrideAccess: false,
     user,
   });
@@ -117,8 +126,9 @@ export async function duplicatePage(id: string | number) {
   await payload.create({
     collection: "pages",
     data: { title: `${original.title} (copy)`, slug, data: original.data },
+    locale,
     overrideAccess: false,
     user,
   });
-  revalidatePath("/pages");
+  revalidatePath(`/${locale}/pages`);
 }

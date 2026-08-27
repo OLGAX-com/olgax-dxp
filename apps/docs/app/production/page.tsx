@@ -46,6 +46,19 @@ DATABASE_URL=postgres://user:password@host:5432/dbname`}</pre>
         a code change.
       </p>
 
+      <h2>Localization schema changes</h2>
+      <p>
+        Marking an existing field <code>localized: true</code> (as <code>Pages.title</code>/
+        <code>data</code> are, see <code>packages/payload-preset</code>) changes how that column
+        is stored. If you add localization to a collection that already has real data, Payload&apos;s
+        dev-mode schema push will warn <strong>&ldquo;DATA LOSS WARNING&rdquo;</strong> before
+        dropping the old column - and it means it. Do not accept that prompt against a production
+        database. Write a proper migration first (
+        <code>payload migrate:create</code>) that moves existing values into the new localized
+        structure, or add localization from the start on a fresh project instead of retrofitting
+        it onto live content.
+      </p>
+
       <h2>Still worth doing before a real launch</h2>
       <ul>
         <li>

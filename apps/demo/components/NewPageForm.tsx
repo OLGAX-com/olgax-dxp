@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { Locale } from "@/lib/i18n";
 
-export function NewPageForm() {
+export function NewPageForm({ locale }: { locale: Locale }) {
   const router = useRouter();
   const [slug, setSlug] = useState("");
   const [section, setSection] = useState("");
@@ -17,7 +18,7 @@ export function NewPageForm() {
         if (!cleanSlug) return;
         const cleanSection = section.trim();
         const query = cleanSection ? `?section=${encodeURIComponent(cleanSection)}` : "";
-        router.push(`/${cleanSlug}/edit${query}`);
+        router.push(`/${locale}/${cleanSlug}/edit${query}`);
       }}
     >
       <input

@@ -1,18 +1,24 @@
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { getPayloadClient, getCurrentUser } from "@/lib/payload";
 import { duplicatePage } from "@/lib/actions";
 import { publicUrlForSlug } from "@/lib/pages";
+import { isLocale, LOCALES } from "@/lib/i18n";
 import { NewPageForm } from "@/components/NewPageForm";
 import { DeletePageButton } from "@/components/DeletePageButton";
 
 export default async function PagesDashboard({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ q?: string }>;
 }) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+
   const user = await getCurrentUser();
   if (!user) {
-    redirect(`/admin/login?redirect=${encodeURIComponent("/pages")}`);
+    redirect(`/admin/login?redirect=${encodeURIComponent(`/${locale}/pages`)}`);
   }
 
   const { q } = await searchParams;
@@ -23,6 +29,7 @@ export default async function PagesDashboard({
     collection: "pages",
     limit: 100,
     sort: "-updatedAt",
+    locale,
     overrideAccess: false,
     user,
     where: query
@@ -41,7 +48,7 @@ export default async function PagesDashboard({
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">Pages</h1>
           <div className="flex gap-4 text-sm font-medium">
-            <a href="/" className="text-zinc-600 hover:underline dark:text-zinc-400">
+            <a href={`/${locale}`} className="text-zinc-600 hover:underline dark:text-zinc-400">
               Home
             </a>
             <a href="/admin" className="text-zinc-600 hover:underline dark:text-zinc-400">
@@ -50,7 +57,7 @@ export default async function PagesDashboard({
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3 text-sm font-medium">
+        <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
           <a
             href="/admin/globals/site-settings"
             className="rounded-full border border-solid border-black/[.08] px-4 py-1.5 text-zinc-600 hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:text-zinc-400 dark:hover:bg-[#1a1a1a]"
@@ -69,9 +76,25 @@ export default async function PagesDashboard({
           >
             Media
           </a>
+          <span className="ml-auto text-xs uppercase tracking-wide text-zinc-400">
+            Editing locale:
+          </span>
+          {LOCALES.map((l) => (
+            <a
+              key={l}
+              href={`/${l}/pages${query ? `?q=${encodeURIComponent(query)}` : ""}`}
+              className={
+                l === locale
+                  ? "rounded-full bg-foreground px-3 py-1 text-xs font-semibold text-background"
+                  : "rounded-full border border-solid border-black/[.08] px-3 py-1 text-xs text-zinc-600 dark:border-white/[.145] dark:text-zinc-400"
+              }
+            >
+              {l}
+            </a>
+          ))}
         </div>
 
-        <NewPageForm />
+        <NewPageForm locale={locale} />
 
         <form method="GET" className="flex gap-2">
           <input
@@ -89,7 +112,7 @@ export default async function PagesDashboard({
           </button>
           {query && (
             <a
-              href="/pages"
+              href={`/${locale}/pages`}
               className="flex h-10 shrink-0 items-center rounded-full px-3 text-sm text-zinc-500 hover:underline"
             >
               Clear
@@ -108,18 +131,18 @@ export default async function PagesDashboard({
               </div>
               <div className="flex items-center gap-3 text-sm font-medium">
                 <a
-                  href={publicUrlForSlug(page.slug)}
+                  href={publicUrlForSlug(locale, page.slug)}
                   className="text-zinc-600 hover:underline dark:text-zinc-400"
                 >
                   View
                 </a>
                 <a
-                  href={`/${page.slug}/edit`}
+                  href={`/${locale}/${page.slug}/edit`}
                   className="text-zinc-600 hover:underline dark:text-zinc-400"
                 >
                   Edit
                 </a>
-                <form action={duplicatePage.bind(null, page.id)}>
+                <form action={duplicatePage.bind(null, locale, page.id)}>
                   <button
                     type="submit"
                     className="text-zinc-600 hover:underline dark:text-zinc-400"
@@ -127,7 +150,7 @@ export default async function PagesDashboard({
                     Duplicate
                   </button>
                 </form>
-                <DeletePageButton id={page.id} title={page.title} />
+                <DeletePageButton locale={locale} id={page.id} title={page.title} />
               </div>
             </li>
           ))}

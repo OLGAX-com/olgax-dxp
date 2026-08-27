@@ -1,17 +1,20 @@
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import type { Data } from "@puckeditor/core";
 import { PageEditor } from "@/components/PageEditor";
 import { getPayloadClient, getCurrentUser } from "@/lib/payload";
 import { getSectionContent } from "@/lib/sections";
+import { isLocale } from "@/lib/i18n";
 
 export default async function EditPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
   searchParams: Promise<{ section?: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  if (!isLocale(locale)) notFound();
+
   const { section } = await searchParams;
 
   // The Puck editor is for logged-in Payload users only - the actions it
@@ -21,19 +24,22 @@ export default async function EditPage({
   // getSafeRedirect - must be a relative path) to bounce back here after login.
   const user = await getCurrentUser();
   if (!user) {
-    redirect(`/admin/login?redirect=${encodeURIComponent(`/${slug}/edit`)}`);
+    redirect(`/admin/login?redirect=${encodeURIComponent(`/${locale}/${slug}/edit`)}`);
   }
 
   const payload = await getPayloadClient();
 
   // `draft: true` returns the latest draft version if one exists (falling
   // back to published), so reopening the editor doesn't discard autosaved
-  // progress that hasn't been published yet.
+  // progress that hasn't been published yet. A locale with no translation
+  // yet falls back to the default locale's content (`localization.fallback`
+  // in payload.config.ts) rather than starting from a blank page.
   const result = await payload.find({
     collection: "pages",
     where: { slug: { equals: slug } },
     limit: 1,
     draft: true,
+    locale,
   });
 
   const page = result.docs[0];
@@ -50,5 +56,7 @@ export default async function EditPage({
     }
   }
 
-  return <PageEditor slug={slug} title={title} initialData={initialData} />;
+  return (
+    <PageEditor locale={locale} slug={slug} title={title} initialData={initialData} />
+  );
 }

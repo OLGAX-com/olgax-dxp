@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getSiteSettings } from "@/lib/payload";
-import "./globals.css";
+import { isLocale } from "@/lib/i18n";
+import "../globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +20,16 @@ export const metadata: Metadata = {
   description: "Payload + Puck + Next.js page-building spike",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+
   const settings = await getSiteSettings();
 
   // Only ever contains values that passed the SiteSettings global's hex-color
@@ -35,7 +46,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       {overrides && (

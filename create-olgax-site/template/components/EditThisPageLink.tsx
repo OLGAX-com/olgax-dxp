@@ -1,7 +1,9 @@
-export function EditThisPageLink({ slug }: { slug: string }) {
+import type { Locale } from "@/lib/i18n";
+
+export function EditThisPageLink({ locale, slug }: { locale: Locale; slug: string }) {
   return (
     <a
-      href={`/${slug}/edit`}
+      href={`/${locale}/${slug}/edit`}
       style={{
         position: "fixed",
         bottom: "1rem",

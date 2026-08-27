@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import sharp from "sharp";
 
 import { Users, Media, Pages, Sections, SiteSettings } from "@olgax/payload-preset";
+import { LOCALES, DEFAULT_LOCALE } from "./lib/i18n";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -31,6 +32,14 @@ export default buildConfig({
   collections: [Users, Media, Pages, Sections],
   globals: [SiteSettings],
   editor: lexicalEditor(),
+  // `Pages.title`/`data` are `localized: true` - each locale stores its own
+  // content under the same document/slug (see lib/i18n.ts for the source of
+  // truth this mirrors on the frontend's locale-prefixed routes).
+  localization: {
+    locales: [...LOCALES],
+    defaultLocale: DEFAULT_LOCALE,
+    fallback: true,
+  },
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
