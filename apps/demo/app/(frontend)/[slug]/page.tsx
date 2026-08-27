@@ -1,9 +1,6 @@
-import { notFound } from "next/navigation";
-import { Render } from "@puckeditor/core";
-import type { Data } from "@puckeditor/core";
-import { config } from "@/lib/puck.config";
-import { getPayloadClient, getCurrentUser } from "@/lib/payload";
-import { EditThisPageLink } from "@/components/EditThisPageLink";
+import { redirect } from "next/navigation";
+import { PageRenderer } from "@/components/PageRenderer";
+import { HOME_SLUG } from "@/lib/pages";
 
 export default async function PublicPage({
   params,
@@ -11,30 +8,12 @@ export default async function PublicPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const payload = await getPayloadClient();
 
-  // Explicit `_status` filter: the Local API bypasses access control by
-  // default, and Payload's `draft` param on find/findByID does NOT filter
-  // by status on its own - this is the actual guard against showing
-  // unpublished drafts on the public route.
-  const result = await payload.find({
-    collection: "pages",
-    where: {
-      slug: { equals: slug },
-      _status: { equals: "published" },
-    },
-    limit: 1,
-  });
+  // The home page's canonical URL is "/" - redirect its own slug there
+  // instead of rendering the same content at two URLs.
+  if (slug === HOME_SLUG) {
+    redirect("/");
+  }
 
-  const page = result.docs[0];
-  if (!page) notFound();
-
-  const user = await getCurrentUser();
-
-  return (
-    <>
-      <Render config={config} data={page.data as Data} />
-      {user && <EditThisPageLink slug={slug} />}
-    </>
-  );
+  return <PageRenderer slug={slug} />;
 }

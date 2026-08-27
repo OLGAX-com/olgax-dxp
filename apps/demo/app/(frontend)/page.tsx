@@ -1,44 +1,36 @@
-import { NewPageForm } from "@/components/NewPageForm";
+import { getCurrentUser } from "@/lib/payload";
+import { PageRenderer } from "@/components/PageRenderer";
+import { HOME_SLUG } from "@/lib/pages";
 
-export default function Home() {
+// The real production homepage: whatever's published at HOME_SLUG (see
+// lib/pages.ts). Falls back to a first-run state (rather than a 404) for a
+// freshly scaffolded site that has no homepage yet - `/pages` is where an
+// editor manages content, not this route.
+export default async function RootPage() {
+  const user = await getCurrentUser();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-6 py-32 px-16 bg-white text-center dark:bg-black">
-        <h1 className="text-3xl font-semibold tracking-tight text-black dark:text-zinc-50">
-          Olgax DXP — Phase 0 spike
-        </h1>
-        <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-          Proving that Puck&apos;s <code>Data</code> JSON round-trips through a Payload field
-          and renders via Next.js.
-        </p>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 items-center justify-center rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-            href="/home"
-          >
-            View demo page
-          </a>
-          <a
-            className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="/home/edit"
-          >
-            Edit in Puck
-          </a>
-          <a
-            className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="/pages"
-          >
-            Manage pages
-          </a>
-          <a
-            className="flex h-12 items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="/admin"
-          >
-            Payload admin
-          </a>
+    <PageRenderer
+      slug={HOME_SLUG}
+      fallback={
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 bg-zinc-50 px-6 py-32 text-center dark:bg-black">
+          <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
+            This site doesn&apos;t have a homepage yet
+          </h1>
+          <p className="max-w-md text-zinc-600 dark:text-zinc-400">
+            Create and publish a page with the slug &ldquo;{HOME_SLUG}&rdquo; to have it appear
+            here.
+          </p>
+          {user && (
+            <a
+              href={`/${HOME_SLUG}/edit`}
+              className="flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
+            >
+              Create the homepage
+            </a>
+          )}
         </div>
-        <NewPageForm />
-      </main>
-    </div>
+      }
+    />
   );
 }

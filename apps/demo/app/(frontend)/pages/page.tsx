@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getPayloadClient, getCurrentUser } from "@/lib/payload";
 import { duplicatePage } from "@/lib/actions";
+import { publicUrlForSlug } from "@/lib/pages";
 import { NewPageForm } from "@/components/NewPageForm";
 import { DeletePageButton } from "@/components/DeletePageButton";
 
@@ -107,7 +108,7 @@ export default async function PagesDashboard({
               </div>
               <div className="flex items-center gap-3 text-sm font-medium">
                 <a
-                  href={`/${page.slug}`}
+                  href={publicUrlForSlug(page.slug)}
                   className="text-zinc-600 hover:underline dark:text-zinc-400"
                 >
                   View

@@ -1,1 +1,1 @@
-Phase 1 — MVP
+Phase 2 — Developer & Component Experience

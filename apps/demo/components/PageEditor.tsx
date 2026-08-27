@@ -6,6 +6,7 @@ import "@puckeditor/core/puck.css";
 import type { Data } from "@puckeditor/core";
 import { config } from "@/lib/puck.config";
 import { saveDraftPageData, publishPageData } from "@/lib/actions";
+import { publicUrlForSlug } from "@/lib/pages";
 
 const AUTOSAVE_DELAY_MS = 2000;
 
@@ -47,7 +48,7 @@ export function PageEditor({
             <a href="/pages" style={navLinkStyle}>
               All pages
             </a>
-            <a href={`/${slug}`} target="_blank" rel="noreferrer" style={navLinkStyle}>
+            <a href={publicUrlForSlug(slug)} target="_blank" rel="noreferrer" style={navLinkStyle}>
               View page ↗
             </a>
             {children}
