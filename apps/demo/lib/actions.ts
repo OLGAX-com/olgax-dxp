@@ -1,6 +1,7 @@
 "use server";
 
 import type { Data } from "@puckeditor/core";
+import { revalidatePath } from "next/cache";
 import { getPayloadClient, getCurrentUser } from "./payload";
 
 async function requireEditor() {
@@ -72,4 +73,52 @@ export async function publishPageData(slug: string, title: string, data: Data) {
       user,
     });
   }
+}
+
+// Called from the /pages dashboard - `overrideAccess: false` + `user` means
+// Payload's own Pages access control (login required) is the real
+// enforcement, not just this action existing behind an authed page.
+export async function deletePage(id: string | number) {
+  const user = await requireEditor();
+  const payload = await getPayloadClient();
+  await payload.delete({ collection: "pages", id, overrideAccess: false, user });
+  revalidatePath("/pages");
+}
+
+// Copies a page's content into a brand-new draft page, appending "-copy" (or
+// "-copy-2", "-copy-3", ...) to the slug until one is free.
+export async function duplicatePage(id: string | number) {
+  const user = await requireEditor();
+  const payload = await getPayloadClient();
+  const original = await payload.findByID({
+    collection: "pages",
+    id,
+    overrideAccess: false,
+    user,
+  });
+
+  let slug = `${original.slug}-copy`;
+  let suffix = 2;
+  while (
+    (
+      await payload.find({
+        collection: "pages",
+        where: { slug: { equals: slug } },
+        limit: 1,
+        overrideAccess: false,
+        user,
+      })
+    ).docs.length > 0
+  ) {
+    slug = `${original.slug}-copy-${suffix}`;
+    suffix++;
+  }
+
+  await payload.create({
+    collection: "pages",
+    data: { title: `${original.title} (copy)`, slug, data: original.data },
+    overrideAccess: false,
+    user,
+  });
+  revalidatePath("/pages");
 }
