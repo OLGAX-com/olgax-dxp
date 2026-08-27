@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { getCurrentUser } from "@/lib/payload";
+import { getCurrentUser, getSiteSettings } from "@/lib/payload";
 import { PageRenderer } from "@/components/PageRenderer";
-import { HOME_SLUG } from "@/lib/pages";
-import { isLocale } from "@/lib/i18n";
+import { HOME_SLUG, localizedPath } from "@/lib/pages";
+import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
 
 // The real production homepage: whatever's published at HOME_SLUG (see
 // lib/pages.ts). Falls back to a first-run state (rather than a 404) for a
@@ -17,11 +17,14 @@ export default async function RootPage({
   if (!isLocale(locale)) notFound();
 
   const user = await getCurrentUser();
+  const settings = await getSiteSettings();
+  const localizationEnabled = resolveLocalizationEnabled(settings.localizationEnabled);
 
   return (
     <PageRenderer
       locale={locale}
       slug={HOME_SLUG}
+      localizationEnabled={localizationEnabled}
       fallback={
         <div className="flex flex-1 flex-col items-center justify-center gap-4 bg-zinc-50 px-6 py-32 text-center dark:bg-black">
           <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
@@ -33,7 +36,7 @@ export default async function RootPage({
           </p>
           {user && (
             <a
-              href={`/${locale}/${HOME_SLUG}/edit`}
+              href={localizedPath(locale, localizationEnabled, `/${HOME_SLUG}/edit`)}
               className="flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
             >
               Create the homepage

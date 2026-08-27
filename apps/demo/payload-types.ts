@@ -403,6 +403,10 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface SiteSetting {
   id: number;
   /**
+   * On: pages live under locale-prefixed URLs (/en/..., /es/...). Off: the site serves only the default locale's content at the root URL (no prefix). Payload still stores every locale's content either way - this only changes what the public site exposes.
+   */
+  localizationEnabled?: boolean | null;
+  /**
    * Buttons, links, accents - e.g. #18181b. Leave blank for the default.
    */
   primaryColor?: string | null;
@@ -422,6 +426,7 @@ export interface SiteSetting {
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
+  localizationEnabled?: T;
   primaryColor?: T;
   backgroundColor?: T;
   textColor?: T;

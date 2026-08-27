@@ -1,7 +1,8 @@
 import { redirect, notFound } from "next/navigation";
 import { PageRenderer } from "@/components/PageRenderer";
-import { HOME_SLUG } from "@/lib/pages";
-import { isLocale } from "@/lib/i18n";
+import { HOME_SLUG, localizedPath } from "@/lib/pages";
+import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/payload";
 
 export default async function PublicPage({
   params,
@@ -11,11 +12,14 @@ export default async function PublicPage({
   const { locale, slug } = await params;
   if (!isLocale(locale)) notFound();
 
-  // The home page's canonical URL is "/[locale]" - redirect its own slug
+  const settings = await getSiteSettings();
+  const localizationEnabled = resolveLocalizationEnabled(settings.localizationEnabled);
+
+  // The home page's canonical URL is the site root - redirect its own slug
   // there instead of rendering the same content at two URLs.
   if (slug === HOME_SLUG) {
-    redirect(`/${locale}`);
+    redirect(localizedPath(locale, localizationEnabled, ""));
   }
 
-  return <PageRenderer locale={locale} slug={slug} />;
+  return <PageRenderer locale={locale} slug={slug} localizationEnabled={localizationEnabled} />;
 }

@@ -24,6 +24,17 @@ export const SiteSettings: GlobalConfig = {
   },
   fields: [
     {
+      name: "localizationEnabled",
+      type: "checkbox",
+      defaultValue: true,
+      admin: {
+        description:
+          "On: pages live under locale-prefixed URLs (/en/..., /es/...). Off: the site serves " +
+          "only the default locale's content at the root URL (no prefix). Payload still stores " +
+          "every locale's content either way - this only changes what the public site exposes.",
+      },
+    },
+    {
       name: "primaryColor",
       type: "text",
       validate: hexColor,

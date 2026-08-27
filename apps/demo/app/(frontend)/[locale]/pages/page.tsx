@@ -1,8 +1,8 @@
 import { redirect, notFound } from "next/navigation";
-import { getPayloadClient, getCurrentUser } from "@/lib/payload";
+import { getPayloadClient, getCurrentUser, getSiteSettings } from "@/lib/payload";
 import { duplicatePage } from "@/lib/actions";
-import { publicUrlForSlug } from "@/lib/pages";
-import { isLocale, LOCALES } from "@/lib/i18n";
+import { publicUrlForSlug, localizedPath } from "@/lib/pages";
+import { isLocale, LOCALES, resolveLocalizationEnabled } from "@/lib/i18n";
 import { NewPageForm } from "@/components/NewPageForm";
 import { DeletePageButton } from "@/components/DeletePageButton";
 
@@ -17,8 +17,11 @@ export default async function PagesDashboard({
   if (!isLocale(locale)) notFound();
 
   const user = await getCurrentUser();
+  const settings = await getSiteSettings();
+  const localizationEnabled = resolveLocalizationEnabled(settings.localizationEnabled);
   if (!user) {
-    redirect(`/admin/login?redirect=${encodeURIComponent(`/${locale}/pages`)}`);
+    const dashboardPath = localizedPath(locale, localizationEnabled, "/pages");
+    redirect(`/admin/login?redirect=${encodeURIComponent(dashboardPath)}`);
   }
 
   const { q } = await searchParams;
@@ -48,7 +51,10 @@ export default async function PagesDashboard({
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">Pages</h1>
           <div className="flex gap-4 text-sm font-medium">
-            <a href={`/${locale}`} className="text-zinc-600 hover:underline dark:text-zinc-400">
+            <a
+              href={localizedPath(locale, localizationEnabled, "")}
+              className="text-zinc-600 hover:underline dark:text-zinc-400"
+            >
               Home
             </a>
             <a href="/admin" className="text-zinc-600 hover:underline dark:text-zinc-400">
@@ -76,25 +82,29 @@ export default async function PagesDashboard({
           >
             Media
           </a>
-          <span className="ml-auto text-xs uppercase tracking-wide text-zinc-400">
-            Editing locale:
-          </span>
-          {LOCALES.map((l) => (
-            <a
-              key={l}
-              href={`/${l}/pages${query ? `?q=${encodeURIComponent(query)}` : ""}`}
-              className={
-                l === locale
-                  ? "rounded-full bg-foreground px-3 py-1 text-xs font-semibold text-background"
-                  : "rounded-full border border-solid border-black/[.08] px-3 py-1 text-xs text-zinc-600 dark:border-white/[.145] dark:text-zinc-400"
-              }
-            >
-              {l}
-            </a>
-          ))}
+          {localizationEnabled && (
+            <>
+              <span className="ml-auto text-xs uppercase tracking-wide text-zinc-400">
+                Editing locale:
+              </span>
+              {LOCALES.map((l) => (
+                <a
+                  key={l}
+                  href={`/${l}/pages${query ? `?q=${encodeURIComponent(query)}` : ""}`}
+                  className={
+                    l === locale
+                      ? "rounded-full bg-foreground px-3 py-1 text-xs font-semibold text-background"
+                      : "rounded-full border border-solid border-black/[.08] px-3 py-1 text-xs text-zinc-600 dark:border-white/[.145] dark:text-zinc-400"
+                  }
+                >
+                  {l}
+                </a>
+              ))}
+            </>
+          )}
         </div>
 
-        <NewPageForm locale={locale} />
+        <NewPageForm locale={locale} localizationEnabled={localizationEnabled} />
 
         <form method="GET" className="flex gap-2">
           <input
@@ -112,7 +122,7 @@ export default async function PagesDashboard({
           </button>
           {query && (
             <a
-              href={`/${locale}/pages`}
+              href={localizedPath(locale, localizationEnabled, "/pages")}
               className="flex h-10 shrink-0 items-center rounded-full px-3 text-sm text-zinc-500 hover:underline"
             >
               Clear
@@ -131,13 +141,13 @@ export default async function PagesDashboard({
               </div>
               <div className="flex items-center gap-3 text-sm font-medium">
                 <a
-                  href={publicUrlForSlug(locale, page.slug)}
+                  href={publicUrlForSlug(locale, page.slug, localizationEnabled)}
                   className="text-zinc-600 hover:underline dark:text-zinc-400"
                 >
                   View
                 </a>
                 <a
-                  href={`/${locale}/${page.slug}/edit`}
+                  href={localizedPath(locale, localizationEnabled, `/${page.slug}/edit`)}
                   className="text-zinc-600 hover:underline dark:text-zinc-400"
                 >
                   Edit

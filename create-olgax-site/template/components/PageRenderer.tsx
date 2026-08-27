@@ -14,10 +14,12 @@ import type { Locale } from "@/lib/i18n";
 export async function PageRenderer({
   locale,
   slug,
+  localizationEnabled,
   fallback,
 }: {
   locale: Locale;
   slug: string;
+  localizationEnabled: boolean;
   fallback?: ReactNode;
 }) {
   const payload = await getPayloadClient();
@@ -49,7 +51,9 @@ export async function PageRenderer({
   return (
     <>
       <Render config={config} data={page.data as Data} />
-      {user && <EditThisPageLink locale={locale} slug={slug} />}
+      {user && (
+        <EditThisPageLink locale={locale} slug={slug} localizationEnabled={localizationEnabled} />
+      )}
     </>
   );
 }

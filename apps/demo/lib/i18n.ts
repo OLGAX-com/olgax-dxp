@@ -9,3 +9,11 @@ export const DEFAULT_LOCALE: Locale = "en";
 export function isLocale(value: string): value is Locale {
   return (LOCALES as readonly string[]).includes(value);
 }
+
+// SiteSettings' `localizationEnabled` checkbox defaults to `true`, but an
+// existing document saved before this field existed has it as null/undefined
+// - treat that the same as `true` (preserves current locale-prefixed
+// behavior rather than silently changing it out from under an existing site).
+export function resolveLocalizationEnabled(value: boolean | null | undefined): boolean {
+  return value !== false;
+}

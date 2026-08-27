@@ -1,9 +1,10 @@
 import { redirect, notFound } from "next/navigation";
 import type { Data } from "@puckeditor/core";
 import { PageEditor } from "@/components/PageEditor";
-import { getPayloadClient, getCurrentUser } from "@/lib/payload";
+import { getPayloadClient, getCurrentUser, getSiteSettings } from "@/lib/payload";
 import { getSectionContent } from "@/lib/sections";
-import { isLocale } from "@/lib/i18n";
+import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
+import { localizedPath } from "@/lib/pages";
 
 export default async function EditPage({
   params,
@@ -16,6 +17,8 @@ export default async function EditPage({
   if (!isLocale(locale)) notFound();
 
   const { section } = await searchParams;
+  const settings = await getSiteSettings();
+  const localizationEnabled = resolveLocalizationEnabled(settings.localizationEnabled);
 
   // The Puck editor is for logged-in Payload users only - the actions it
   // calls also enforce this (see lib/actions.ts), but redirecting here
@@ -24,7 +27,8 @@ export default async function EditPage({
   // getSafeRedirect - must be a relative path) to bounce back here after login.
   const user = await getCurrentUser();
   if (!user) {
-    redirect(`/admin/login?redirect=${encodeURIComponent(`/${locale}/${slug}/edit`)}`);
+    const editPath = localizedPath(locale, localizationEnabled, `/${slug}/edit`);
+    redirect(`/admin/login?redirect=${encodeURIComponent(editPath)}`);
   }
 
   const payload = await getPayloadClient();
@@ -57,6 +61,12 @@ export default async function EditPage({
   }
 
   return (
-    <PageEditor locale={locale} slug={slug} title={title} initialData={initialData} />
+    <PageEditor
+      locale={locale}
+      slug={slug}
+      title={title}
+      initialData={initialData}
+      localizationEnabled={localizationEnabled}
+    />
   );
 }

@@ -6,7 +6,7 @@ import "@puckeditor/core/puck.css";
 import type { Data } from "@puckeditor/core";
 import { config } from "@/lib/puck.config";
 import { saveDraftPageData, publishPageData } from "@/lib/actions";
-import { publicUrlForSlug } from "@/lib/pages";
+import { publicUrlForSlug, localizedPath } from "@/lib/pages";
 import type { Locale } from "@/lib/i18n";
 
 const AUTOSAVE_DELAY_MS = 2000;
@@ -16,11 +16,13 @@ export function PageEditor({
   slug,
   title,
   initialData,
+  localizationEnabled,
 }: {
   locale: Locale;
   slug: string;
   title: string;
   initialData: Data;
+  localizationEnabled: boolean;
 }) {
   const autosaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -48,11 +50,11 @@ export function PageEditor({
         // alongside the default actions (Publish button, etc.).
         headerActions: ({ children }) => (
           <>
-            <a href={`/${locale}/pages`} style={navLinkStyle}>
+            <a href={localizedPath(locale, localizationEnabled, "/pages")} style={navLinkStyle}>
               All pages
             </a>
             <a
-              href={publicUrlForSlug(locale, slug)}
+              href={publicUrlForSlug(locale, slug, localizationEnabled)}
               target="_blank"
               rel="noreferrer"
               style={navLinkStyle}

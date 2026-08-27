@@ -3,8 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/pages";
 
-export function NewPageForm({ locale }: { locale: Locale }) {
+export function NewPageForm({
+  locale,
+  localizationEnabled,
+}: {
+  locale: Locale;
+  localizationEnabled: boolean;
+}) {
   const router = useRouter();
   const [slug, setSlug] = useState("");
   const [section, setSection] = useState("");
@@ -18,7 +25,7 @@ export function NewPageForm({ locale }: { locale: Locale }) {
         if (!cleanSlug) return;
         const cleanSection = section.trim();
         const query = cleanSection ? `?section=${encodeURIComponent(cleanSection)}` : "";
-        router.push(`/${locale}/${cleanSlug}/edit${query}`);
+        router.push(`${localizedPath(locale, localizationEnabled, `/${cleanSlug}/edit`)}${query}`);
       }}
     >
       <input

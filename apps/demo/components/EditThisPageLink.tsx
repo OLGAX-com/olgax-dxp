@@ -1,9 +1,18 @@
 import type { Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/pages";
 
-export function EditThisPageLink({ locale, slug }: { locale: Locale; slug: string }) {
+export function EditThisPageLink({
+  locale,
+  slug,
+  localizationEnabled,
+}: {
+  locale: Locale;
+  slug: string;
+  localizationEnabled: boolean;
+}) {
   return (
     <a
-      href={`/${locale}/${slug}/edit`}
+      href={localizedPath(locale, localizationEnabled, `/${slug}/edit`)}
       style={{
         position: "fixed",
         bottom: "1rem",
