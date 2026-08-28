@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     pages: Page;
     sections: Section;
+    'page-views': PageView;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     sections: SectionsSelect<false> | SectionsSelect<true>;
+    'page-views': PageViewsSelect<false> | PageViewsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -213,6 +215,21 @@ export interface Section {
   createdAt: string;
 }
 /**
+ * Read-only aggregate view counts, recorded automatically by public page loads.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-views".
+ */
+export interface PageView {
+  id: number;
+  slug: string;
+  locale: string;
+  date: string;
+  count: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -251,6 +268,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sections';
         value: number | Section;
+      } | null)
+    | ({
+        relationTo: 'page-views';
+        value: number | PageView;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -353,6 +374,18 @@ export interface PagesSelect<T extends boolean = true> {
 export interface SectionsSelect<T extends boolean = true> {
   name?: T;
   content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-views_select".
+ */
+export interface PageViewsSelect<T extends boolean = true> {
+  slug?: T;
+  locale?: T;
+  date?: T;
+  count?: T;
   updatedAt?: T;
   createdAt?: T;
 }

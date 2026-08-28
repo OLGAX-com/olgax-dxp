@@ -6,7 +6,7 @@ import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
 
-import { Users, Media, Pages, Sections, SiteSettings } from "@olgax/payload-preset";
+import { Users, Media, Pages, Sections, SiteSettings, PageViews } from "@olgax/payload-preset";
 import { LOCALES, DEFAULT_LOCALE } from "./lib/i18n";
 
 const filename = fileURLToPath(import.meta.url);
@@ -29,7 +29,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Pages, Sections],
+  collections: [Users, Media, Pages, Sections, PageViews],
   globals: [SiteSettings],
   editor: lexicalEditor(),
   // `Pages.title`/`data` are `localized: true` - each locale stores its own
