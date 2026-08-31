@@ -1,11 +1,20 @@
-import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
+import {
+  registerComponent,
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax/sdk";
 import "./Footer.css";
 
 export type FooterLink = { label: string; href: string };
 export type FooterProps = {
   text: string;
   links: FooterLink[];
-} & ColorOverrideProps;
+} & ColorOverrideProps &
+  VisibilityProps;
 
 const Footer = ({ text, links, ...props }: FooterProps) => (
   <footer className="olgax-footer" style={colorOverrideStyle(props)}>
@@ -24,6 +33,7 @@ registerComponent<FooterProps>("Footer", {
   fields: {
     text: { type: "text" },
     ...colorOverrideFields(),
+    ...visibilityFields(),
     links: {
       type: "array",
       arrayFields: {
@@ -38,5 +48,6 @@ registerComponent<FooterProps>("Footer", {
     text: `© ${new Date().getFullYear()} Olgax`,
     links: [{ label: "Privacy", href: "#" }],
   },
-  render: (props) => <Footer {...props} />,
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <Footer {...props} /> : <></>,
 });

@@ -1,11 +1,20 @@
-import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
+import {
+  registerComponent,
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax/sdk";
 import "./CTA.css";
 
 export type CTAProps = {
   heading: string;
   buttonLabel: string;
   buttonHref: string;
-} & ColorOverrideProps;
+} & ColorOverrideProps &
+  VisibilityProps;
 
 const CTA = ({ heading, buttonLabel, buttonHref, ...props }: CTAProps) => (
   <section className="olgax-cta" style={colorOverrideStyle(props)}>
@@ -22,11 +31,13 @@ registerComponent<CTAProps>("CTA", {
     buttonLabel: { type: "text" },
     buttonHref: { type: "text" },
     ...colorOverrideFields(),
+    ...visibilityFields(),
   },
   defaultProps: {
     heading: "Ready to build your site?",
     buttonLabel: "Get started",
     buttonHref: "#",
   },
-  render: (props) => <CTA {...props} />,
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <CTA {...props} /> : <></>,
 });

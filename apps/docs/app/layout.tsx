@@ -14,6 +14,7 @@ const nav = [
   { href: "/tutorial", label: "15-minute tutorial" },
   { href: "/sdk", label: "SDK reference" },
   { href: "/theming", label: "Theming" },
+  { href: "/personalization", label: "Personalization" },
   { href: "/data-sources", label: "Data sources" },
   { href: "/drafts", label: "Drafts & publishing" },
   { href: "/webhooks", label: "Webhooks" },

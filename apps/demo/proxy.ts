@@ -2,6 +2,23 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { LOCALES, DEFAULT_LOCALE, resolveLocalizationEnabled } from "@/lib/i18n";
 
+// A first-party, no-PII marker cookie - the entire signal behind the "new vs
+// returning visitor" personalization rule (see @olgax/sdk's visibilityFields/
+// isVisible and lib/personalization.ts's getVisitorState, which reads this
+// same cookie name). Set once a request arrives without it; absent = new.
+const VISITOR_COOKIE = "olgax_visitor";
+const VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+function markVisitor(request: NextRequest, response: NextResponse): NextResponse {
+  if (!request.cookies.has(VISITOR_COOKIE)) {
+    response.cookies.set(VISITOR_COOKIE, "1", {
+      maxAge: VISITOR_COOKIE_MAX_AGE,
+      sameSite: "lax",
+    });
+  }
+  return response;
+}
+
 // Proxy runs on every request, so this deliberately avoids a full Payload
 // Local API call (native DB drivers aren't guaranteed to work in this
 // runtime) - a plain same-origin fetch to Payload's own public REST endpoint
@@ -45,21 +62,21 @@ export async function proxy(request: NextRequest) {
   const localizationEnabled = await getLocalizationEnabled(request.nextUrl.origin);
 
   if (localizationEnabled) {
-    if (matchedLocale) return NextResponse.next();
+    if (matchedLocale) return markVisitor(request, NextResponse.next());
     const url = request.nextUrl.clone();
     url.pathname = `/${DEFAULT_LOCALE}${pathname}`;
-    return NextResponse.redirect(url);
+    return markVisitor(request, NextResponse.redirect(url));
   }
 
   if (matchedLocale) {
     const url = request.nextUrl.clone();
     url.pathname = pathname.slice(`/${matchedLocale}`.length) || "/";
-    return NextResponse.redirect(url);
+    return markVisitor(request, NextResponse.redirect(url));
   }
 
   const url = request.nextUrl.clone();
   url.pathname = `/${DEFAULT_LOCALE}${pathname}`;
-  return NextResponse.rewrite(url);
+  return markVisitor(request, NextResponse.rewrite(url));
 }
 
 export const config = {

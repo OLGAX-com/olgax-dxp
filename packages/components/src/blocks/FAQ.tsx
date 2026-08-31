@@ -1,10 +1,19 @@
-import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
+import {
+  registerComponent,
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax/sdk";
 import "./FAQ.css";
 
 export type FAQItem = { question: string; answer: string };
 export type FAQProps = {
   items: FAQItem[];
-} & ColorOverrideProps;
+} & ColorOverrideProps &
+  VisibilityProps;
 
 const FAQ = ({ items, ...props }: FAQProps) => (
   <section className="olgax-faq" style={colorOverrideStyle(props)}>
@@ -20,6 +29,7 @@ const FAQ = ({ items, ...props }: FAQProps) => (
 registerComponent<FAQProps>("FAQ", {
   fields: {
     ...colorOverrideFields(),
+    ...visibilityFields(),
     items: {
       type: "array",
       arrayFields: {
@@ -33,5 +43,6 @@ registerComponent<FAQProps>("FAQ", {
   defaultProps: {
     items: [{ question: "What is Olgax DXP?", answer: "A page-building layer for Payload + Next.js." }],
   },
-  render: (props) => <FAQ {...props} />,
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <FAQ {...props} /> : <></>,
 });

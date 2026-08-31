@@ -1,4 +1,12 @@
-import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
+import {
+  registerComponent,
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax/sdk";
 import "./Pricing.css";
 
 export type PricingPlan = {
@@ -10,7 +18,8 @@ export type PricingPlan = {
 };
 export type PricingProps = {
   plans: PricingPlan[];
-} & ColorOverrideProps;
+} & ColorOverrideProps &
+  VisibilityProps;
 
 const Pricing = ({ plans, ...props }: PricingProps) => (
   <section className="olgax-pricing" style={colorOverrideStyle(props)}>
@@ -37,6 +46,7 @@ const Pricing = ({ plans, ...props }: PricingProps) => (
 registerComponent<PricingProps>("Pricing", {
   fields: {
     ...colorOverrideFields(),
+    ...visibilityFields(),
     plans: {
       type: "array",
       arrayFields: {
@@ -67,5 +77,6 @@ registerComponent<PricingProps>("Pricing", {
       },
     ],
   },
-  render: (props) => <Pricing {...props} />,
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <Pricing {...props} /> : <></>,
 });

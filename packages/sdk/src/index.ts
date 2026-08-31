@@ -2,6 +2,8 @@ import type { ComponentConfig, DefaultComponentProps } from "@puckeditor/core";
 
 export { colorOverrideFields, colorOverrideStyle } from "./theming";
 export type { ColorOverrideProps } from "./theming";
+export { visibilityFields, isVisible } from "./personalization";
+export type { VisibilityProps, VisibilityRule, VisitorState } from "./personalization";
 
 // A single shared registry that `packages/components` (and any third-party
 // component package) registers into, and that a consuming app's Puck config

@@ -1,10 +1,19 @@
-import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
+import {
+  registerComponent,
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax/sdk";
 import "./Gallery.css";
 
 export type GalleryImage = { src: string; alt: string };
 export type GalleryProps = {
   images: GalleryImage[];
-} & ColorOverrideProps;
+} & ColorOverrideProps &
+  VisibilityProps;
 
 const Gallery = ({ images, ...props }: GalleryProps) => (
   <div className="olgax-gallery" style={colorOverrideStyle(props)}>
@@ -18,6 +27,7 @@ const Gallery = ({ images, ...props }: GalleryProps) => (
 registerComponent<GalleryProps>("Gallery", {
   fields: {
     ...colorOverrideFields(),
+    ...visibilityFields(),
     images: {
       type: "array",
       arrayFields: {
@@ -31,5 +41,6 @@ registerComponent<GalleryProps>("Gallery", {
   defaultProps: {
     images: [],
   },
-  render: (props) => <Gallery {...props} />,
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <Gallery {...props} /> : <></>,
 });

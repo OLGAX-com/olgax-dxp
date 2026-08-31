@@ -8,6 +8,7 @@ import { getPayloadClient, getCurrentUser } from "@/lib/payload";
 import { EditThisPageLink } from "@/components/EditThisPageLink";
 import { UmamiPageView } from "@/components/UmamiPageView";
 import { recordPageView } from "@/lib/analytics";
+import { getVisitorState } from "@/lib/personalization";
 import type { Locale } from "@/lib/i18n";
 
 // Shared by the root "/[locale]" route (renders the HOME_SLUG page) and the
@@ -59,9 +60,11 @@ export async function PageRenderer({
     after(() => recordPageView(slug, locale));
   }
 
+  const visitor = await getVisitorState();
+
   return (
     <>
-      <Render config={config} data={page.data as Data} />
+      <Render config={config} data={page.data as Data} metadata={{ visitor }} />
       <UmamiPageView skip={Boolean(user)} />
       {user && (
         <EditThisPageLink locale={locale} slug={slug} localizationEnabled={localizationEnabled} />

@@ -1,4 +1,12 @@
-import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
+import {
+  registerComponent,
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax/sdk";
 import "./Hero.css";
 
 export type HeroProps = {
@@ -6,7 +14,8 @@ export type HeroProps = {
   subheading: string;
   ctaLabel: string;
   ctaHref: string;
-} & ColorOverrideProps;
+} & ColorOverrideProps &
+  VisibilityProps;
 
 const Hero = ({ heading, subheading, ctaLabel, ctaHref, ...props }: HeroProps) => (
   <section className="olgax-hero" style={colorOverrideStyle(props)}>
@@ -27,6 +36,7 @@ registerComponent<HeroProps>("Hero", {
     ctaLabel: { type: "text" },
     ctaHref: { type: "text" },
     ...colorOverrideFields(),
+    ...visibilityFields(),
   },
   defaultProps: {
     heading: "Build pages, not pipelines",
@@ -34,5 +44,6 @@ registerComponent<HeroProps>("Hero", {
     ctaLabel: "Get started",
     ctaHref: "#",
   },
-  render: (props) => <Hero {...props} />,
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <Hero {...props} /> : <></>,
 });

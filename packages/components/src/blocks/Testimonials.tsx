@@ -1,10 +1,19 @@
-import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
+import {
+  registerComponent,
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax/sdk";
 import "./Testimonials.css";
 
 export type Testimonial = { quote: string; author: string };
 export type TestimonialsProps = {
   items: Testimonial[];
-} & ColorOverrideProps;
+} & ColorOverrideProps &
+  VisibilityProps;
 
 const Testimonials = ({ items, ...props }: TestimonialsProps) => (
   <section className="olgax-testimonials" style={colorOverrideStyle(props)}>
@@ -20,6 +29,7 @@ const Testimonials = ({ items, ...props }: TestimonialsProps) => (
 registerComponent<TestimonialsProps>("Testimonials", {
   fields: {
     ...colorOverrideFields(),
+    ...visibilityFields(),
     items: {
       type: "array",
       arrayFields: {
@@ -33,5 +43,6 @@ registerComponent<TestimonialsProps>("Testimonials", {
   defaultProps: {
     items: [{ quote: "This is great!", author: "A happy user" }],
   },
-  render: (props) => <Testimonials {...props} />,
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <Testimonials {...props} /> : <></>,
 });

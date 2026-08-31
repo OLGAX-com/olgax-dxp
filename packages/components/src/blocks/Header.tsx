@@ -1,11 +1,20 @@
-import { registerComponent, colorOverrideFields, colorOverrideStyle, type ColorOverrideProps } from "@olgax/sdk";
+import {
+  registerComponent,
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax/sdk";
 import "./Header.css";
 
 export type HeaderLink = { label: string; href: string };
 export type HeaderProps = {
   logoText: string;
   links: HeaderLink[];
-} & ColorOverrideProps;
+} & ColorOverrideProps &
+  VisibilityProps;
 
 const Header = ({ logoText, links, ...props }: HeaderProps) => (
   <header className="olgax-header" style={colorOverrideStyle(props)}>
@@ -24,6 +33,7 @@ registerComponent<HeaderProps>("Header", {
   fields: {
     logoText: { type: "text" },
     ...colorOverrideFields(),
+    ...visibilityFields(),
     links: {
       type: "array",
       arrayFields: {
@@ -41,5 +51,6 @@ registerComponent<HeaderProps>("Header", {
       { label: "About", href: "#" },
     ],
   },
-  render: (props) => <Header {...props} />,
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <Header {...props} /> : <></>,
 });
