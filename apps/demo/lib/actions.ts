@@ -82,14 +82,14 @@ export async function publishPageData(locale: Locale, slug: string, title: strin
   }
 }
 
-// Called from the /pages dashboard - `overrideAccess: false` + `user` means
-// Payload's own Pages access control (login required) is the real
+// Called from the /dashboard/pages tab - `overrideAccess: false` + `user`
+// means Payload's own Pages access control (login required) is the real
 // enforcement, not just this action existing behind an authed page.
 export async function deletePage(locale: Locale, id: string | number) {
   const user = await requireEditor();
   const payload = await getPayloadClient();
   await payload.delete({ collection: "pages", id, overrideAccess: false, user });
-  revalidatePath(`/${locale}/pages`);
+  revalidatePath(`/${locale}/dashboard/pages`);
 }
 
 // Copies a page's content (for the current locale only - other locales on
@@ -130,5 +130,5 @@ export async function duplicatePage(locale: Locale, id: string | number) {
     overrideAccess: false,
     user,
   });
-  revalidatePath(`/${locale}/pages`);
+  revalidatePath(`/${locale}/dashboard/pages`);
 }

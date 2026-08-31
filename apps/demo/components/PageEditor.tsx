@@ -50,7 +50,10 @@ export function PageEditor({
         // alongside the default actions (Publish button, etc.).
         headerActions: ({ children }) => (
           <>
-            <a href={localizedPath(locale, localizationEnabled, "/pages")} style={navLinkStyle}>
+            <a
+              href={localizedPath(locale, localizationEnabled, "/dashboard/pages")}
+              style={navLinkStyle}
+            >
               All pages
             </a>
             <a

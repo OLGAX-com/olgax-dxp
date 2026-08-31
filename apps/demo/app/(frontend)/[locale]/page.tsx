@@ -6,8 +6,8 @@ import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
 
 // The real production homepage: whatever's published at HOME_SLUG (see
 // lib/pages.ts). Falls back to a first-run state (rather than a 404) for a
-// freshly scaffolded site that has no homepage yet - `/pages` is where an
-// editor manages content, not this route.
+// freshly scaffolded site that has no homepage yet - `/dashboard` is where
+// an editor manages content, not this route.
 export default async function RootPage({
   params,
 }: {

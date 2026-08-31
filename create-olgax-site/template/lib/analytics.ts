@@ -67,8 +67,9 @@ export async function recordPageView(slug: string, locale: Locale, attempt = 0) 
   }
 }
 
-// Total views per slug across every locale/day - used by the /pages
-// dashboard. One query for every page's rows rather than one query per page.
+// Total views per slug across every locale/day - used by the dashboard's
+// Pages and Overview tabs. One query for every page's rows rather than one
+// query per page.
 export async function getViewCountsBySlug(): Promise<Record<string, number>> {
   const payload = await getPayloadClient();
   const result = await payload.find({
@@ -82,4 +83,36 @@ export async function getViewCountsBySlug(): Promise<Record<string, number>> {
     totals[view.slug] = (totals[view.slug] ?? 0) + (view.count ?? 0);
   }
   return totals;
+}
+
+// Site-wide view totals per day for the last N days (today inclusive),
+// across every page/locale - used by the Analytics tab. Zero-view days are
+// filled in so callers always get exactly `days` entries in order.
+export async function getDailyViewTotals(days: number): Promise<{ date: string; count: number }[]> {
+  const payload = await getPayloadClient();
+  const cutoff = new Date();
+  cutoff.setUTCDate(cutoff.getUTCDate() - (days - 1));
+  cutoff.setUTCHours(0, 0, 0, 0);
+
+  const result = await payload.find({
+    collection: "page-views",
+    limit: 5000,
+    where: { date: { greater_than_equal: cutoff.toISOString() } },
+    overrideAccess: true,
+  });
+
+  const totals = new Map<string, number>();
+  for (const view of result.docs) {
+    const day = String(view.date).slice(0, 10);
+    totals.set(day, (totals.get(day) ?? 0) + (view.count ?? 0));
+  }
+
+  const series: { date: string; count: number }[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    series.push({ date: key, count: totals.get(key) ?? 0 });
+  }
+  return series;
 }
