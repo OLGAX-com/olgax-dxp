@@ -16,6 +16,7 @@ const nav = [
   { href: "/theming", label: "Theming" },
   { href: "/data-sources", label: "Data sources" },
   { href: "/drafts", label: "Drafts & publishing" },
+  { href: "/webhooks", label: "Webhooks" },
   { href: "/production", label: "Production considerations" },
 ];
 

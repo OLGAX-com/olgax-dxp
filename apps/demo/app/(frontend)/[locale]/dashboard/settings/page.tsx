@@ -14,6 +14,11 @@ const SHORTCUTS = [
   },
   { href: "/admin/collections/media", label: "Media", hint: "Uploaded images and files" },
   { href: "/admin/collections/users", label: "Users", hint: "Editor accounts" },
+  {
+    href: "/admin/collections/webhooks",
+    label: "Webhooks",
+    hint: "Notify an external URL on publish/delete",
+  },
 ];
 
 // Payload's admin panel already owns the actual editing UI for these -

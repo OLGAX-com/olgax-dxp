@@ -72,6 +72,7 @@ export interface Config {
     pages: Page;
     sections: Section;
     'page-views': PageView;
+    webhooks: Webhook;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +85,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     sections: SectionsSelect<false> | SectionsSelect<true>;
     'page-views': PageViewsSelect<false> | PageViewsSelect<true>;
+    webhooks: WebhooksSelect<false> | WebhooksSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -230,6 +232,31 @@ export interface PageView {
   createdAt: string;
 }
 /**
+ * Notify an external URL when content changes - see docs for the payload shape.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webhooks".
+ */
+export interface Webhook {
+  id: number;
+  /**
+   * A label for your own reference, e.g. "Slack #content-alerts".
+   */
+  name: string;
+  /**
+   * The endpoint that receives the POSTed event payload.
+   */
+  url: string;
+  /**
+   * Used to HMAC-sign each request (X-Olgax-Signature header) so your endpoint can verify it actually came from this site - see docs for how to verify it.
+   */
+  secret: string;
+  events: ('page.published' | 'page.deleted')[];
+  enabled?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -272,6 +299,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'page-views';
         value: number | PageView;
+      } | null)
+    | ({
+        relationTo: 'webhooks';
+        value: number | Webhook;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -386,6 +417,19 @@ export interface PageViewsSelect<T extends boolean = true> {
   locale?: T;
   date?: T;
   count?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webhooks_select".
+ */
+export interface WebhooksSelect<T extends boolean = true> {
+  name?: T;
+  url?: T;
+  secret?: T;
+  events?: T;
+  enabled?: T;
   updatedAt?: T;
   createdAt?: T;
 }

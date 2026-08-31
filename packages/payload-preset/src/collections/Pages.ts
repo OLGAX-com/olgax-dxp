@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { dispatchWebhooks } from "../webhooks/dispatch";
 
 // `data` holds Puck's own `Data` JSON shape (content + root props) verbatim -
 // Payload does not need to understand its internal structure.
@@ -30,6 +31,34 @@ export const Pages: CollectionConfig = {
   },
   versions: {
     drafts: true,
+  },
+  // Fires on every save/delete regardless of how it happens (Local API,
+  // REST, admin panel) - not just apps/demo's own server actions - so any
+  // consuming app gets webhook support for free. Never fires for plain
+  // autosaved drafts (see the `_status` check), only actual publishes.
+  hooks: {
+    afterChange: [
+      async ({ doc, req }) => {
+        if (doc._status !== "published") return;
+        await dispatchWebhooks(req, {
+          event: "page.published",
+          slug: doc.slug,
+          locale: req.locale,
+          title: doc.title,
+          timestamp: new Date().toISOString(),
+        });
+      },
+    ],
+    afterDelete: [
+      async ({ doc, req }) => {
+        await dispatchWebhooks(req, {
+          event: "page.deleted",
+          slug: doc.slug,
+          title: doc.title,
+          timestamp: new Date().toISOString(),
+        });
+      },
+    ],
   },
   fields: [
     {
