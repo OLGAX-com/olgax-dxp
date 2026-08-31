@@ -59,6 +59,26 @@ DATABASE_URL=postgres://user:password@host:5432/dbname`}</pre>
         it onto live content.
       </p>
 
+      <h2>Analytics</h2>
+      <p>
+        <code>apps/demo</code> records basic page-view counts out of the box (no setup, no
+        external service - see the Analytics tab in <code>/dashboard</code>). For broader
+        indicators - countries, session duration, devices, browsers, referrers, UTM campaigns -
+        it integrates with a self-hosted{" "}
+        <a href="https://umami.is">Umami</a> instance instead of reimplementing any of that.
+        Umami is entirely optional: with no env vars set, no tracker script loads and nothing
+        changes from today&apos;s zero-config default.
+      </p>
+      <p>
+        Run <code>docker compose -f docker-compose.umami.yml up -d</code> (bundled in{" "}
+        <code>apps/demo</code>), create a website in Umami&apos;s own UI, then set{" "}
+        <code>NEXT_PUBLIC_UMAMI_SCRIPT_URL</code>, <code>NEXT_PUBLIC_UMAMI_WEBSITE_ID</code>, and{" "}
+        <code>NEXT_PUBLIC_UMAMI_DASHBOARD_URL</code> in <code>.env</code> - see{" "}
+        <code>.env.example</code> for the exact values. Both the built-in counter and the Umami
+        tracker skip a logged-in editor&apos;s own visits, so previewing your own work never
+        inflates the numbers.
+      </p>
+
       <h2>Still worth doing before a real launch</h2>
       <ul>
         <li>

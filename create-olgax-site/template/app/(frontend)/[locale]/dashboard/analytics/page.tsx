@@ -1,5 +1,6 @@
 import { getPayloadClient, getCurrentUser, getSiteSettings } from "@/lib/payload";
 import { getViewCountsBySlug, getDailyViewTotals } from "@/lib/analytics";
+import { getUmamiConfig } from "@/lib/umami";
 import { publicUrlForSlug } from "@/lib/pages";
 import { resolveLocalizationEnabled } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
@@ -15,6 +16,7 @@ export default async function DashboardAnalytics({
   const user = await getCurrentUser();
   const settings = await getSiteSettings();
   const localizationEnabled = resolveLocalizationEnabled(settings.localizationEnabled);
+  const umami = getUmamiConfig();
 
   const payload = await getPayloadClient();
   const result = await payload.find({
@@ -34,9 +36,41 @@ export default async function DashboardAnalytics({
 
   return (
     <div className="flex flex-col gap-8">
+      <div className="rounded-2xl border border-solid border-black/[.08] p-4 dark:border-white/[.145]">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+          Full analytics
+        </h2>
+        {umami.enabled && umami.dashboardUrl ? (
+          <div className="mt-2 flex items-center justify-between">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              Countries, sessions, devices, browsers and referrers - via your self-hosted{" "}
+              <a href="https://umami.is" className="underline">
+                Umami
+              </a>{" "}
+              instance.
+            </p>
+            <a
+              href={umami.dashboardUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background"
+            >
+              Open ↗
+            </a>
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            Not connected. Run the bundled <code>docker-compose.umami.yml</code> (or point at any
+            existing Umami instance) and set <code>NEXT_PUBLIC_UMAMI_SCRIPT_URL</code>,{" "}
+            <code>NEXT_PUBLIC_UMAMI_WEBSITE_ID</code>, and <code>NEXT_PUBLIC_UMAMI_DASHBOARD_URL</code>{" "}
+            in <code>.env</code> for countries, sessions, devices, and referrer breakdowns.
+          </p>
+        )}
+      </div>
+
       <div>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-          Last {TREND_DAYS} days
+          Built-in page views · last {TREND_DAYS} days
         </h2>
         <ul className="flex flex-col gap-1.5">
           {dailyTotals.map((day) => (
@@ -58,7 +92,7 @@ export default async function DashboardAnalytics({
 
       <div>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-          Views by page
+          Built-in views by page
         </h2>
         <ul className="flex flex-col divide-y divide-black/[.08] dark:divide-white/[.145]">
           {pagesByViews.map((page) => (

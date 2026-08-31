@@ -6,6 +6,7 @@ import type { Data } from "@puckeditor/core";
 import { config } from "@/lib/puck.config";
 import { getPayloadClient, getCurrentUser } from "@/lib/payload";
 import { EditThisPageLink } from "@/components/EditThisPageLink";
+import { UmamiPageView } from "@/components/UmamiPageView";
 import { recordPageView } from "@/lib/analytics";
 import type { Locale } from "@/lib/i18n";
 
@@ -61,6 +62,7 @@ export async function PageRenderer({
   return (
     <>
       <Render config={config} data={page.data as Data} />
+      <UmamiPageView skip={Boolean(user)} />
       {user && (
         <EditThisPageLink locale={locale} slug={slug} localizationEnabled={localizationEnabled} />
       )}
