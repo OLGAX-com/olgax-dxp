@@ -14,13 +14,19 @@ const dirname = path.dirname(filename);
 
 const databaseURL = process.env.DATABASE_URL || "file:./payload.db";
 
+// Explicit path (rather than relying on each adapter's own default) so
+// `pnpm migrate:create` always writes to the same place regardless of which
+// db adapter is active - see apps/docs' production page for when a real
+// migration (vs. dev-mode's automatic schema push) is required.
+const migrationDir = path.resolve(dirname, "migrations");
+
 // SQLite is the zero-config local dev default (matches create-olgax-site's
 // under-2-minutes goal - no external service to stand up). For a real
 // deployment, set DATABASE_URL to a postgres:// connection string (e.g. from
 // Neon, Supabase, Railway, or Vercel Postgres) and this switches automatically.
 const db = /^postgres(ql)?:\/\//.test(databaseURL)
-  ? postgresAdapter({ pool: { connectionString: databaseURL } })
-  : sqliteAdapter({ client: { url: databaseURL } });
+  ? postgresAdapter({ pool: { connectionString: databaseURL }, migrationDir })
+  : sqliteAdapter({ client: { url: databaseURL }, migrationDir });
 
 export default buildConfig({
   admin: {

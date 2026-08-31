@@ -46,17 +46,32 @@ DATABASE_URL=postgres://user:password@host:5432/dbname`}</pre>
         a code change.
       </p>
 
-      <h2>Localization schema changes</h2>
+      <h2>Migrations</h2>
+      <p>
+        <code>payload.config.ts</code> sets an explicit <code>migrationDir</code> (
+        <code>apps/demo/migrations</code>) so migrations land in the same place regardless of
+        which database adapter is active. Three scripts wrap Payload&apos;s CLI:
+      </p>
+      <pre>{`pnpm migrate:create   # write a new migration from the current schema diff
+pnpm migrate          # run any pending migrations
+pnpm migrate:status   # list applied/pending migrations`}</pre>
+      <p>
+        Local dev never needs these - Payload&apos;s dev-mode schema push (the &ldquo;Pulling
+        schema from database&rdquo; prompt) applies changes automatically, which is fine for
+        disposable local data. A real deployment should use migrations instead: run{" "}
+        <code>pnpm migrate:create</code> after a schema-affecting change, commit the generated
+        file, and run <code>pnpm migrate</code> as part of deploying - never rely on the
+        dev-mode push (or accept its &ldquo;DATA LOSS WARNING&rdquo; prompt) against a database
+        with real content.
+      </p>
       <p>
         Marking an existing field <code>localized: true</code> (as <code>Pages.title</code>/
-        <code>data</code> are, see <code>packages/payload-preset</code>) changes how that column
-        is stored. If you add localization to a collection that already has real data, Payload&apos;s
-        dev-mode schema push will warn <strong>&ldquo;DATA LOSS WARNING&rdquo;</strong> before
-        dropping the old column - and it means it. Do not accept that prompt against a production
-        database. Write a proper migration first (
-        <code>payload migrate:create</code>) that moves existing values into the new localized
-        structure, or add localization from the start on a fresh project instead of retrofitting
-        it onto live content.
+        <code>data</code> and <code>Sections.content</code> are, see{" "}
+        <code>packages/payload-preset</code>) is the schema change most likely to trigger that
+        warning - it changes how the column is stored, and accepting the prompt against a
+        populated table drops the old column. Write a migration that moves existing values into
+        the new localized structure first, or add localization from the start on a fresh project
+        instead of retrofitting it onto live content.
       </p>
 
       <h2>Analytics</h2>

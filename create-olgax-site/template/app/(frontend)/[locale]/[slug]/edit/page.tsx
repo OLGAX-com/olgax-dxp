@@ -54,7 +54,7 @@ export default async function EditPage({
   // Only start from a section for a brand-new page - never overwrite
   // existing content just because a `?section=` param is present.
   if (!page && section) {
-    const sectionContent = await getSectionContent(section);
+    const sectionContent = await getSectionContent(section, locale);
     if (sectionContent) {
       initialData = { content: sectionContent, root: {} };
     }

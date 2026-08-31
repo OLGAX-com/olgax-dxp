@@ -28,8 +28,12 @@ export const Sections: CollectionConfig = {
       name: "content",
       type: "json",
       required: true,
+      localized: true,
       admin: {
-        description: "An array of Puck ComponentData items (Data.content), not a full Data object.",
+        description:
+          "An array of Puck ComponentData items (Data.content), not a full Data object. " +
+          "Localized - each locale can have its own copy in the section's blocks; a locale " +
+          "with no translation yet falls back to the default locale's content.",
       },
     },
   ],
