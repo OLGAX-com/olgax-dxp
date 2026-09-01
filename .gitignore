@@ -42,6 +42,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# turborepo cache
+.turbo
+
 # local planning notes (tasks, decisions, work logs) - not for version control
 /.planning/
 

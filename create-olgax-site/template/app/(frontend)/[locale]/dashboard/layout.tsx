@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser, getSiteSettings } from "@/lib/payload";
 import { localizedPath } from "@/lib/pages";
@@ -38,9 +39,9 @@ export default async function DashboardLayout({
             >
               Home
             </a>
-            <a href="/admin" className="text-zinc-600 hover:underline dark:text-zinc-400">
+            <Link href="/admin" className="text-zinc-600 hover:underline dark:text-zinc-400">
               Payload admin
-            </a>
+            </Link>
           </div>
         </div>
 
