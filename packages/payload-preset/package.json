@@ -8,13 +8,17 @@
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
   "peerDependencies": {
-    "payload": "^3.87.1",
     "@payloadcms/ui": "^3.87.1",
+    "payload": "^3.87.1",
     "react": "^19"
   },
   "devDependencies": {
     "@types/react": "^19",
-    "react": "^19"
+    "react": "^19",
+    "vitest": "^4.1.11"
   }
 }

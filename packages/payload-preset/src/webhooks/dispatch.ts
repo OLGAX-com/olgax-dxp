@@ -16,7 +16,8 @@ export type WebhookPayload = {
   timestamp: string;
 };
 
-function sign(secret: string, body: string): string {
+// Exported for unit testing - same sha256=<hex> convention GitHub/Stripe use.
+export function sign(secret: string, body: string): string {
   return `sha256=${createHmac("sha256", secret).update(body).digest("hex")}`;
 }
 

@@ -23,4 +23,5 @@ jobs:
       # Uses the sqlite/no-secret defaults in payload.config.ts (see
       # apps/demo/.env.example) - no CI secrets needed for a build check.
       - run: pnpm lint
+      - run: pnpm test
       - run: pnpm build
