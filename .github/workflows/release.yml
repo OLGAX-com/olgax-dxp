@@ -1,0 +1,44 @@
+name: Release
+
+# Requires an NPM_TOKEN repo secret (npmjs.com access token with publish
+# rights for the @olgax org) - added by a maintainer, not something CI can
+# set up on its own. Until that secret exists, this workflow runs but the
+# publish step is a no-op (changesets/action skips it without a token).
+on:
+  push:
+    branches: [master]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+      - run: pnpm build
+
+      # Opens/updates a "Version Packages" PR when changesets are pending;
+      # once that PR is merged (no changesets left, versions already bumped),
+      # publishes every non-ignored package in .changeset/config.json to npm
+      # and creates a GitHub Release per package.
+      - uses: changesets/action@v1
+        with:
+          publish-script: pnpm release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
