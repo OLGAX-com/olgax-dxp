@@ -51,3 +51,10 @@ next-env.d.ts
 # local sqlite database (Phase 0 spike - not for version control)
 payload.db
 payload.db-*
+
+# e2e test artifacts
+payload.e2e.db
+payload.e2e.db-*
+test-results/
+playwright-report/
+blob-report/

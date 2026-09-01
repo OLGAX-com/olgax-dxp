@@ -14,7 +14,8 @@
     "migrate": "pnpm payload migrate",
     "migrate:create": "pnpm payload migrate:create",
     "migrate:status": "pnpm payload migrate:status",
-    "seed": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx scripts/seed.ts"
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx scripts/seed.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@olgax/components": "workspace:*",
@@ -35,6 +36,7 @@
     "sharp": "^0.35.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
