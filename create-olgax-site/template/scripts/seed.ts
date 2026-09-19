@@ -39,8 +39,8 @@ async function seed() {
               type: "Hero",
               props: {
                 id: "hero-1",
-                heading: "Hello from Puck + Payload",
-                subheading: "This page's content lives in Payload and renders through Puck.",
+                heading: "Welcome to Olgax DXP",
+                subheading: "A self-hostable page-building platform. Edit this page visually, then publish in seconds.",
                 ctaLabel: "Edit this page",
                 ctaHref: "/home/edit",
               },

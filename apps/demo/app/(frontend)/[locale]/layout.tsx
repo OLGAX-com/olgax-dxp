@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Olgax DXP",
-  description: "Payload + Puck + Next.js page-building spike",
+  description: "Olgax DXP - a self-hostable page-building platform.",
 };
 
 export default async function LocaleLayout({
