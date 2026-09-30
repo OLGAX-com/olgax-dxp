@@ -42,9 +42,9 @@ export const Pages: CollectionConfig = {
         if (doc._status !== "published") return;
         await dispatchWebhooks(req, {
           event: "page.published",
-          slug: doc.slug,
+          slug: doc.slug as string,
           locale: req.locale,
-          title: doc.title,
+          title: doc.title as string,
           timestamp: new Date().toISOString(),
         });
       },
@@ -53,8 +53,8 @@ export const Pages: CollectionConfig = {
       async ({ doc, req }) => {
         await dispatchWebhooks(req, {
           event: "page.deleted",
-          slug: doc.slug,
-          title: doc.title,
+          slug: doc.slug as string,
+          title: doc.title as string,
           timestamp: new Date().toISOString(),
         });
       },
