@@ -1,21 +1,26 @@
 # @olgax.com/payload-preset
 
-Minimal, reusable Payload CMS collections for an Olgax DXP site: `Users` (auth), `Media`
-(uploads), and `Pages` (slug, title, and a `data` JSON field holding Puck's `Data` shape).
+Minimal, reusable Payload CMS collections and globals for an Olgax DXP site: `Users` (auth),
+`Media` (uploads), `Pages` (slug, title, drafts/versioning, and a `data` JSON field holding
+Puck's `Data` shape), `Sections` (reusable page templates), `PageViews` (built-in analytics),
+`Webhooks` (outbound integrations), and the `SiteSettings` global (site-wide theming).
 
 ## Install
 
-This package is part of the Olgax DXP pnpm workspace and is consumed via the `workspace:*`
-protocol - it isn't published standalone yet.
+```bash
+npm install @olgax.com/payload-preset
+```
 
 ## Usage
 
 ```ts
 import { buildConfig } from "payload";
-import { Users, Media, Pages } from "@olgax.com/payload-preset";
+import { Users, Media, Pages, Sections, PageViews, Webhooks, SiteSettings } from "@olgax.com/payload-preset";
 
 export default buildConfig({
-  collections: [Users, Media, Pages],
+  collections: [Users, Media, Pages, Sections, PageViews, Webhooks],
+  globals: [SiteSettings],
   // ...db, editor, secret, etc.
 });
 ```
+

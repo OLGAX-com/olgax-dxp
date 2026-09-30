@@ -1,7 +1,15 @@
 {
   "name": "@olgax.com/payload-preset",
   "version": "0.1.0",
+  "description": "Pre-configured Payload CMS collections (Users, Media, Pages, Sections, SiteSettings) for Olgax DXP.",
+  "keywords": ["olgax", "payload-cms", "payload", "cms", "collections", "preset", "puck"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OLGAX-com/olgax-dxp.git",
+    "directory": "packages/payload-preset"
+  },
+  "bugs": "https://github.com/OLGAX-com/olgax-dxp/issues",
   "publishConfig": {
     "access": "public"
   },

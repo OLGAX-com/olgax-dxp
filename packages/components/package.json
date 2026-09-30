@@ -1,7 +1,15 @@
 {
   "name": "@olgax.com/components",
   "version": "0.1.0",
+  "description": "Default, themeable Puck component library for Olgax DXP - Hero, Header, Footer, CTA, Gallery, Pricing, FAQ, Testimonials, RelatedPages.",
+  "keywords": ["olgax", "payload-cms", "puck", "page-builder", "react-components", "ui-components", "cms", "nextjs"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OLGAX-com/olgax-dxp.git",
+    "directory": "packages/components"
+  },
+  "bugs": "https://github.com/OLGAX-com/olgax-dxp/issues",
   "publishConfig": {
     "access": "public"
   },
