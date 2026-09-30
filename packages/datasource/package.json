@@ -1,8 +1,16 @@
 {
   "name": "@olgax.com/datasource",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Collection/filter/limit data resolvers connecting Puck components to Payload CMS content, for Olgax DXP.",
-  "keywords": ["olgax", "payload-cms", "puck", "data-fetching", "resolver", "cms", "nextjs"],
+  "keywords": [
+    "olgax",
+    "payload-cms",
+    "puck",
+    "data-fetching",
+    "resolver",
+    "cms",
+    "nextjs"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

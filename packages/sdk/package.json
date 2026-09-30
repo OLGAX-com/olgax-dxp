@@ -1,8 +1,18 @@
 {
   "name": "@olgax.com/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Developer SDK for registering custom Puck components in an Olgax DXP project (Payload CMS + Puck + Next.js).",
-  "keywords": ["olgax", "payload-cms", "puck", "page-builder", "visual-editor", "cms", "sdk", "react", "nextjs"],
+  "keywords": [
+    "olgax",
+    "payload-cms",
+    "puck",
+    "page-builder",
+    "visual-editor",
+    "cms",
+    "sdk",
+    "react",
+    "nextjs"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
