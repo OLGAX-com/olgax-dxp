@@ -1,5 +1,11 @@
 # @olgax.com/payload-preset
 
+## 0.1.3
+
+### Patch Changes
+
+- 0fd3fa8: Fix the actual remaining type error from the previous patch: `req.locale` in the `Pages` `afterChange` webhook hook is now normalized with `?? undefined` (Payload's request type can report `locale` as `null`, which isn't assignable to `WebhookPayload`'s optional `string` field).
+
 ## 0.1.2
 
 ### Patch Changes
