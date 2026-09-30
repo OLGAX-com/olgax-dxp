@@ -43,7 +43,7 @@ export const Pages: CollectionConfig = {
         await dispatchWebhooks(req, {
           event: "page.published",
           slug: doc.slug as string,
-          locale: req.locale,
+          locale: req.locale ?? undefined,
           title: doc.title as string,
           timestamp: new Date().toISOString(),
         });
