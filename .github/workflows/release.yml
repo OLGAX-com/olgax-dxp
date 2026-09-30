@@ -1,9 +1,12 @@
 name: Release
 
-# Requires an NPM_TOKEN repo secret (npmjs.com access token with publish
-# rights for the @olgax org) - added by a maintainer, not something CI can
-# set up on its own. Until that secret exists, this workflow runs but the
-# publish step is a no-op (changesets/action skips it without a token).
+# Prefers npm Trusted Publishing (OIDC, via the id-token permission below).
+# Trusted Publisher can only be configured per-package on npmjs.com after a
+# package's first publish, so NPM_TOKEN stays as a fallback for that bootstrap
+# publish - npm's CLI tries OIDC first and falls back to the token automatically.
+# Once every package has a Trusted Publisher configured (package Settings ->
+# Trusted Publisher -> GitHub Actions -> org "OLGAX-com", repo "olgax-dxp",
+# workflow filename "release.yml"), the NPM_TOKEN secret can be removed.
 on:
   push:
     branches: [main]
@@ -16,6 +19,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,6 +33,9 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
+      # Trusted publishing needs npm >=11.5.1; the runner's bundled npm is older.
+      - run: npm install -g npm@latest
+
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm lint
@@ -38,7 +45,7 @@ jobs:
       # Opens/updates a "Version Packages" PR when changesets are pending;
       # once that PR is merged (no changesets left, versions already bumped),
       # publishes every non-ignored package in .changeset/config.json to npm
-      # and creates a GitHub Release per package.
+      # (via OIDC, see permissions above) and creates a GitHub Release per package.
       - uses: changesets/action@v1
         with:
           publish: pnpm release
