@@ -1,8 +1,17 @@
 {
   "name": "create-olgax-site",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Scaffold an Olgax DXP project in minutes - a self-hostable page-building layer for Payload CMS + Puck + Next.js.",
-  "keywords": ["olgax", "create-app", "cli", "scaffolder", "payload-cms", "puck", "page-builder", "nextjs"],
+  "keywords": [
+    "olgax",
+    "create-app",
+    "cli",
+    "scaffolder",
+    "payload-cms",
+    "puck",
+    "page-builder",
+    "nextjs"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
