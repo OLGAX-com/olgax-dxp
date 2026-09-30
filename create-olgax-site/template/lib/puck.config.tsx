@@ -1,10 +1,10 @@
 import type { Config } from "@puckeditor/core";
 import type { ReactNode } from "react";
-import { getRegisteredComponents } from "@olgax/sdk";
-import { registerRelatedPages } from "@olgax/components";
-import { createCollectionResolverFetch } from "@olgax/datasource";
+import { getRegisteredComponents } from "@olgax.com/sdk";
+import { registerRelatedPages } from "@olgax.com/components";
+import { createCollectionResolverFetch } from "@olgax.com/datasource";
 
-// Importing @olgax/components registers its 8 default blocks as a side effect.
+// Importing @olgax.com/components registers its 8 default blocks as a side effect.
 // RelatedPages uses the fetch-based resolver (not the direct-Payload one) because
 // this config is shared with the client `<Puck>` editor - see apps/demo's
 // app/(frontend)/api/related-pages/route.ts for the server-side query it calls.

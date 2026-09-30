@@ -1,5 +1,5 @@
 // Phase 3 groundwork: the manifest shape a future component marketplace/registry
-// would use to describe a publishable @olgax/* component package. There is no
+// would use to describe a publishable @olgax.com/* component package. There is no
 // registry backend or discovery/install flow yet - this is just the schema and
 // validation a real implementation would build on.
 export type ComponentManifest = {

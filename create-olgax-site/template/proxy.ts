@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { LOCALES, DEFAULT_LOCALE, resolveLocalizationEnabled } from "@/lib/i18n";
 
 // A first-party, no-PII marker cookie - the entire signal behind the "new vs
-// returning visitor" personalization rule (see @olgax/sdk's visibilityFields/
+// returning visitor" personalization rule (see @olgax.com/sdk's visibilityFields/
 // isVisible and lib/personalization.ts's getVisitorState, which reads this
 // same cookie name). Set once a request arrives without it; absent = new.
 const VISITOR_COOKIE = "olgax_visitor";

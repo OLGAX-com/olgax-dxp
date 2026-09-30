@@ -3,7 +3,7 @@ export default function Page() {
     <>
       <h1>Theming</h1>
       <p>
-        Every component in <code>@olgax/components</code> reads styling only from{" "}
+        Every component in <code>@olgax.com/components</code> reads styling only from{" "}
         <code>--olgax-*</code> CSS custom properties (with sensible fallbacks) - never
         hardcoded colors or spacing. This means a consuming app can restyle every default
         component without forking them.

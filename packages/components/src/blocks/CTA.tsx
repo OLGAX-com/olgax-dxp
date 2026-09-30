@@ -6,7 +6,7 @@ import {
   isVisible,
   type ColorOverrideProps,
   type VisibilityProps,
-} from "@olgax/sdk";
+} from "@olgax.com/sdk";
 import "./CTA.css";
 
 export type CTAProps = {

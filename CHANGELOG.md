@@ -6,21 +6,21 @@ managed by [Changesets](https://github.com/changesets/changesets) - see `CONTRIB
 ## 0.1.0 - First public release
 
 An open-source, self-hostable page-building layer for Payload CMS + Next.js: Payload for
-content, [Puck](https://puckeditor.com) for the drag-and-drop canvas, `@olgax/*` for the parts
+content, [Puck](https://puckeditor.com) for the drag-and-drop canvas, `@olgax.com/*` for the parts
 that make it feel like a product.
 
 ### Core
 
 - **`create-olgax-site`** CLI scaffolder - `npx create-olgax-site my-site` produces a runnable
   Next.js + Payload + Puck project.
-- **`@olgax/payload-preset`** - reusable Payload collections/globals: `Users`, `Media`, `Pages`
+- **`@olgax.com/payload-preset`** - reusable Payload collections/globals: `Users`, `Media`, `Pages`
   (with drafts/versioning), `Sections` (reusable page templates), `SiteSettings`, `PageViews`,
   `Webhooks`.
-- **`@olgax/sdk`** - `registerComponent()`, `colorOverrideFields()`/`colorOverrideStyle()`
+- **`@olgax.com/sdk`** - `registerComponent()`, `colorOverrideFields()`/`colorOverrideStyle()`
   (per-instance color overrides), `visibilityFields()`/`isVisible()` (personalization).
-- **`@olgax/components`** - 8 default components (Hero, Header, Footer, CTA, Gallery, Pricing,
+- **`@olgax.com/components`** - 8 default components (Hero, Header, Footer, CTA, Gallery, Pricing,
   FAQ, Testimonials) plus `RelatedPages`, all themeable via CSS custom properties.
-- **`@olgax/datasource`** - collection/filter/limit data resolvers for components that need real
+- **`@olgax.com/datasource`** - collection/filter/limit data resolvers for components that need real
   Payload data (Local API and fetch-based variants).
 
 ### Content & editing

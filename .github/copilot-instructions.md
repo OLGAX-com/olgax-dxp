@@ -12,7 +12,7 @@ polished starter/framework that combines three things nobody has cleanly package
 1. **Payload CMS** — content, media, auth, permissions, drafts (the durable backend).
 2. **Puck** (`@measured/puck`) — the drag-and-drop visual canvas (MIT, framework-agnostic,
    do NOT reinvent this — integrate it).
-3. **`@olgax/*` packages** — a component registry/SDK, a curated default component library,
+3. **`@olgax.com/*` packages** — a component registry/SDK, a curated default component library,
    a Next.js renderer, and a CLI scaffolder (`create-olgax-site`) that ties the first two
    together into a working site in minutes.
 
@@ -235,7 +235,7 @@ olgax-dxp/
   matching the `create-t3-app` / `create-next-app` style of scaffolder.
 - Keep prompts minimal (project name, maybe package manager choice). Don't add a long
   interactive wizard in Phase 1.
-- Generated projects should depend on the published `@olgax/*` packages, not copy-paste their
+- Generated projects should depend on the published `@olgax.com/*` packages, not copy-paste their
   source, so upstream fixes propagate.
 
 ## Documentation & Contribution Conventions

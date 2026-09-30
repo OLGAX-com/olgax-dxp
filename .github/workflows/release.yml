@@ -6,7 +6,7 @@ name: Release
 # publish step is a no-op (changesets/action skips it without a token).
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 

@@ -31,7 +31,7 @@ export function registerComponent<Props extends DefaultComponentProps>(
   }
   if (registry[name]) {
     console.warn(
-      `@olgax/sdk: a component named "${name}" is already registered - it will be overwritten. ` +
+      `@olgax.com/sdk: a component named "${name}" is already registered - it will be overwritten. ` +
         "This usually means two component packages picked the same name.",
     );
   }

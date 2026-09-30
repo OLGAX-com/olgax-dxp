@@ -5,7 +5,7 @@ export { Sites };
 
 /**
  * Opt-in helper: adds a required `site` relationship field to an existing collection
- * config (typically `@olgax/payload-preset`'s `Pages`), so a consuming app can scope
+ * config (typically `@olgax.com/payload-preset`'s `Pages`), so a consuming app can scope
  * documents per site without every app being forced into multi-tenancy - see
  * `.github/copilot-instructions.md`'s Phase 3 guidance on package boundaries.
  *

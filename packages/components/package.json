@@ -1,5 +1,5 @@
 {
-  "name": "@olgax/components",
+  "name": "@olgax.com/components",
   "version": "0.1.0",
   "license": "MIT",
   "publishConfig": {
@@ -9,8 +9,8 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "dependencies": {
-    "@olgax/datasource": "workspace:*",
-    "@olgax/sdk": "workspace:*"
+    "@olgax.com/datasource": "workspace:*",
+    "@olgax.com/sdk": "workspace:*"
   },
   "peerDependencies": {
     "@puckeditor/core": "^0.23.0",

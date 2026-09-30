@@ -14,13 +14,14 @@
     "migrate": "pnpm payload migrate",
     "migrate:create": "pnpm payload migrate:create",
     "migrate:status": "pnpm payload migrate:status",
-    "seed": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx scripts/seed.ts"
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx scripts/seed.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@olgax/components": "^0.1.0",
-    "@olgax/datasource": "^0.1.0",
-    "@olgax/payload-preset": "^0.1.0",
-    "@olgax/sdk": "^0.1.0",
+    "@olgax.com/components": "^0.1.0",
+    "@olgax.com/datasource": "^0.1.0",
+    "@olgax.com/payload-preset": "^0.1.0",
+    "@olgax.com/sdk": "^0.1.0",
     "@payloadcms/db-postgres": "^3.87.1",
     "@payloadcms/db-sqlite": "^3.87.1",
     "@payloadcms/next": "^3.87.1",
@@ -35,6 +36,7 @@
     "sharp": "^0.35.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

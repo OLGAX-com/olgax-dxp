@@ -47,7 +47,7 @@ pnpm dev                                   # runs dev servers via turbo
   `.github/copilot-instructions.md` for the full phase breakdown) - open a tracking issue
   instead if it's out of scope for now.
 
-## Releasing (`@olgax/*` packages, `create-olgax-site`)
+## Releasing (`@olgax.com/*` packages, `create-olgax-site`)
 
 This repo uses [Changesets](https://github.com/changesets/changesets) for versioning and
 publishing. If your PR changes anything inside `packages/sdk`, `packages/components`,
@@ -63,7 +63,7 @@ generated `.changeset/*.md` file with your PR. `packages/marketplace` and `packa
 are intentionally excluded from versioning/publishing for now (see `.changeset/config.json`) -
 they're groundwork only, not real features yet.
 
-Merging to `master` with pending changesets opens/updates a "Version Packages" PR automatically
+Merging to `main` with pending changesets opens/updates a "Version Packages" PR automatically
 (`.github/workflows/release.yml`); merging that PR publishes to npm.
 
 ## Code of conduct

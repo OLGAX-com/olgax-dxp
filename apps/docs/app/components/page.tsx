@@ -6,7 +6,7 @@ export default function Page() {
         Default components live in <code>packages/components/src/blocks/</code>. Each is a
         plain React component registered with Puck via{" "}
         <a href="/sdk">
-          <code>@olgax/sdk</code>
+          <code>@olgax.com/sdk</code>
         </a>
         &apos;s <code>registerComponent()</code>.
       </p>

@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import type { VisitorState } from "@olgax/sdk";
+import type { VisitorState } from "@olgax.com/sdk";
 
 // Same cookie name/marker proxy.ts sets on a visitor's first request (kept
 // as a separate literal here rather than a shared import, since proxy.ts

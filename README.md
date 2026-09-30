@@ -36,10 +36,10 @@ editor, and the Payload admin panel.
 
 ## Packages
 
-- [`@olgax/payload-preset`](packages/payload-preset) - reusable Payload collections
-- [`@olgax/sdk`](packages/sdk) - `registerComponent()`, the developer-facing API for adding
+- [`@olgax.com/payload-preset`](packages/payload-preset) - reusable Payload collections
+- [`@olgax.com/sdk`](packages/sdk) - `registerComponent()`, the developer-facing API for adding
   components to the Puck config
-- [`@olgax/components`](packages/components) - the default component library
+- [`@olgax.com/components`](packages/components) - the default component library
 
 ## Contributing
 

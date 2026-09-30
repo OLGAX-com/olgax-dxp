@@ -6,7 +6,7 @@ import {
   isVisible,
   type ColorOverrideProps,
   type VisibilityProps,
-} from "@olgax/sdk";
+} from "@olgax.com/sdk";
 import "./Testimonials.css";
 
 export type Testimonial = { quote: string; author: string };

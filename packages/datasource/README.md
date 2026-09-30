@@ -1,4 +1,4 @@
-# @olgax/datasource
+# @olgax.com/datasource
 
 A narrow resolver layer so a Puck component can declare "pull N items from a Payload
 collection, filtered by one field" and receive them as a resolved `items` prop - without
@@ -22,8 +22,8 @@ import the `payload` package (it's server/Node-only and will break the client bu
 
 ```ts
 // lib/puck.config.ts - shared by the editor and the render route
-import { createCollectionResolverFetch } from "@olgax/datasource";
-import { registerRelatedPages } from "@olgax/components";
+import { createCollectionResolverFetch } from "@olgax.com/datasource";
+import { registerRelatedPages } from "@olgax.com/components";
 
 registerRelatedPages(createCollectionResolverFetch("/api/related-pages"));
 ```
@@ -31,7 +31,7 @@ registerRelatedPages(createCollectionResolverFetch("/api/related-pages"));
 ```ts
 // app/(frontend)/api/related-pages/route.ts - the Route Handler it calls
 import { NextResponse } from "next/server";
-import { queryCollectionFromSearchParams } from "@olgax/datasource";
+import { queryCollectionFromSearchParams } from "@olgax.com/datasource";
 import { getPayloadClient } from "@/lib/payload";
 
 export async function GET(request: Request) {

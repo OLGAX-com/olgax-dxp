@@ -24,7 +24,7 @@ export const collectionQueryFields = {
 };
 
 // Derived from Puck's own ComponentConfig type (via the `{ props: Props }` params
-// shape, same trick used in @olgax/sdk) rather than hand-rolled, so the functions
+// shape, same trick used in @olgax.com/sdk) rather than hand-rolled, so the functions
 // below are guaranteed assignable to a real `resolveData`.
 type ResolveDataFn<Props extends DefaultComponentProps> = NonNullable<
   ComponentConfig<{ props: Props }>["resolveData"]

@@ -1,4 +1,4 @@
-import { getRegisteredComponents } from "@olgax/sdk";
+import { getRegisteredComponents } from "@olgax.com/sdk";
 import "./tokens.css";
 import "./blocks/Hero";
 import "./blocks/Header";
@@ -9,13 +9,13 @@ import "./blocks/Pricing";
 import "./blocks/FAQ";
 import "./blocks/Testimonials";
 
-// Every block above registers itself with @olgax/sdk on import (side effect).
+// Every block above registers itself with @olgax.com/sdk on import (side effect).
 // This is the single Puck `components` map a consuming app's config needs.
 export const components = getRegisteredComponents();
 
 // RelatedPages needs an app-supplied `getPayload`, so unlike the blocks above it
 // doesn't register itself on import - call this once, then re-read
-// `getRegisteredComponents()` from @olgax/sdk directly to pick it up (`components`
+// `getRegisteredComponents()` from @olgax.com/sdk directly to pick it up (`components`
 // above is a snapshot taken before this runs). See packages/datasource's README.
 export { registerRelatedPages } from "./blocks/RelatedPages";
 

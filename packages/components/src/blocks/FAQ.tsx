@@ -6,7 +6,7 @@ import {
   isVisible,
   type ColorOverrideProps,
   type VisibilityProps,
-} from "@olgax/sdk";
+} from "@olgax.com/sdk";
 import "./FAQ.css";
 
 export type FAQItem = { question: string; answer: string };

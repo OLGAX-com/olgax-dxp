@@ -87,7 +87,7 @@ export const Pages: CollectionConfig = {
       admin: {
         position: "sidebar",
         components: {
-          Field: "@olgax/payload-preset/src/components/PageQuickLinks#PageQuickLinks",
+          Field: "@olgax.com/payload-preset/src/components/PageQuickLinks#PageQuickLinks",
         },
       },
     },

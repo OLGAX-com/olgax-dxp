@@ -18,10 +18,10 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@olgax/components": "workspace:*",
-    "@olgax/datasource": "workspace:*",
-    "@olgax/payload-preset": "workspace:*",
-    "@olgax/sdk": "workspace:*",
+    "@olgax.com/components": "workspace:*",
+    "@olgax.com/datasource": "workspace:*",
+    "@olgax.com/payload-preset": "workspace:*",
+    "@olgax.com/sdk": "workspace:*",
     "@payloadcms/db-postgres": "^3.87.1",
     "@payloadcms/db-sqlite": "^3.87.1",
     "@payloadcms/next": "^3.87.1",

@@ -6,7 +6,7 @@ import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
 
-import { Users, Media, Pages, Sections, SiteSettings, PageViews, Webhooks } from "@olgax/payload-preset";
+import { Users, Media, Pages, Sections, SiteSettings, PageViews, Webhooks } from "@olgax.com/payload-preset";
 import { LOCALES, DEFAULT_LOCALE } from "./lib/i18n";
 
 const filename = fileURLToPath(import.meta.url);

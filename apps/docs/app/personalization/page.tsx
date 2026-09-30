@@ -30,12 +30,12 @@ export default function Page() {
 
       <h2>Using it in a component</h2>
       <p>
-        Every default block in <code>@olgax/components</code> already has a &quot;Show to&quot;
+        Every default block in <code>@olgax.com/components</code> already has a &quot;Show to&quot;
         field (Everyone / New visitors only / Returning visitors only) via{" "}
-        <code>@olgax/sdk</code>&apos;s <code>visibilityFields()</code>/<code>isVisible()</code> -
+        <code>@olgax.com/sdk</code>&apos;s <code>visibilityFields()</code>/<code>isVisible()</code> -
         the same pattern as <code>colorOverrideFields()</code>:
       </p>
-      <pre>{`import { registerComponent, visibilityFields, isVisible } from "@olgax/sdk";
+      <pre>{`import { registerComponent, visibilityFields, isVisible } from "@olgax.com/sdk";
 
 registerComponent("MyBlock", {
   fields: {

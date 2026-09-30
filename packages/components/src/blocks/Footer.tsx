@@ -6,7 +6,7 @@ import {
   isVisible,
   type ColorOverrideProps,
   type VisibilityProps,
-} from "@olgax/sdk";
+} from "@olgax.com/sdk";
 import "./Footer.css";
 
 export type FooterLink = { label: string; href: string };

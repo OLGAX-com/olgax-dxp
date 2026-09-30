@@ -1,6 +1,6 @@
 import type { ComponentConfig } from "@puckeditor/core";
-import { registerComponent } from "@olgax/sdk";
-import { collectionQueryFields } from "@olgax/datasource";
+import { registerComponent } from "@olgax.com/sdk";
+import { collectionQueryFields } from "@olgax.com/datasource";
 import "./RelatedPages.css";
 
 export type RelatedPagesItem = { id: string | number; title?: string; slug?: string };
@@ -24,7 +24,7 @@ const RelatedPages = ({ items }: RelatedPagesProps) => (
 
 // Unlike the other blocks in this package, RelatedPages needs a `resolveData`
 // (Phase 2's data-source layer) - so it's registered via this factory instead of
-// registering itself on import. Pass a resolver built with `@olgax/datasource`,
+// registering itself on import. Pass a resolver built with `@olgax.com/datasource`,
 // e.g. `createCollectionResolverFetch` for a config shared with the client editor.
 export function registerRelatedPages(
   resolveData: ComponentConfig<RelatedPagesProps>["resolveData"],

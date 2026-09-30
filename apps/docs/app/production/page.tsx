@@ -11,7 +11,7 @@ export default function Page() {
       <p>
         Payload does <strong>not</strong> restrict reads/writes by default just because a
         collection has <code>auth: true</code> or <code>versions.drafts</code> enabled - every
-        collection in <code>@olgax/payload-preset</code> and <code>@olgax/multi-tenancy</code>{" "}
+        collection in <code>@olgax.com/payload-preset</code> and <code>@olgax.com/multi-tenancy</code>{" "}
         explicitly defines <code>access.create</code>/<code>update</code>/<code>delete</code>{" "}
         requiring a logged-in user (<code>Boolean(req.user)</code>), and <code>Users</code>{" "}
         additionally allows anonymous <code>create</code> only when zero users exist yet (the

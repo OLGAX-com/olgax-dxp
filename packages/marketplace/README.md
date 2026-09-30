@@ -1,4 +1,4 @@
-# @olgax/marketplace
+# @olgax.com/marketplace
 
 > **Phase 3 groundwork, not a working feature.** This package only defines the
 > `ComponentManifest` schema and a validator for it. There is no registry backend, no
@@ -9,7 +9,7 @@
 ## Usage
 
 ```ts
-import { validateManifest } from "@olgax/marketplace";
+import { validateManifest } from "@olgax.com/marketplace";
 
 const result = validateManifest({
   name: "olgax-component-carousel",

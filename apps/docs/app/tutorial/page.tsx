@@ -13,7 +13,7 @@ export default function Page() {
       <p>
         Create <code>packages/components/src/blocks/Spacer.tsx</code>:
       </p>
-      <pre>{`import { registerComponent } from "@olgax/sdk";
+      <pre>{`import { registerComponent } from "@olgax.com/sdk";
 
 export type SpacerProps = {
   height: number;
@@ -44,7 +44,7 @@ registerComponent<SpacerProps>("Spacer", {
       <pre>{`pnpm --filter demo dev`}</pre>
       <p>
         Open <code>http://localhost:3000/home/edit</code> - <code>Spacer</code> should already
-        appear in the component drawer (Next transpiles <code>@olgax/components</code> directly
+        appear in the component drawer (Next transpiles <code>@olgax.com/components</code> directly
         from source, no build step needed - see <code>apps/demo/next.config.ts</code>&apos;s{" "}
         <code>transpilePackages</code>). Drag it onto the canvas and confirm the{" "}
         <code>height</code> field works.

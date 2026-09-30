@@ -2,7 +2,7 @@ import { getPayload } from "payload";
 import config from "../payload.config";
 
 // One-off local dev helper: creates a first admin user and a demo `home`
-// page (built from the default @olgax/components library) so the
+// page (built from the default @olgax.com/components library) so the
 // Payload <-> Puck round-trip can be verified without using the admin UI.
 async function seed() {
   const payload = await getPayload({ config });
@@ -49,7 +49,7 @@ async function seed() {
               type: "CTA",
               props: {
                 id: "cta-1",
-                heading: "Built with @olgax/components",
+                heading: "Built with @olgax.com/components",
                 buttonLabel: "View admin",
                 buttonHref: "/admin",
               },

@@ -5,7 +5,7 @@
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "master",
+  "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["demo", "docs", "@olgax/marketplace", "@olgax/multi-tenancy"]
+  "ignore": ["demo", "docs", "@olgax.com/marketplace", "@olgax.com/multi-tenancy"]
 }

@@ -3,19 +3,19 @@ export default function Page() {
     <>
       <h1>Data sources</h1>
       <p>
-        <code>@olgax/datasource</code> is a narrow resolver layer: a component declares
+        <code>@olgax.com/datasource</code> is a narrow resolver layer: a component declares
         &quot;pull N items from a Payload collection, filtered by one field&quot; and receives
         them as a resolved <code>items</code> prop. It deliberately does not support a general
         query language - one equality filter, a limit, nothing more.
       </p>
       <pre>{`// lib/puck.config.ts - shared by the editor and the render route
-import { createCollectionResolverFetch } from "@olgax/datasource";
-import { registerRelatedPages } from "@olgax/components";
+import { createCollectionResolverFetch } from "@olgax.com/datasource";
+import { registerRelatedPages } from "@olgax.com/components";
 
 registerRelatedPages(createCollectionResolverFetch("/api/related-pages"));`}</pre>
       <pre>{`// app/(frontend)/api/related-pages/route.ts - the Route Handler it calls
 import { NextResponse } from "next/server";
-import { queryCollectionFromSearchParams } from "@olgax/datasource";
+import { queryCollectionFromSearchParams } from "@olgax.com/datasource";
 import { getPayloadClient } from "@/lib/payload";
 
 export async function GET(request: Request) {
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
         The author sets <code>collection</code>, optionally <code>filterField</code>/
         <code>filterValue</code>, and <code>limit</code> in the Puck editor - <code>items</code>{" "}
         is resolved automatically (via Puck&apos;s <code>resolveData</code>) and marked
-        read-only. See <code>@olgax/components</code>&apos;s <code>RelatedPages</code> block for
+        read-only. See <code>@olgax.com/components</code>&apos;s <code>RelatedPages</code> block for
         a complete example.
       </p>
       <p>

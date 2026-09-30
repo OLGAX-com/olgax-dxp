@@ -20,16 +20,16 @@ importers:
 
   apps/demo:
     dependencies:
-      '@olgax/components':
+      '@olgax.com/components':
         specifier: workspace:*
         version: link:../../packages/components
-      '@olgax/datasource':
+      '@olgax.com/datasource':
         specifier: workspace:*
         version: link:../../packages/datasource
-      '@olgax/payload-preset':
+      '@olgax.com/payload-preset':
         specifier: workspace:*
         version: link:../../packages/payload-preset
-      '@olgax/sdk':
+      '@olgax.com/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
       '@payloadcms/db-postgres':
@@ -138,10 +138,10 @@ importers:
 
   packages/components:
     dependencies:
-      '@olgax/datasource':
+      '@olgax.com/datasource':
         specifier: workspace:*
         version: link:../datasource
-      '@olgax/sdk':
+      '@olgax.com/sdk':
         specifier: workspace:*
         version: link:../sdk
       '@puckeditor/core':
