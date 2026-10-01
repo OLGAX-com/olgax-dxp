@@ -3,8 +3,7 @@
 A narrow resolver layer so a Puck component can declare "pull N items from a Payload
 collection, filtered by one field" and receive them as a resolved `items` prop - without
 hand-writing Payload queries in every component. Deliberately does not support a general query
-language (no `and`/`or`, no operators beyond equality, one filter field at a time) - see
-`.github/copilot-instructions.md`'s Phase 2 scope.
+language (no `and`/`or`, no operators beyond equality, one filter field at a time).
 
 ## Two resolvers - pick based on where your config is used
 

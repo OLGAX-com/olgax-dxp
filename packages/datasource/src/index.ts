@@ -2,8 +2,7 @@ import type { ComponentConfig, DefaultComponentProps } from "@puckeditor/core";
 import type { Payload } from "payload";
 
 // Deliberately narrow: collection + a single equality filter + limit. No general
-// query language (no and/or, no operators) - see .github/copilot-instructions.md's
-// Phase 2 scope for `packages/datasource`.
+// query language (no and/or, no operators).
 export type CollectionQueryProps = {
   collection: string;
   filterField?: string;

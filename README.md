@@ -12,8 +12,7 @@ library, renderer, and CLI that ties the two together into a working site in min
 If you want a self-hosted alternative to page builders like Builder.io or Webstudio, but built on
 tools you already trust (Payload for content, Puck for the canvas), this is for you.
 
-> Status: **Phase 1 (MVP)**. See [PHASE.md](PHASE.md) and
-> [.github/copilot-instructions.md](.github/copilot-instructions.md) for the full phase breakdown.
+> Status: **Phase 1 (MVP)**. See [PHASE.md](PHASE.md) for the current phase.
 
 ## Quick start
 

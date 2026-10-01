@@ -58,3 +58,6 @@ payload.e2e.db-*
 test-results/
 playwright-report/
 blob-report/
+
+# Local AI assistant instructions - not part of the repo
+.github/copilot-instructions.md

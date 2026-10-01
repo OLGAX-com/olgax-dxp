@@ -1,7 +1,6 @@
 # Contributing to Olgax DXP
 
-Thanks for your interest in contributing! See `PHASE.md` and `.github/copilot-instructions.md`
-for what's in scope right now.
+Thanks for your interest in contributing! See `PHASE.md` for what's in scope right now.
 
 ## Project structure
 
@@ -43,8 +42,7 @@ pnpm dev                                   # runs dev servers via turbo
 
 - Keep PRs focused - one component, one fix, one doc update per PR where possible.
 - Run `pnpm lint` and `pnpm build` before opening a PR (CI runs both on every PR too).
-- Check `PHASE.md` before proposing anything from a later phase (see
-  `.github/copilot-instructions.md` for the full phase breakdown) - open a tracking issue
+- Check `PHASE.md` before proposing anything from a later phase - open a tracking issue
   instead if it's out of scope for now.
 
 ## Releasing (`@olgax.com/*` packages, `create-olgax-site`)
