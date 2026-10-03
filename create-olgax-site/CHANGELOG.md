@@ -1,5 +1,11 @@
 # create-olgax-site
 
+## 0.2.1
+
+### Patch Changes
+
+- 4ff2d4f: Custom components no longer need a reload or a restart. Blocks in `components/blocks/` are now plain exported Puck configs listed in `components/blocks/index.ts`, and the open editor updates live when you edit a block's fields or add a new block with `pnpm new:component`. The generated README documents the flow, including renaming and new-field pitfalls.
+
 ## 0.2.0
 
 ### Minor Changes
