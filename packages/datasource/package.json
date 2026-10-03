@@ -1,6 +1,6 @@
 {
   "name": "@olgax.com/datasource",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Collection/filter/limit data resolvers connecting Puck components to Payload CMS content, for Olgax DXP.",
   "keywords": [
     "olgax",

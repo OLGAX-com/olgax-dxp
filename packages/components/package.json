@@ -1,6 +1,6 @@
 {
   "name": "@olgax.com/components",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Default, themeable Puck component library for Olgax DXP - Hero, Header, Footer, CTA, Gallery, Pricing, FAQ, Testimonials, RelatedPages.",
   "keywords": [
     "olgax",
