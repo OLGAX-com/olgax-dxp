@@ -1,5 +1,11 @@
 # @olgax.com/payload-preset
 
+## 0.1.4
+
+### Patch Changes
+
+- ecf8364: Link the new documentation site (https://dxp.olgax.com) and the official Discord (https://discord.gg/EAXcCXgUz2) from READMEs, package metadata and the CLI's next-steps output, and refresh the generated project's README.
+
 ## 0.1.3
 
 ### Patch Changes

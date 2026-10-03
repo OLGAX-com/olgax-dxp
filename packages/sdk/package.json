@@ -1,6 +1,6 @@
 {
   "name": "@olgax.com/sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Developer SDK for registering custom Puck components in an Olgax DXP project (Payload CMS + Puck + Next.js).",
   "keywords": [
     "olgax",
