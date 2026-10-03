@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getCurrentUser, getSiteSettings } from "@/lib/payload";
 import { PageRenderer } from "@/components/PageRenderer";
 import { HOME_SLUG, localizedPath } from "@/lib/pages";
@@ -34,13 +35,22 @@ export default async function RootPage({
             Create and publish a page with the slug &ldquo;{HOME_SLUG}&rdquo; to have it appear
             here.
           </p>
-          {user && (
+          {user ? (
             <a
               href={localizedPath(locale, localizationEnabled, `/${HOME_SLUG}/edit`)}
               className="flex h-11 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
             >
               Create the homepage
             </a>
+          ) : (
+            <p className="max-w-md text-sm text-zinc-600 dark:text-zinc-400">
+              Setting up? Run <code>pnpm seed</code> in your project to create an admin user and a
+              demo homepage, or sign in at{" "}
+              <Link href="/admin" prefetch={false} className="underline">
+                /admin
+              </Link>{" "}
+              and create the page there.
+            </p>
           )}
         </div>
       }

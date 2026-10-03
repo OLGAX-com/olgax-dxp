@@ -4,6 +4,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createInterface } from "node:readline/promises";
 import { execSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const templateDir = join(__dirname, "..", "template");
@@ -53,21 +54,51 @@ async function main() {
   pkg.name = projectName;
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 
+  // A working .env up front (with a unique secret) so the site runs without manual setup.
+  const envExamplePath = join(targetDir, ".env.example");
+  if (existsSync(envExamplePath)) {
+    const env = readFileSync(envExamplePath, "utf8").replace(
+      /^PAYLOAD_SECRET=.*$/m,
+      `PAYLOAD_SECRET=${randomBytes(32).toString("hex")}`,
+    );
+    writeFileSync(join(targetDir, ".env"), env);
+  }
+
   console.log(`\nScaffolded "${projectName}" in ${targetDir}\n`);
 
+  let installed = false;
+  let seeded = false;
   try {
     console.log("Installing dependencies with pnpm...");
     execSync("pnpm install", { cwd: targetDir, stdio: "inherit" });
+    installed = true;
   } catch {
     console.warn("\npnpm install failed or pnpm isn't available - run it manually.");
   }
 
+  if (installed) {
+    try {
+      console.log("\nCreating the admin user and demo homepage...");
+      execSync("pnpm seed", { cwd: targetDir, stdio: "inherit" });
+      seeded = true;
+    } catch {
+      console.warn("\nSeeding failed - run `pnpm seed` yourself once the issue above is resolved.");
+    }
+  }
+
+  const steps = [`cd ${projectName}`];
+  if (!installed) steps.push("pnpm install");
+  if (!seeded) steps.push("pnpm seed                  # admin user + demo homepage");
+  steps.push("pnpm dev");
+
   console.log(`
 Next steps:
-  cd ${projectName}
-  cp .env.example .env        # then set PAYLOAD_SECRET
-  pnpm seed                   # creates an admin user + demo page
-  pnpm dev
+${steps.map((step) => `  ${step}`).join("\n")}
+
+Then open http://localhost:3000
+  Admin login:   admin@example.com / ChangeMe123!  (change it in /admin before deploying)
+  Page builder:  http://localhost:3000/home/edit
+  Your own components: pnpm new:component MyBlock   (see README.md)
 `);
 }
 

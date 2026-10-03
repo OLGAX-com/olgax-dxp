@@ -23,7 +23,9 @@ pnpm dev
 ```
 
 That's it - a runnable Next.js + Payload + Puck project with an admin panel, a visual page
-editor, and a seeded demo page.
+editor, and a seeded demo page. The CLI creates `.env`, installs dependencies, and seeds an admin
+user (`admin@example.com` / `ChangeMe123!`) and a homepage for you. Add your own page-builder
+components with `pnpm new:component MyBlock`.
 
 ## Features
 
@@ -34,6 +36,8 @@ editor, and a seeded demo page.
   plus `RelatedPages` for pulling in real content from a Payload collection.
 - Every component is themeable via CSS custom properties (`--olgax-*`), with per-instance color
   overrides settable right from the Puck editor - no forking components to restyle them.
+- **Bring your own components**: `pnpm new:component PromoBanner` generates a block in your
+  site's `components/blocks/`, registers it, and it appears in the page builder.
 - Start a new page from a reusable `Sections` template instead of a blank canvas.
 
 ### Content & editing

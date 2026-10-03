@@ -3,6 +3,10 @@ export default function Page() {
     <>
       <h1>Adding a component</h1>
       <p>
+        This page is for contributing to the default component library in this repository. To add
+        components to your own site, see <a href="/custom-components">Custom components</a>.
+      </p>
+      <p>
         Default components live in <code>packages/components/src/blocks/</code>. Each is a
         plain React component registered with Puck via{" "}
         <a href="/sdk">

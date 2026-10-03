@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 const nav = [
   { href: "/", label: "Introduction" },
   { href: "/installation", label: "Installation" },
+  { href: "/custom-components", label: "Custom components" },
   { href: "/components", label: "Adding a component" },
   { href: "/tutorial", label: "15-minute tutorial" },
   { href: "/sdk", label: "SDK reference" },

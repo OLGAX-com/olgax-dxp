@@ -1,0 +1,22 @@
+.site-callout {
+  padding: calc(var(--olgax-spacing, 1rem) * 1.25);
+  border-left: 4px solid var(--olgax-color-primary, #18181b);
+  border-radius: var(--olgax-radius, 0.5rem);
+  background: var(--olgax-color-bg-muted, #f4f4f5);
+  color: var(--olgax-color-text, #18181b);
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
+}
+
+.site-callout--center {
+  text-align: center;
+}
+
+.site-callout__title {
+  margin: 0 0 0.25rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.site-callout__body {
+  margin: 0;
+}

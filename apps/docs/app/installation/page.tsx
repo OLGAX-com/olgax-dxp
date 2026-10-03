@@ -5,12 +5,17 @@ export default function Page() {
       <p>Scaffold a new Olgax DXP site:</p>
       <pre>{`npx create-olgax-site my-site
 cd my-site
-cp .env.example .env   # set PAYLOAD_SECRET
-pnpm seed               # creates an admin user + a demo page
 pnpm dev`}</pre>
       <p>
-        Then open <code>http://localhost:3000/admin</code> to log in, and{" "}
-        <code>http://localhost:3000/home/edit</code> to try the Puck editor.
+        The scaffolder installs dependencies, creates <code>.env</code> with a generated{" "}
+        <code>PAYLOAD_SECRET</code>, and seeds an admin user and a demo homepage. If the seed step
+        fails or is skipped, run <code>pnpm seed</code> yourself before <code>pnpm dev</code>.
+      </p>
+      <p>
+        Open <code>http://localhost:3000</code> for the site, <code>http://localhost:3000/admin</code>{" "}
+        to log in (<code>admin@example.com</code> / <code>ChangeMe123!</code> - change it before you
+        deploy), and <code>http://localhost:3000/home/edit</code> to try the page builder. Next, add
+        your own blocks: <a href="/custom-components">Custom components</a>.
       </p>
       <h2>Requirements</h2>
       <ul>

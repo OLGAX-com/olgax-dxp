@@ -15,6 +15,7 @@
     "migrate:create": "pnpm payload migrate:create",
     "migrate:status": "pnpm payload migrate:status",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx scripts/seed.ts",
+    "new:component": "node scripts/new-component.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {

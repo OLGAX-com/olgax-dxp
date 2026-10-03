@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { getRegisteredComponents } from "@olgax.com/sdk";
 import { registerRelatedPages } from "@olgax.com/components";
 import { createCollectionResolverFetch } from "@olgax.com/datasource";
+// Your own blocks: importing this registers everything under components/blocks/.
+import "@/components/blocks";
 
 // Importing @olgax.com/components registers its 8 default blocks as a side effect.
 // RelatedPages uses the fetch-based resolver (not the direct-Payload one) because

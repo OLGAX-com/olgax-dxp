@@ -9,7 +9,7 @@ export default function Page() {
       </p>
       <p>
         This docs site is a Phase 1 starting point - see the{" "}
-        <a href="https://github.com" rel="noreferrer">
+        <a href="https://github.com/OLGAX-com/olgax-dxp" rel="noreferrer">
           repository README
         </a>{" "}
         for the current project status.
@@ -17,6 +17,10 @@ export default function Page() {
       <ul>
         <li>
           <a href="/installation">Installation</a> - scaffold a new site
+        </li>
+        <li>
+          <a href="/custom-components">Custom components</a> - add your own blocks to the page
+          builder
         </li>
         <li>
           <a href="/components">Adding a component</a> - the component contribution flow
