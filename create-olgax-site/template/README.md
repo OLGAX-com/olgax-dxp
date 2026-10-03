@@ -78,7 +78,8 @@ fields show up in the side panel immediately.
   already saved don't have the new field until someone edits and saves them again.
 
 **3. Use it.** Open a page's editor (for example `/home/edit`) and drag your block in from the
-component list. Publish the page to see it on the live site.
+component list. The editor preview uses the same styles as your live page, including your
+block's CSS, and keeps them in sync as you edit. Publish the page to see it on the live site.
 
 **Adding a block by hand.** Create the file and export a config like above, then add two lines to
 `components/blocks/index.ts`: an `import` and an entry in the `blocks` object
@@ -106,6 +107,14 @@ Set these in `.env` (see `.env.example` for the full list):
 | `pnpm new:component <Name>` | Generate a custom page-builder block |
 | `pnpm migrate`, `migrate:create`, `migrate:status` | Database migrations (use these with Postgres) |
 | `pnpm generate:types` | Regenerate Payload types after changing collections |
+
+## Troubleshooting
+
+- **The editor shows old fields, or the preview looks different from the live page.** The dev
+  server's cache can get out of step after many quick file changes. Stop `pnpm dev`, delete the
+  `.next` folder, start it again, and hard-refresh the browser (Ctrl+Shift+R).
+- **Port 3000 is busy.** Another app may already be using it. Stop that app, or run
+  `pnpm dev -p 3001`.
 
 ## Deploying
 

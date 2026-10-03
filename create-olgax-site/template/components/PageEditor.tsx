@@ -6,6 +6,7 @@ import "@puckeditor/core/puck.css";
 import type { Data } from "@puckeditor/core";
 import { config, CONFIG_UPDATED_EVENT } from "@/lib/puck.config";
 import { saveDraftPageData, publishPageData } from "@/lib/actions";
+import { EditorStyleSync } from "@/components/EditorStyleSync";
 import { publicUrlForSlug, localizedPath } from "@/lib/pages";
 import type { Locale } from "@/lib/i18n";
 
@@ -62,6 +63,8 @@ export function PageEditor({
       }}
       onPublish={(data) => publishPageData(locale, slug, title, data)}
       overrides={{
+        // Keeps the preview styled exactly like the live page - see EditorStyleSync.
+        iframe: EditorStyleSync,
         // Puck's documented (if experimental) header override - not the
         // internal/unstable AppState APIs - just injects extra links
         // alongside the default actions (Publish button, etc.).
