@@ -1,5 +1,7 @@
 # @olgax.com/datasource
 
+[Docs](https://dxp.olgax.com/docs/reference/datasource) | [Website](https://dxp.olgax.com) | [Discord](https://discord.gg/EAXcCXgUz2) | [GitHub](https://github.com/OLGAX-com/olgax-dxp)
+
 A narrow resolver layer so a Puck component can declare "pull N items from a Payload
 collection, filtered by one field" and receive them as a resolved `items` prop - without
 hand-writing Payload queries in every component. Deliberately does not support a general query

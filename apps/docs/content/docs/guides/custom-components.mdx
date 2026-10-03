@@ -1,0 +1,134 @@
+---
+title: Custom components
+description: Build your own Puck blocks for Olgax DXP with pnpm new:component - fields, styling, live editor updates, server and client components, and common pitfalls.
+---
+
+Your site's own blocks live in `components/blocks/`. One command creates a block and wires it into the editor.
+
+<Callout title="Two ways to add components">
+  This guide covers blocks inside **your site**, the common case. To add a component to the shared library that every
+  site can install, see [Default components](/docs/contributing/default-components).
+</Callout>
+
+## Generate a block
+
+```bash
+pnpm new:component Testimonial
+```
+
+The name must be PascalCase: start with an uppercase letter, then letters and digits. The command:
+
+- creates `components/blocks/Testimonial.tsx` and `Testimonial.css`
+- adds `Testimonial: block(testimonialBlock)` to the `blocks` map in `components/blocks/index.ts`
+
+With `pnpm dev` running, open any page in the editor. **Testimonial** is in the block list.
+
+## Anatomy of a block
+
+```tsx title="components/blocks/Testimonial.tsx"
+import type { ComponentConfig } from "@puckeditor/core";
+import {
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax.com/sdk";
+import "./Testimonial.css";
+
+export type TestimonialProps = {
+  quote: string;
+  author: string;
+} & ColorOverrideProps &
+  VisibilityProps;
+
+// A plain component with no hooks, so it renders in the editor and on the server.
+const TestimonialView = ({ quote, author, ...props }: TestimonialProps) => (
+  <figure className="testimonial" style={colorOverrideStyle(props)}>
+    <blockquote>{quote}</blockquote>
+    <figcaption>{author}</figcaption>
+  </figure>
+);
+
+export const testimonialBlock: ComponentConfig<{ props: TestimonialProps }> = {
+  fields: {
+    quote: { type: "textarea" },
+    author: { type: "text" },
+    ...colorOverrideFields(),
+    ...visibilityFields(),
+  },
+  defaultProps: {
+    quote: "This changed how we ship pages.",
+    author: "A happy customer",
+  },
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <TestimonialView {...props} /> : <></>,
+};
+```
+
+The shape is a [Puck component config](https://puckeditor.com/docs/api-reference/configuration/component-config):
+
+| Key | Purpose |
+| --- | --- |
+| `fields` | The inputs shown in the editor: `text`, `textarea`, `number`, `select`, `radio`, `array`, `object`, `richtext`, and more |
+| `defaultProps` | The initial values when an editor drops the block |
+| `render` | A React component that receives the field values as props |
+
+## Styling
+
+Put styles in the block's `.css` file and use the design tokens so the block follows the site theme:
+
+```css title="components/blocks/Testimonial.css"
+.testimonial {
+  padding: var(--olgax-spacing);
+  border: 1px solid var(--olgax-color-border);
+  border-radius: var(--olgax-radius);
+  background: var(--olgax-color-bg-muted);
+  color: var(--olgax-color-text);
+}
+```
+
+`colorOverrideFields()` and `colorOverrideStyle()` (used above) give editors per-block color controls. See
+[Theming](/docs/guides/theming).
+
+## Live editor updates
+
+You do not need to restart the dev server or refresh the browser while you work:
+
+- **Changing a block's fields or code** updates the editor in place.
+- **Adding a new block** makes it appear in the block list.
+- **Editing CSS** restyles the editor canvas straight away.
+
+## Server and client components
+
+Blocks are **server components** by default, which is ideal for content. They cannot use hooks or browser APIs. If a
+block needs `useState`, effects or event handlers, add `"use client"` at the top of its file.
+
+## Pitfalls
+
+<Accordions>
+  <Accordion title="Renaming the key in the blocks map">
+    Saved pages reference blocks by their key. If you rename `Testimonial` in `components/blocks/index.ts`, pages that
+    already use it will no longer find it. Keep keys stable, or migrate the saved data.
+  </Accordion>
+  <Accordion title="Adding a field to a block that is already used">
+    Existing instances do not have the new field. Give it a value in `defaultProps` and make `render` handle a missing
+    value, because old instances will not pick up `defaultProps`.
+  </Accordion>
+  <Accordion title="The editor looks stale">
+    Stop the dev server, delete the `.next` folder, start it again and hard-refresh the browser. See
+    [Troubleshooting](/docs/deployment/troubleshooting).
+  </Accordion>
+</Accordions>
+
+## Third-party component packages
+
+Packages such as `@olgax.com/components` register themselves with `registerComponent()` from `@olgax.com/sdk`. The
+site's `lib/puck.config.tsx` merges everything registered with the `blocks` from `components/blocks/`, so both appear in
+the same editor. See the [SDK reference](/docs/reference/sdk).
+
+## Need help?
+
+Ask in the [Olgax Discord](https://discord.gg/EAXcCXgUz2). Sharing the block code and what you expected usually gets
+a fast answer.

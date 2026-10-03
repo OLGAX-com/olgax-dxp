@@ -18,6 +18,7 @@
     "directory": "packages/datasource"
   },
   "bugs": "https://github.com/OLGAX-com/olgax-dxp/issues",
+  "homepage": "https://dxp.olgax.com",
   "publishConfig": {
     "access": "public"
   },

@@ -1,0 +1,82 @@
+---
+title: Default components
+description: Add a component to the shared @olgax.com/components library - a 15 minute walkthrough that builds a Spacer block with registerComponent and CSS tokens.
+---
+
+This page is for contributors adding to the **shared library** that every site can install. To build blocks for one
+site, see [Custom components](/docs/guides/custom-components).
+
+## Rules for library components
+
+1. A typed props interface and a `registerComponent("Name", { fields, defaultProps, render })` call. See `Hero.tsx`.
+2. A co-located `.css` file that uses `--olgax-*` custom properties (see `tokens.css`) and **no hard-coded colors or
+   spacing**, so it stays themeable.
+3. Imported from `src/index.ts` for its registration side effect.
+4. No client-only hooks (`useState` and similar) in `render`. Components must work in the Puck editor (client) and in
+   `<Render>` (which can run on the server).
+
+## Walkthrough: a Spacer block
+
+<Steps>
+  <Step>
+    ### Create the component
+    `packages/components/src/blocks/Spacer.tsx`:
+
+    ```tsx
+    import { registerComponent } from "@olgax.com/sdk";
+
+    export type SpacerProps = {
+      height: number;
+    };
+
+    const Spacer = ({ height }: SpacerProps) => <div style={{ height }} />;
+
+    registerComponent<SpacerProps>("Spacer", {
+      fields: {
+        height: { type: "number" },
+      },
+      defaultProps: {
+        height: 32,
+      },
+      render: (props) => <Spacer {...props} />,
+    });
+    ```
+  </Step>
+  <Step>
+    ### Register it in the package index
+    Add one line to `packages/components/src/index.ts`, next to the other blocks:
+
+    ```ts
+    import "./blocks/Spacer";
+    ```
+  </Step>
+  <Step>
+    ### Run it locally
+    ```bash
+    pnpm --filter demo dev
+    ```
+
+    Open `http://localhost:3000/home/edit`. **Spacer** is in the block list. Next transpiles
+    `@olgax.com/components` straight from source, so there is no build step. Drag it onto the canvas and check the
+    `height` field.
+  </Step>
+  <Step>
+    ### Document it
+    Add a short section to `packages/components/README.md` showing the props as a `Data.content` item, following the
+    existing entries.
+  </Step>
+  <Step>
+    ### Check types
+    ```bash
+    pnpm --filter demo build
+    ```
+
+    Puck's config types are stricter than editor diagnostics, so a full build is the reliable check.
+  </Step>
+</Steps>
+
+Add a changeset for your change. See [Releasing](/docs/contributing/releasing).
+
+## Need a review or a second opinion?
+
+Share your branch in the [Olgax Discord](https://discord.gg/EAXcCXgUz2) and ask for feedback.

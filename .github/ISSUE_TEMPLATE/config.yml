@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a question on Discord
+    url: https://discord.gg/EAXcCXgUz2
+    about: Get help and chat with the community on the official Olgax DXP Discord.
+  - name: Read the documentation
+    url: https://dxp.olgax.com
+    about: Guides, references and troubleshooting at dxp.olgax.com.

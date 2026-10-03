@@ -1,0 +1,92 @@
+---
+title: Page editor and dashboard
+description: Create, edit, duplicate and organize pages with the Olgax DXP visual page builder and dashboard - Overview, Pages, Analytics and Settings.
+---
+
+Everything an editor needs lives in two places: the **dashboard** at `/dashboard`, and the **page editor** at
+`/<slug>/edit`. Both require a signed-in Payload user. Anonymous visitors are redirected to `/admin/login`.
+
+## The dashboard
+
+<Tabs items={["Overview", "Pages", "Analytics", "Settings"]}>
+  <Tab value="Overview">
+    Totals at a glance: number of pages and how many are published, total views, the current locale and a list of
+    your top pages by views.
+  </Tab>
+  <Tab value="Pages">
+    Search by title or slug, create a page, **Duplicate** it, **Delete** it, open the editor or the public page, and
+    see views per page. Duplicating is the quickest way to start a new page from an existing layout.
+  </Tab>
+  <Tab value="Analytics">
+    Built-in page views for the last 7 days and per page, plus a link to your Umami dashboard when connected. See
+    [Analytics](/docs/guides/analytics).
+  </Tab>
+  <Tab value="Settings">
+    Shortcuts into the admin: Site Settings, Sections, Media, Users and Webhooks, plus the current localization
+    status.
+  </Tab>
+</Tabs>
+
+## Create a page
+
+Use the **New page** form on the Pages tab. Type a slug, for example `pricing`, and press the button. The editor opens
+at `/pricing/edit`.
+
+- Spaces in a slug become hyphens, and the slug is lowercased.
+- The page `home` is your homepage, served at `/`. Visiting `/home` redirects to `/`.
+- The page does not exist in the database until the first draft autosaves.
+
+### Start from a section
+
+The optional second field takes the **slug of a section**. The new page starts with that section's blocks instead of
+an empty canvas. Try it with the seeded `cta-banner` section:
+
+```text
+/some-new-page/edit?section=cta-banner
+```
+
+Sections are reusable groups of blocks managed in the admin under **Sections**. They are a way to keep repeated
+layouts consistent. A section is a starting point: the blocks are copied into the page, not linked.
+
+## Work in the editor
+
+The editor is [Puck](https://puckeditor.com). The left panel lists blocks, the center is a live canvas, and the right
+panel edits the selected block. The canvas is styled exactly like the live page.
+
+- **Drag** a block to add it or reorder it.
+- **Select** a block to edit its fields. Text, links, numbers, lists and selects are plain fields.
+- **Page title and page-level colors** are root fields, shown when nothing is selected.
+- **Undo and redo**, device-size preview and the outline are built into Puck.
+
+Edits **autosave as a draft** after a short pause (about two seconds). Nothing reaches the public site until you
+press **Publish**. See [Drafts and publishing](/docs/guides/drafts-and-publishing).
+
+### Per-block options
+
+Blocks can include extra fields that Olgax adds through the SDK:
+
+- **Colors**: override the background, text and primary colors for just this block. See
+  [Theming](/docs/guides/theming).
+- **Show to**: everyone, new visitors only or returning visitors only. See
+  [Personalization](/docs/guides/personalization).
+
+### Edit from the live site
+
+When you are signed in, an **Edit this page** link appears on public pages so you can jump straight into the editor.
+
+## Site Settings
+
+In the admin, open **Site Settings** (a global) to set:
+
+- the **primary, background and text colors** for the whole site, as hex values
+- whether **localization** is enabled
+
+## Media
+
+Upload images in the admin under **Media**. Every file needs alt text. Media is publicly readable so images can show
+on public pages, and only signed-in users can upload, replace or delete.
+
+<Callout title="One role for now">
+  Any signed-in user can edit everything. Role-based permissions are not part of Olgax DXP yet, so only create accounts
+  for people you trust.
+</Callout>

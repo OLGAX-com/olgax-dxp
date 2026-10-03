@@ -4,6 +4,8 @@ A [Next.js](https://nextjs.org) + [Payload CMS](https://payloadcms.com) + [Puck]
 site, scaffolded with [`create-olgax-site`](https://www.npmjs.com/package/create-olgax-site) from
 [Olgax DXP](https://github.com/OLGAX-com/olgax-dxp).
 
+Docs: [dxp.olgax.com](https://dxp.olgax.com) | Community: [Discord](https://discord.gg/EAXcCXgUz2)
+
 ## Getting started
 
 ```bash
@@ -124,7 +126,9 @@ development only.
 
 ## Learn more
 
-- [Olgax DXP on GitHub](https://github.com/OLGAX-com/olgax-dxp) (docs live in `apps/docs`)
+- [Olgax DXP documentation](https://dxp.olgax.com)
+- [Olgax DXP on Discord](https://discord.gg/EAXcCXgUz2): ask questions and share what you build
+- [Olgax DXP on GitHub](https://github.com/OLGAX-com/olgax-dxp)
 - [Payload docs](https://payloadcms.com/docs)
 - [Puck docs](https://puckeditor.com/docs)
 

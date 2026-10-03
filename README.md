@@ -3,6 +3,9 @@
 [![CI](https://github.com/OLGAX-com/olgax-dxp/actions/workflows/ci.yml/badge.svg)](https://github.com/OLGAX-com/olgax-dxp/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/create-olgax-site.svg)](https://www.npmjs.com/package/create-olgax-site)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/EAXcCXgUz2)
+
+**[Website and docs](https://dxp.olgax.com)** | **[Discord](https://discord.gg/EAXcCXgUz2)** | **[npm](https://www.npmjs.com/package/create-olgax-site)** | **[Issues](https://github.com/OLGAX-com/olgax-dxp/issues)**
 
 **Olgax DXP** is an open-source, self-hostable page-building layer for **Payload CMS + Next.js**.
 [Payload](https://payloadcms.com) handles content, auth, and drafts; [Puck](https://puckeditor.com)
@@ -89,7 +92,7 @@ components with `pnpm new:component MyBlock`.
 ```
 apps/
   demo/               # Reference Next.js + Payload + Puck site
-  docs/               # Documentation site
+  docs/               # Documentation site (Fumadocs, deployed at dxp.olgax.com)
 packages/
   payload-preset/     # Pre-configured Payload collections and globals
   sdk/                # registerComponent() and related developer-facing APIs
@@ -114,12 +117,28 @@ editor, and the Payload admin panel.
 
 ## Documentation
 
-See `apps/docs` for guides on installation, the SDK, theming, data sources, drafts,
-personalization, webhooks, and production deployment.
+Full documentation lives at **[dxp.olgax.com](https://dxp.olgax.com)**:
+
+- [Quick start](https://dxp.olgax.com/docs/getting-started/quick-start)
+- [Guides](https://dxp.olgax.com/docs/guides/page-editor): page editor, custom components, drafts and publishing,
+  theming, localization, personalization, analytics, data sources and webhooks
+- [Deployment](https://dxp.olgax.com/docs/deployment/production): production checklist, self-hosting and
+  troubleshooting
+- [Reference](https://dxp.olgax.com/docs/reference/cli): CLI, SDK, components, datasource and payload-preset
+
+The docs are MDX files in [`apps/docs/content/docs`](apps/docs/content/docs), built with
+[Fumadocs](https://www.fumadocs.dev). Every page has an "Edit on GitHub" link, and fixes are very welcome.
+
+## Community
+
+- Chat, ask questions and share what you build on the **[official Discord](https://discord.gg/EAXcCXgUz2)**.
+- Read the docs at **[dxp.olgax.com](https://dxp.olgax.com)**.
+- Report bugs and request features in [GitHub Issues](https://github.com/OLGAX-com/olgax-dxp/issues).
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and the "good first issue" label on GitHub Issues.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the "good first issue" label on GitHub Issues. Not sure where to start?
+Ask on [Discord](https://discord.gg/EAXcCXgUz2).
 
 ## License
 

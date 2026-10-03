@@ -1,0 +1,110 @@
+---
+title: Quick start
+description: Create a Payload CMS and Next.js site with a visual page builder in minutes using npx create-olgax-site, then open the editor and publish your first page.
+---
+
+## Requirements
+
+- **Node.js 20.9 or newer**
+- **[pnpm](https://pnpm.io)**. The scaffolder and the generated project use pnpm.
+
+## Create a site
+
+```bash
+npx create-olgax-site my-site
+cd my-site
+pnpm dev
+```
+
+Without a name the CLI asks for one. The name is turned into a folder name (lowercase, hyphens).
+
+The CLI does the setup work for you:
+
+<Steps>
+  <Step>
+    ### Copies the template
+    A complete Next.js, Payload and Puck project, including a `README.md` and a `LICENSE`.
+  </Step>
+  <Step>
+    ### Creates `.env`
+    A copy of `.env.example` with a freshly generated `PAYLOAD_SECRET`, so the site runs without manual setup.
+  </Step>
+  <Step>
+    ### Installs dependencies
+    Using `pnpm install`.
+  </Step>
+  <Step>
+    ### Seeds your data
+    Runs `pnpm seed` to create an admin user, a published homepage and a reusable `cta-banner` section.
+  </Step>
+</Steps>
+
+If the install or the seed fails, the CLI says which command to run yourself. Nothing else is needed afterwards.
+
+## Open your site
+
+With `pnpm dev` running, open [http://localhost:3000](http://localhost:3000).
+
+| URL | What it is |
+| --- | --- |
+| `/` | Your public homepage |
+| `/dashboard` | Pages, analytics and site settings |
+| `/home/edit` | The visual page builder, here for the homepage |
+| `/admin` | The Payload admin panel: users, media, sections, webhooks, raw data |
+
+Routes are locale-prefixed by default, so you will see `/en` and `/en/home/edit` in the address bar. You can turn
+this off. See [Localization](/docs/guides/localization).
+
+### Default login
+
+```text
+admin@example.com
+ChangeMe123!
+```
+
+<Callout type="warn" title="Change the password">
+  The seed creates an admin with a well-known password. Change it in `/admin` before you deploy anything.
+</Callout>
+
+## Edit and publish a page
+
+<Steps>
+  <Step>
+    ### Sign in
+    Go to `/admin` and sign in. The editor and dashboard use the same session.
+  </Step>
+  <Step>
+    ### Open the editor
+    Visit `/home/edit`, or click **Edit this page** on the live site (it appears for signed-in editors).
+  </Step>
+  <Step>
+    ### Add and arrange blocks
+    Drag blocks from the left panel onto the canvas. Select one to edit its fields on the right.
+  </Step>
+  <Step>
+    ### Publish
+    Changes autosave as a draft. Click **Publish** to put them on the live site.
+  </Step>
+</Steps>
+
+## If the homepage says "doesn't have a homepage yet"
+
+The seed did not run. Run `pnpm seed`, or sign in and create a page with the slug `home` and publish it. The
+homepage is always the published page whose slug is `home`.
+
+## Next steps
+
+<Cards>
+  <Card title="Add your own component" href="/docs/guides/custom-components">
+    Run pnpm new:component and see it in the editor.
+  </Card>
+  <Card title="Project structure" href="/docs/getting-started/project-structure">
+    Where everything lives in a generated project.
+  </Card>
+  <Card title="Configuration" href="/docs/getting-started/configuration">
+    Environment variables and databases.
+  </Card>
+  <Card title="Join the community" href="https://discord.gg/EAXcCXgUz2">
+    Ask questions and share what you build.
+  </Card>
+</Cards>

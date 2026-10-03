@@ -1,7 +1,6 @@
 // Locale convention for both Payload's localized fields and the frontend's
-// locale-prefixed routes (/en/..., /es/...). Add a locale here and to
-// payload.config.ts's `localization.locales` to support another language -
-// no other code changes needed.
+// locale-prefixed routes (/en/..., /es/...). Add a locale here to support another
+// language - payload.config.ts reads this list, so no other code changes are needed.
 export const LOCALES = ["en", "es"] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "en";

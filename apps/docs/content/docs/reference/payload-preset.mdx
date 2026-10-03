@@ -1,0 +1,111 @@
+---
+title: "@olgax.com/payload-preset"
+description: Reference for @olgax.com/payload-preset - the Payload CMS collections and globals behind Olgax DXP - users, media, pages, sections, page views, webhooks and site settings.
+---
+
+Reusable Payload collections and globals for an Olgax DXP site. Every one defines explicit access control.
+
+```bash
+pnpm add @olgax.com/payload-preset
+```
+
+## Usage
+
+```ts title="payload.config.ts"
+import { buildConfig } from "payload";
+import {
+  Users,
+  Media,
+  Pages,
+  Sections,
+  PageViews,
+  Webhooks,
+  SiteSettings,
+} from "@olgax.com/payload-preset";
+
+export default buildConfig({
+  collections: [Users, Media, Pages, Sections, PageViews, Webhooks],
+  globals: [SiteSettings],
+  // ...db, editor, secret, localization
+});
+```
+
+A scaffolded site already has this wired up.
+
+## Collections
+
+### `users`
+
+Payload auth collection, titled by email. The first user can be created without signing in, which is how the first admin
+is bootstrapped. After that, creating and reading users requires a signed-in user.
+
+### `media`
+
+Upload collection with a required `alt` text field. Publicly readable. Create, update and delete require a signed-in
+user.
+
+### `pages`
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `title` | text, required | Localized |
+| `slug` | text, required | Unique and indexed |
+| `data` | json, required | Localized. Puck's `Data` object. |
+
+- Payload drafts are enabled (`versions.drafts`). See [Drafts and publishing](/docs/guides/drafts-and-publishing).
+- Signed-in users read everything. Anonymous users read published pages only.
+- Dispatches `page.published` and `page.deleted` [webhooks](/docs/guides/webhooks).
+- Adds a **Quick links** panel in the admin sidebar.
+
+### `sections`
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `name` | text, required | Also the admin title |
+| `content` | json, required | Localized. An array of Puck component data (`Data.content`), not a full `Data` object. |
+
+Reusable groups of blocks, used with **start from section** when creating a page. A locale without a translation falls
+back to the default locale. All access requires a signed-in user.
+
+### `page-views`
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `slug` | text, required | Indexed |
+| `locale` | text, required | |
+| `date` | date, required | Day-level |
+| `count` | number | Read-only in the admin |
+
+A unique index on `slug`, `locale` and `date` keeps one row per page, language and day. Written by the server on public
+page loads. See [Analytics](/docs/guides/analytics).
+
+### `webhooks`
+
+| Field | Notes |
+| --- | --- |
+| `name` | A label |
+| `url` | Receiver URL |
+| `secret` | Used to sign requests with HMAC-SHA256 |
+| `events` | `page.published`, `page.deleted` |
+| `enabled` | Toggle without deleting |
+
+See [Webhooks](/docs/guides/webhooks).
+
+## Globals
+
+### `site-settings`
+
+| Field | Notes |
+| --- | --- |
+| `localizationEnabled` | Checkbox, default on. Locale-prefixed URLs on, or the default locale at bare URLs off. |
+| `primaryColor` | Hex color. Blank keeps the default. |
+| `backgroundColor` | Hex color. Blank keeps the default. |
+| `textColor` | Hex color. Blank keeps the default. |
+
+Color values are validated as hex (`#rgb`, `#rgba`, `#rrggbb` or `#rrggbbaa`). Readable by everyone, updatable by
+signed-in users.
+
+## Extending
+
+Treat these as a starting point. Add your own collections alongside them, or add fields to a copy of one. When you
+change the schema of a database with real data, create a [migration](/docs/deployment/production#migrations).

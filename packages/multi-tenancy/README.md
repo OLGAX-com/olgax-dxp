@@ -1,5 +1,7 @@
 # @olgax.com/multi-tenancy
 
+Part of [Olgax DXP](https://dxp.olgax.com) | [Discord](https://discord.gg/EAXcCXgUz2)
+
 > **Phase 3 groundwork.** This is a data-model starting point, not a finished multi-tenancy
 > feature - no tenant-aware access control, domain-based routing, or admin UI site switcher yet.
 > Entirely opt-in: importing this package doesn't change any other package's behavior.

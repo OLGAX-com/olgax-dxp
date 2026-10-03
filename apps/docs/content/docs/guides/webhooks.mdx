@@ -1,0 +1,75 @@
+---
+title: Webhooks
+description: Notify any URL when an Olgax DXP page is published or deleted. Configure webhooks in the admin and verify the HMAC-SHA256 signature on your receiver.
+---
+
+Webhooks are the integration mechanism itself, not a connector for one vendor. Register any URL and it is notified
+when content changes. They work for a Slack incoming webhook, a Zapier catch hook, a static-site rebuild trigger or
+your own endpoint.
+
+## Configure one
+
+In the admin, open **Webhooks** and create an entry:
+
+| Field | Meaning |
+| --- | --- |
+| `name` | A label for you |
+| `url` | Where to send the request |
+| `secret` | Used to sign the request, so keep it private |
+| `events` | Which events this webhook fires for |
+| `enabled` | Turn it off without deleting it |
+
+Reading and writing webhooks requires a signed-in user, because the secret is sensitive.
+
+## Events
+
+| Event | Fires when |
+| --- | --- |
+| `page.published` | A page's status becomes, or stays, published. A plain autosaved draft never fires it. |
+| `page.deleted` | A page is deleted, published or not |
+
+Events come from the `pages` collection's `afterChange` and `afterDelete` hooks. They fire however the change
+happens: the admin, the REST or GraphQL API, the Local API or the editor.
+
+## What you receive
+
+A `POST` request with the header `X-Olgax-Event` set to the event name, and a JSON body:
+
+```json
+{
+  "event": "page.published",
+  "slug": "home",
+  "locale": "en",
+  "title": "Home",
+  "timestamp": "2026-01-01T12:00:00.000Z"
+}
+```
+
+## Verify the signature
+
+Each request has an `X-Olgax-Signature` header of the form `sha256=<hex>`. It is an HMAC-SHA256 of the raw request
+body keyed with the webhook's `secret`, the same convention GitHub and Stripe use. Verify it before trusting the
+payload.
+
+```ts
+import { createHmac, timingSafeEqual } from "crypto";
+
+function isValid(secret: string, rawBody: string, header: string | null) {
+  if (!header) return false;
+  const expected = `sha256=${createHmac("sha256", secret).update(rawBody).digest("hex")}`;
+  return (
+    header.length === expected.length &&
+    timingSafeEqual(Buffer.from(header), Buffer.from(expected))
+  );
+}
+```
+
+<Callout title="Always use the raw body">
+  Compute the HMAC over the exact bytes you received, not over re-serialized JSON.
+</Callout>
+
+## Reliability
+
+Webhooks never block or fail a publish or delete. Requests are sent in parallel with a **5 second timeout** each, and
+a slow or unreachable receiver is ignored rather than shown to the editor. Your receiver should respond quickly and
+do heavy work in the background.

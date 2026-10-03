@@ -1,0 +1,50 @@
+---
+title: Configuration
+description: Environment variables, database choice and secrets for an Olgax DXP site - PAYLOAD_SECRET, DATABASE_URL, NEXT_PUBLIC_SITE_URL and the optional Umami settings.
+---
+
+A generated project reads its configuration from `.env`. `.env.example` lists every variable with comments.
+
+## Environment variables
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `PAYLOAD_SECRET` | Yes | Signs sessions and tokens. The CLI generates a unique value for you. |
+| `DATABASE_URL` | No | `file:./payload.db` (SQLite, the default) or a `postgres://` connection string |
+| `NEXT_PUBLIC_SITE_URL` | In production | Your public URL. Needed when data-backed blocks fetch on the server. |
+| `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | No | Umami tracker script URL |
+| `NEXT_PUBLIC_UMAMI_WEBSITE_ID` | No | Umami website id |
+| `NEXT_PUBLIC_UMAMI_DASHBOARD_URL` | No | Link target for the Umami card in the dashboard |
+
+<Callout type="warn" title="Keep secrets per environment">
+  Use a long, random `PAYLOAD_SECRET` for each environment, and never reuse your local one in production. Do not commit
+  `.env`. The generated `.gitignore` already excludes it.
+</Callout>
+
+## Database
+
+`payload.config.ts` picks the adapter from `DATABASE_URL`:
+
+- A `file:` path uses **SQLite**. It needs no external service, which is why a new project runs immediately.
+- A value starting with `postgres://` or `postgresql://` uses **Postgres**.
+
+```bash title=".env"
+# Local development (default)
+DATABASE_URL=file:./payload.db
+
+# Production: any managed Postgres works (Neon, Supabase, Railway, Vercel Postgres, ...)
+DATABASE_URL=postgres://user:password@host:5432/dbname
+```
+
+Switching to Postgres is an environment change, not a code change. Read [Production](/docs/deployment/production)
+before you point a real site at a database, especially for migrations.
+
+## Localization
+
+Languages are defined once, in `LOCALES` in `lib/i18n.ts`. `payload.config.ts` reads the same list. The runtime on
+and off switch lives in the admin under **Site Settings**. See [Localization](/docs/guides/localization).
+
+## Email
+
+Payload logs verification and password reset emails to the console until you configure an email adapter. See
+[Payload's email docs](https://payloadcms.com/docs/email/overview) before launch.

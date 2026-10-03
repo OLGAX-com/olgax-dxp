@@ -1,0 +1,68 @@
+---
+title: Analytics
+description: Built-in privacy-friendly page view counts for Olgax DXP, a dashboard with the last 7 days of traffic, and optional Umami integration with Docker Compose.
+---
+
+Olgax DXP has two layers of analytics. Use one or both.
+
+## Built-in page views
+
+Every public page view increments a counter in the `page-views` collection. It is simple and private by design:
+
+- **No cookies and no personal data.** Only a count per page, per locale, per day is stored.
+- **Day-bucketed.** One row per slug, locale and date, so the data stays small.
+- **Does not slow pages down.** The count is recorded after the response is sent, and a tracking failure never breaks
+  a page.
+- **Concurrency safe.** A unique index handles two visitors counting at the same moment.
+
+You see the data in the dashboard:
+
+- **Overview** shows total views and your top pages.
+- **Analytics** shows daily views for the last 7 days and views by page.
+- **Pages** shows the view count next to every page.
+
+## Optional: Umami
+
+For referrers, devices, countries and more, connect [Umami](https://umami.is), an open-source, privacy-friendly
+analytics tool.
+
+<Steps>
+  <Step>
+    ### Run Umami
+    Your project includes `docker-compose.umami.yml`. Start it with Docker, or point at any Umami instance you
+    already run.
+
+    ```bash
+    docker compose -f docker-compose.umami.yml up -d
+    ```
+
+    It listens on `http://localhost:3001` (set `UMAMI_PORT` to change it). Sign in with `admin` / `umami` and change
+    the password immediately.
+  </Step>
+  <Step>
+    ### Create a website in Umami
+    Add your site in the Umami dashboard and copy its **website id**.
+  </Step>
+  <Step>
+    ### Set the environment variables
+    ```bash title=".env"
+    NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://your-umami.example.com/script.js
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID=your-website-id
+    NEXT_PUBLIC_UMAMI_DASHBOARD_URL=https://your-umami.example.com
+    ```
+  </Step>
+  <Step>
+    ### Restart
+    Restart the app. The dashboard's Analytics tab now links to your Umami dashboard.
+  </Step>
+</Steps>
+
+Page views are sent from the site, and navigation inside the app is tracked as pages change.
+
+<Callout title="Editors are not counted">
+  Visits by signed-in editors are not tracked, so your own editing does not inflate the numbers.
+</Callout>
+
+## Disable it
+
+Leave the `NEXT_PUBLIC_UMAMI_*` variables empty to turn Umami off. The built-in counter keeps working.

@@ -1,5 +1,7 @@
 # create-olgax-site
 
+[Website and docs](https://dxp.olgax.com) | [Discord](https://discord.gg/EAXcCXgUz2) | [GitHub](https://github.com/OLGAX-com/olgax-dxp)
+
 Scaffolds a new Olgax DXP site: a Next.js + Payload CMS + Puck project pre-wired with
 `@olgax.com/payload-preset`, `@olgax.com/sdk`, and `@olgax.com/components`.
 
@@ -29,6 +31,12 @@ step fails, the CLI tells you which command to run yourself.
 - A `README.md` and `LICENSE` in the generated project
 - `components/blocks/` for your own page-builder components - generate one with
   `pnpm new:component MyBlock`
+
+## Documentation and community
+
+- Docs: [dxp.olgax.com](https://dxp.olgax.com)
+- Chat and support: [official Discord](https://discord.gg/EAXcCXgUz2)
+- Source and issues: [github.com/OLGAX-com/olgax-dxp](https://github.com/OLGAX-com/olgax-dxp)
 
 ## Local testing (within this monorepo)
 

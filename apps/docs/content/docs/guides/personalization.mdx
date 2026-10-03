@@ -1,0 +1,56 @@
+---
+title: Personalization
+description: Show Olgax DXP blocks to new or returning visitors using a first-party, no-PII cookie and the visibility helpers from @olgax.com/sdk.
+---
+
+Olgax DXP ships one narrow personalization signal: **new versus returning visitor**. It is the baseline most
+platforms start with. It is deliberately not a segments or rules engine, but it is a clean extension point if you
+want to build one.
+
+## How it works
+
+1. `proxy.ts` sets a first-party cookie, `olgax_visitor`, on a visitor's first request. It stores no IP address, user
+   agent or other identifying data, only a marker. It lasts one year.
+2. `getVisitorState()` in `lib/personalization.ts` reads that cookie on the server. No cookie means `"new"`, and a
+   cookie means `"returning"`.
+3. `PageRenderer` passes the value to Puck's `metadata` prop, and every block receives it as `props.puck.metadata`.
+
+The very first page view of a visitor counts as **new**, because the cookie is set on that response.
+
+## In the editor
+
+Every default block has a **Show to** field with three options:
+
+- Everyone
+- New visitors only
+- Returning visitors only
+
+In the editor canvas there is no real visitor, so every block is always shown. You never lose track of a block you are
+editing.
+
+## In your own blocks
+
+```tsx
+import { visibilityFields, isVisible } from "@olgax.com/sdk";
+
+export const myBlock = {
+  fields: {
+    // ...your own fields
+    ...visibilityFields(),
+  },
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <MyBlock {...props} /> : <></>,
+};
+```
+
+Blocks generated with `pnpm new:component` already include this.
+
+## Out of scope on purpose
+
+There is no audience builder, no rules engine and no third-party segment integration. To add richer targeting, extend
+the same `metadata` mechanism instead of building a separate system.
+
+<Callout title="Privacy and consent">
+  The cookie is first-party and holds no personal data, but cookie rules vary by region. Review them for your audience
+  and update your site's privacy notice if needed.
+</Callout>

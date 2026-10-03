@@ -1,0 +1,64 @@
+---
+title: Troubleshooting
+description: Fix common Olgax DXP problems - a stale page editor, a busy port, missing homepage, login issues, failed installs and Windows quirks.
+---
+
+## The editor looks stale or a block has no styles
+
+Puck reads its config once when it mounts, and the dev server can hold on to stale build output. Stop the dev server,
+delete the `.next` folder, start it again and hard-refresh the browser.
+
+```bash
+# stop pnpm dev first
+rm -rf .next      # Windows PowerShell: Remove-Item -Recurse -Force .next
+pnpm dev
+```
+
+## Port 3000 is already in use
+
+```bash
+pnpm dev -p 3001
+```
+
+Only one dev server can run per project at a time.
+
+## "This site doesn't have a homepage yet"
+
+The homepage is the published page with the slug `home`. Run `pnpm seed`, or sign in and create and publish that page.
+
+## I cannot sign in
+
+- On a fresh project, use the seeded `admin@example.com` and `ChangeMe123!`, after running `pnpm seed`.
+- If you changed `PAYLOAD_SECRET`, existing sessions stop working. Sign in again.
+- A deleted `payload.db` means a new empty database. Run `pnpm seed` again.
+
+## `pnpm seed` or the CLI failed
+
+- Check Node with `node -v`. Olgax DXP needs 20.9 or newer.
+- Check pnpm with `pnpm -v`. If it is missing, install it from [pnpm.io](https://pnpm.io).
+- If `npx create-olgax-site` runs an older version than expected, request the latest explicitly:
+
+```bash
+npx create-olgax-site@latest my-site
+```
+
+## A new block does not appear
+
+Make sure `components/blocks/index.ts` includes an entry for it in the `blocks` object. If you made the block by hand,
+add the import and the entry yourself. If it is there and the editor is stale, see the first item on this page.
+
+## A saved page lost a block or field
+
+Saved pages store blocks by their key in `components/blocks/index.ts`. Renaming a key orphans existing uses. Rename it
+back, or migrate the data.
+
+## Still stuck?
+
+<Cards>
+  <Card title="Ask on Discord" href="https://discord.gg/EAXcCXgUz2">
+    The fastest way to get help. Include your Node version, your OS and the error text.
+  </Card>
+  <Card title="Open an issue" href="https://github.com/OLGAX-com/olgax-dxp/issues">
+    Report a bug with steps to reproduce it.
+  </Card>
+</Cards>

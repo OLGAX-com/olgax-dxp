@@ -2,6 +2,9 @@
 
 Thanks for your interest in contributing! See `PHASE.md` for what's in scope right now.
 
+Docs: [dxp.olgax.com](https://dxp.olgax.com) | Questions and chat: [Discord](https://discord.gg/EAXcCXgUz2).
+The documentation lives in `apps/docs/content/docs` as MDX, and improvements are welcome.
+
 ## Project structure
 
 This is a pnpm + Turborepo workspace:

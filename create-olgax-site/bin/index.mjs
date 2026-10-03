@@ -99,6 +99,9 @@ Then open http://localhost:3000
   Admin login:   admin@example.com / ChangeMe123!  (change it in /admin before deploying)
   Page builder:  http://localhost:3000/home/edit
   Your own components: pnpm new:component MyBlock   (see README.md)
+
+Docs:     https://dxp.olgax.com
+Discord:  https://discord.gg/EAXcCXgUz2   (questions, help and showcase)
 `);
 }
 

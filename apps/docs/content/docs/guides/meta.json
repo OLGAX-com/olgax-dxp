@@ -1,0 +1,14 @@
+{
+  "title": "Guides",
+  "pages": [
+    "page-editor",
+    "custom-components",
+    "drafts-and-publishing",
+    "theming",
+    "localization",
+    "personalization",
+    "analytics",
+    "data-sources",
+    "webhooks"
+  ]
+}

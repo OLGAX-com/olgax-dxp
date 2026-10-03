@@ -1,0 +1,167 @@
+---
+title: "@olgax.com/components"
+description: The default Olgax DXP component library - Hero, Header, Footer, CTA, Gallery, Pricing, FAQ, Testimonials and RelatedPages - with props and theming.
+---
+
+The default, themeable component library for Olgax DXP. Each component is a plain React component registered with Puck
+through [`@olgax.com/sdk`](/docs/reference/sdk), and styled only with `--olgax-*` CSS variables.
+
+```bash
+pnpm add @olgax.com/components
+```
+
+## Usage
+
+```ts
+import { components } from "@olgax.com/components";
+import type { Config } from "@puckeditor/core";
+
+export const config: Config = { components };
+```
+
+Import the tokens once to get the default theme:
+
+```ts
+import "@olgax.com/components/dist/tokens.css";
+```
+
+Scaffolded sites already do this. Override any `--olgax-*` property to retheme, or add the optional dark theme:
+
+```ts
+import "@olgax.com/components/src/themes/dark.css";
+```
+
+See [Theming](/docs/guides/theming).
+
+## Common props
+
+Every component also has:
+
+- **Color overrides**: optional `backgroundColor`, `primaryColor` and `textColor` hex values that affect only that
+  instance.
+- **Show to**: `everyone`, `new-visitors` or `returning-visitors`.
+
+## Components
+
+Each block shows the props Puck stores for it, which is useful when hand-authoring seed data.
+
+<Tabs items={["Hero", "Header", "Footer", "CTA", "Gallery", "Pricing", "FAQ", "Testimonials"]}>
+  <Tab value="Hero">
+    ```json
+    {
+      "type": "Hero",
+      "props": {
+        "heading": "Build pages, not pipelines",
+        "subheading": "A self-hostable page-building layer for Payload + Next.js.",
+        "ctaLabel": "Get started",
+        "ctaHref": "/get-started"
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Header">
+    ```json
+    {
+      "type": "Header",
+      "props": {
+        "logoText": "Olgax",
+        "links": [
+          { "label": "Home", "href": "/" },
+          { "label": "About", "href": "/about" }
+        ]
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Footer">
+    ```json
+    {
+      "type": "Footer",
+      "props": {
+        "text": "© 2026 Olgax",
+        "links": [{ "label": "Privacy", "href": "/privacy" }]
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="CTA">
+    ```json
+    {
+      "type": "CTA",
+      "props": {
+        "heading": "Ready to build your site?",
+        "buttonLabel": "Get started",
+        "buttonHref": "/get-started"
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Gallery">
+    ```json
+    {
+      "type": "Gallery",
+      "props": {
+        "images": [{ "src": "/photo-1.jpg", "alt": "A description of the photo" }]
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Pricing">
+    ```json
+    {
+      "type": "Pricing",
+      "props": {
+        "plans": [
+          {
+            "name": "Starter",
+            "price": "$0/mo",
+            "features": "1 site\nCommunity support",
+            "ctaLabel": "Get started",
+            "ctaHref": "/get-started"
+          }
+        ]
+      }
+    }
+    ```
+    `features` is a newline-separated string, one feature per line, shown as a bullet list.
+  </Tab>
+  <Tab value="FAQ">
+    ```json
+    {
+      "type": "FAQ",
+      "props": {
+        "items": [{ "question": "What is Olgax DXP?", "answer": "A page-building layer for Payload + Next.js." }]
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Testimonials">
+    ```json
+    {
+      "type": "Testimonials",
+      "props": {
+        "items": [{ "quote": "This is great!", "author": "A happy user" }]
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## RelatedPages
+
+`RelatedPages` needs a resolver from [`@olgax.com/datasource`](/docs/reference/datasource), so it does not register
+itself on import. Register it from your app:
+
+```ts
+import { registerRelatedPages } from "@olgax.com/components";
+import { createCollectionResolverFetch } from "@olgax.com/datasource";
+
+registerRelatedPages(createCollectionResolverFetch("/api/related-pages"));
+```
+
+Editors set `collection`, `filterField`, `filterValue` and `limit`. `items` is resolved automatically and read-only.
+See [Data sources](/docs/guides/data-sources).
+
+## Contribute a component
+
+Want to add one to the library? See [Default components](/docs/contributing/default-components).

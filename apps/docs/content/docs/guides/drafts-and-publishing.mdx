@@ -1,0 +1,48 @@
+---
+title: Drafts and publishing
+description: How autosaved drafts, the Publish button and published-only public routes work in Olgax DXP, and why draft pages never leak to visitors.
+---
+
+The `pages` collection uses Payload's built-in drafts (`versions.drafts`). There is no custom versioning system.
+
+## The workflow
+
+<Steps>
+  <Step>
+    ### Edit
+    Changing anything in the editor **autosaves a draft** after a short pause. A draft never affects the live page.
+  </Step>
+  <Step>
+    ### Publish
+    Press **Publish** in the editor. The current changes become the published version
+    (`_status: "published"`), and only then does the public route show them.
+  </Step>
+  <Step>
+    ### Come back later
+    Reopening the editor loads the latest draft, or the published version when there is no newer draft. In-progress work
+    is not lost.
+  </Step>
+</Steps>
+
+## Who sees what
+
+| Visitor | Sees |
+| --- | --- |
+| Anonymous | Published pages only |
+| Signed-in editor | Everything, including drafts, in the editor and the admin |
+
+## Why access control is explicit
+
+Payload's `draft` option chooses which version is returned when you ask for it. It does **not** hide documents whose
+`_status` is `"draft"` from an ordinary query. So Olgax enforces the rule in two places:
+
+1. The public render route filters on `_status` equal to `"published"`.
+2. The `pages` collection's `access.read` returns only published pages to anyone who is not signed in. This protects
+   the REST and GraphQL APIs.
+
+Both matter. The Local API used by the app's own routes bypasses access control by default, and the HTTP APIs do not.
+
+## Publishing triggers webhooks
+
+Publishing a page, or deleting one, fires [webhooks](/docs/guides/webhooks) if you have configured any. A plain
+autosaved draft never fires one.

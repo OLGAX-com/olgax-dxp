@@ -1,0 +1,106 @@
+---
+title: "@olgax.com/sdk"
+description: API reference for @olgax.com/sdk - registerComponent, getRegisteredComponents, color override helpers and visitor visibility helpers for Puck components.
+---
+
+`@olgax.com/sdk` is a thin layer over Puck's config API. It lets any package register components, and gives components
+two shared, opt-in features: color overrides and visitor visibility.
+
+```bash
+pnpm add @olgax.com/sdk
+```
+
+## registerComponent
+
+```ts
+registerComponent<Props>(name: string, config: ComponentConfig<{ props: Props }>): void
+```
+
+Registers a Puck component so it shows up in the editor and can be rendered.
+
+```tsx
+import { registerComponent } from "@olgax.com/sdk";
+
+registerComponent("MyComponent", {
+  fields: { title: { type: "text" } },
+  defaultProps: { title: "Hello" },
+  render: ({ title }) => <h2>{title}</h2>,
+});
+```
+
+- `name` is required and is the key saved in pages.
+- Registering the same name twice logs a warning and overwrites the first. This usually means two packages picked the
+  same name.
+
+## getRegisteredComponents
+
+```ts
+getRegisteredComponents(): Record<string, ComponentConfig>
+```
+
+Returns a copy of every component registered so far. Use it to build the Puck config:
+
+```ts
+import { getRegisteredComponents } from "@olgax.com/sdk";
+import type { Config } from "@puckeditor/core";
+
+export const config: Config = { components: getRegisteredComponents() };
+```
+
+`@olgax.com/components` registers its library this way. In a scaffolded site, `lib/puck.config.tsx` merges this registry
+with your own `blocks`.
+
+## Color overrides
+
+```ts
+colorOverrideFields(): Fields
+colorOverrideStyle(props: ColorOverrideProps): CSSProperties
+type ColorOverrideProps = { backgroundColor?: string; primaryColor?: string; textColor?: string }
+```
+
+`colorOverrideFields()` adds `backgroundColor`, `primaryColor` and `textColor` fields to a component. Pass the props to
+`colorOverrideStyle()` and apply the result as the root element's `style`. It sets `--olgax-color-bg`,
+`--olgax-color-bg-muted`, `--olgax-color-primary`, `--olgax-color-text` and `--olgax-color-text-muted` for that element,
+so everything inside follows. Unset values fall through to the theme. See [Theming](/docs/guides/theming).
+
+## Visitor visibility
+
+```ts
+visibilityFields(): Fields
+isVisible(rule: VisibilityRule | undefined, visitor: VisitorState | undefined): boolean
+
+type VisibilityRule = "everyone" | "new-visitors" | "returning-visitors"
+type VisitorState = "new" | "returning"
+type VisibilityProps = { visibility?: VisibilityRule }
+```
+
+`visibilityFields()` adds a **Show to** select. `isVisible()` returns whether to render. A missing rule, the rule
+`"everyone"` or an unknown visitor (the editor canvas) always renders. See
+[Personalization](/docs/guides/personalization).
+
+## Putting it together
+
+```tsx
+import type { ComponentConfig } from "@puckeditor/core";
+import {
+  colorOverrideFields,
+  colorOverrideStyle,
+  visibilityFields,
+  isVisible,
+  type ColorOverrideProps,
+  type VisibilityProps,
+} from "@olgax.com/sdk";
+
+type Props = { title: string } & ColorOverrideProps & VisibilityProps;
+
+export const myBlock: ComponentConfig<{ props: Props }> = {
+  fields: { title: { type: "text" }, ...colorOverrideFields(), ...visibilityFields() },
+  defaultProps: { title: "Hello" },
+  render: (props) =>
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? (
+      <h2 style={colorOverrideStyle(props)}>{props.title}</h2>
+    ) : (
+      <></>
+    ),
+};
+```

@@ -1,5 +1,7 @@
 # @olgax.com/components
 
+[Docs](https://dxp.olgax.com/docs/reference/components) | [Website](https://dxp.olgax.com) | [Discord](https://discord.gg/EAXcCXgUz2) | [GitHub](https://github.com/OLGAX-com/olgax-dxp)
+
 The default Olgax DXP component library: `Hero`, `Header`, `Footer`, `CTA`, `Gallery`,
 `Pricing`, `FAQ`, `Testimonials`. Each component is a plain React component registered with
 Puck via [`@olgax.com/sdk`](../sdk)'s `registerComponent()`, styled with CSS custom properties

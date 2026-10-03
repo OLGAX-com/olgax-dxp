@@ -1,0 +1,86 @@
+---
+title: Production checklist
+description: What to get right before launching an Olgax DXP site - access control, Postgres, migrations, secrets, email and the things Olgax does not do for you yet.
+---
+
+Two things every real deployment must get right that a local project does not: **who can edit**, and **where data lives**.
+
+## Access control
+
+Payload does **not** restrict reads and writes just because a collection has `auth: true` or drafts enabled. So every
+collection in `@olgax.com/payload-preset` explicitly defines its access rules:
+
+| Collection | Read | Write |
+| --- | --- | --- |
+| `users` | Signed-in | Signed-in. Anonymous `create` is allowed only while **zero users exist** (the first-admin bootstrap). |
+| `media` | Public (images must show on public pages) | Signed-in |
+| `pages` | Signed-in see all, anonymous see **published only** | Signed-in |
+| `sections` | Signed-in | Signed-in |
+| `webhooks` | Signed-in (the secret is sensitive) | Signed-in |
+| `page-views` | Signed-in | Created and updated only by the server. Signed-in users can delete. |
+| `site-settings` (global) | Public (the proxy reads it) | Signed-in |
+
+The Local API used by the app's own routes bypasses access control by default. The write paths that matter, saving a
+draft and publishing, check for a signed-in user first and then run with access control enforced, so Payload's rules are
+the real enforcement and not just a UI check. The `/<slug>/edit` route also redirects anonymous visitors to
+`/admin/login` instead of rendering the editor.
+
+## Database
+
+Use Postgres in production. It is an environment change only:
+
+```bash
+DATABASE_URL=postgres://user:password@host:5432/dbname
+```
+
+Any managed Postgres works, such as Neon, Supabase, Railway or Vercel Postgres.
+
+If you do keep SQLite (`file:./payload.db`), the database file lives on the server's disk. Put it on a persistent
+volume, and take backups.
+
+## Migrations
+
+Local development does not need migrations. Payload's dev-mode schema push applies changes automatically, which is
+fine for disposable data. A real deployment should use migrations:
+
+```bash
+pnpm migrate:create   # write a new migration from the current schema diff
+pnpm migrate          # run any pending migrations
+pnpm migrate:status   # list applied and pending migrations
+```
+
+Run `pnpm migrate:create` after any schema-affecting change, commit the generated file, and run `pnpm migrate` as part
+of every deploy. Migrations land in the project's `migrations/` folder whichever database adapter is active.
+
+<Callout type="warn" title="Never accept the data loss prompt on live data">
+  Do not rely on the dev-mode push, or accept its "DATA LOSS WARNING" prompt, against a database that has real
+  content.
+</Callout>
+
+### Localized fields
+
+Marking an existing field `localized: true` (as page `title` and `data` and section `content` already are) changes how
+the column is stored. Accepting the prompt on a populated table drops the old column. Write a migration that moves the
+existing values first, or add localization from the start on a fresh project.
+
+## Secrets and environment
+
+- Set a strong, unique `PAYLOAD_SECRET` for every environment. Never reuse your local one.
+- Set `NEXT_PUBLIC_SITE_URL` to your public URL.
+- Change the seeded `admin@example.com` password, or delete that user after creating your own.
+- Do not commit `.env`.
+
+## Before a real launch
+
+- [ ] Configure an email adapter. Payload logs verification and reset emails to the console otherwise. See
+  [Payload's email docs](https://payloadcms.com/docs/email/overview).
+- [ ] Use Postgres, and run `pnpm migrate` during deploys.
+- [ ] Decide where uploaded media is stored. See [Self-hosting](/docs/deployment/self-hosting#uploaded-media).
+- [ ] Remember there are no roles yet. Any signed-in user is a full editor, so only create accounts for people you
+  trust.
+- [ ] Optionally connect [Umami](/docs/guides/analytics).
+
+## Questions
+
+If something here does not match what you see, tell us on [Discord](https://discord.gg/EAXcCXgUz2) or open a
+[GitHub issue](https://github.com/OLGAX-com/olgax-dxp/issues).

@@ -1,0 +1,74 @@
+---
+title: Local development
+description: Set up the Olgax DXP monorepo locally - pnpm and Turborepo workspace layout, running the demo site, tests, lint and build, and how to open a good pull request.
+---
+
+Olgax DXP is open source, and contributions of every size are welcome. Come say hello on
+[Discord](https://discord.gg/EAXcCXgUz2) if you want to talk through an idea before writing code.
+
+## Repository layout
+
+A pnpm and Turborepo workspace at [github.com/OLGAX-com/olgax-dxp](https://github.com/OLGAX-com/olgax-dxp):
+
+```text
+apps/demo                  Reference Next.js + Payload + Puck site
+apps/docs                  This documentation site (Fumadocs)
+packages/payload-preset    Payload collections and globals
+packages/sdk               registerComponent() and developer-facing APIs
+packages/components        Default component library
+packages/datasource        Collection, filter and limit data resolvers
+packages/multi-tenancy     Groundwork only: Sites collection and withSite() helper
+packages/marketplace       Groundwork only: component manifest schema and validation
+create-olgax-site          The CLI scaffolder and its project template
+```
+
+<Callout title="Template and demo stay in sync">
+  `create-olgax-site/template` is what users get, and `apps/demo` is the reference site. Shared files between them are
+  kept identical. If you change one, apply the same change to the other.
+</Callout>
+
+## Get set up
+
+```bash
+git clone https://github.com/OLGAX-com/olgax-dxp.git
+cd olgax-dxp
+pnpm install
+cp apps/demo/.env.example apps/demo/.env   # then set PAYLOAD_SECRET
+pnpm --filter demo seed                    # admin user and a demo page
+pnpm dev                                   # all dev servers via Turborepo
+```
+
+Requires Node.js 20.9 or newer and pnpm.
+
+Open the demo at `http://localhost:3000`, and sign in with the seeded admin (see the
+[Quick start](/docs/getting-started/quick-start)).
+
+## Run the docs site
+
+```bash
+pnpm --filter docs dev
+```
+
+Docs are MDX files in `apps/docs/content/docs`. Every page has an **Edit on GitHub** link. Add a page by creating an
+`.mdx` file with `title` and `description` frontmatter, and list it in the folder's `meta.json`.
+
+## Before you open a PR
+
+```bash
+pnpm lint
+pnpm build
+pnpm test
+```
+
+CI runs the same checks on every pull request.
+
+## Pull request tips
+
+- Keep PRs focused: one component, one fix or one doc update.
+- Explain **why**, not only what changed.
+- If you touch a published package, add a changeset. See [Releasing](/docs/contributing/releasing).
+- Unsure whether an idea fits? Open an issue or ask on [Discord](https://discord.gg/EAXcCXgUz2) first.
+
+## Code of conduct
+
+Be respectful and constructive. This is a community project.

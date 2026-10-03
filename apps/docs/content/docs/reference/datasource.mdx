@@ -1,0 +1,65 @@
+---
+title: "@olgax.com/datasource"
+description: API reference for @olgax.com/datasource - collectionQueryFields, createCollectionResolverFetch, createCollectionResolver and queryCollectionFromSearchParams.
+---
+
+A narrow resolver layer for feeding Payload collection data into Puck components.
+
+```bash
+pnpm add @olgax.com/datasource
+```
+
+See [Data sources](/docs/guides/data-sources) for a walkthrough.
+
+## CollectionQueryProps
+
+```ts
+type CollectionQueryProps = {
+  collection: string;
+  filterField?: string;
+  filterValue?: string;
+  limit?: number;
+  items?: unknown[];
+};
+```
+
+One collection, a single equality filter and a limit (default 10). No operators and no `and` or `or`.
+
+## collectionQueryFields
+
+Puck field definitions for `collection`, `filterField`, `filterValue` (text) and `limit` (number). Spread them into a
+component's `fields`.
+
+## createCollectionResolverFetch
+
+```ts
+createCollectionResolverFetch<Props extends CollectionQueryProps>(endpoint: string): ResolveData
+```
+
+Returns a Puck `resolveData` that calls a same-app route handler with `fetch()`. It never imports `payload`, so it is
+safe in a config shared by the client-side editor and server-side rendering. On the server it uses
+`NEXT_PUBLIC_SITE_URL` (default `http://localhost:3000`) as the base URL.
+
+It re-runs only when `collection`, `filterField`, `filterValue` or `limit` changes, and writes the result to a
+read-only `items` prop.
+
+## queryCollectionFromSearchParams
+
+```ts
+queryCollectionFromSearchParams(
+  getPayload: () => Promise<Payload>,
+  searchParams: URLSearchParams,
+): Promise<unknown[]>
+```
+
+The server-side half. Use it in the route handler that `createCollectionResolverFetch` calls. Returns an empty array when
+no `collection` is given.
+
+## createCollectionResolver
+
+```ts
+createCollectionResolver<Props extends CollectionQueryProps>(getPayload: () => Promise<Payload>): ResolveData
+```
+
+Runs the Payload Local API `find()` directly. **Server only.** Use it only in a config that backs server-rendered output
+and never reaches the client `<Puck>` editor, otherwise `payload` ends up in the browser bundle.

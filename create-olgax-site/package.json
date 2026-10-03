@@ -19,6 +19,7 @@
     "directory": "create-olgax-site"
   },
   "bugs": "https://github.com/OLGAX-com/olgax-dxp/issues",
+  "homepage": "https://dxp.olgax.com",
   "type": "module",
   "bin": {
     "create-olgax-site": "./bin/index.mjs"

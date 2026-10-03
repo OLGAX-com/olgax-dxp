@@ -1,0 +1,57 @@
+---
+title: Releasing
+description: How Olgax DXP packages are versioned and published to npm with Changesets, the automated Version Packages pull request and npm Trusted Publishing.
+---
+
+The `@olgax.com/*` packages and `create-olgax-site` are versioned with [Changesets](https://github.com/changesets/changesets)
+and published to npm by GitHub Actions.
+
+## Which packages are published
+
+- `@olgax.com/sdk`
+- `@olgax.com/components`
+- `@olgax.com/datasource`
+- `@olgax.com/payload-preset`
+- `create-olgax-site`
+
+`apps/demo` and `apps/docs` are never published. `packages/marketplace` and `packages/multi-tenancy` are groundwork and
+excluded for now. See `.changeset/config.json`.
+
+## Add a changeset
+
+If your PR changes anything in a published package, add a changeset:
+
+```bash
+pnpm changeset
+```
+
+Pick the affected packages and a semver bump, then write a one-line summary. It becomes the changelog entry. Commit
+the generated `.changeset/*.md` file with your PR.
+
+| Bump | Use for |
+| --- | --- |
+| patch | Bug fixes, docs and README updates |
+| minor | New features |
+| major | Breaking changes |
+
+## What happens next
+
+<Steps>
+  <Step>
+    ### Merge to main
+    CI runs lint, build and tests. If there are pending changesets, the release workflow opens or updates a
+    **Version Packages** pull request.
+  </Step>
+  <Step>
+    ### Merge Version Packages
+    Merging bumps versions, updates changelogs and publishes to npm.
+  </Step>
+  <Step>
+    ### Provenance
+    Publishing uses npm Trusted Publishing (OIDC), so releases are tied to this repository's workflow.
+  </Step>
+</Steps>
+
+## The docs site
+
+The docs are not released with Changesets. They are deployed from `main`, so docs-only changes need no changeset.

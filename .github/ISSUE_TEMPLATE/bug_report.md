@@ -5,6 +5,9 @@ title: "[Bug] "
 labels: bug
 ---
 
+Not sure it's a bug? Ask on [Discord](https://discord.gg/EAXcCXgUz2) or check the
+[troubleshooting guide](https://dxp.olgax.com/docs/deployment/troubleshooting) first.
+
 **Describe the bug**
 A clear description of what's wrong.
 

@@ -1,0 +1,77 @@
+---
+title: Theming
+description: Restyle an Olgax DXP site with --olgax-* CSS variables, Site Settings colors, per-page and per-block color overrides, and dark mode without forking components.
+---
+
+Every component in `@olgax.com/components` reads its styling from `--olgax-*` CSS custom properties, with sensible
+fallbacks. Nothing is hard-coded, so you can restyle every default component without forking it.
+
+## Four levels of control
+
+From broadest to narrowest. A narrower level wins over a broader one.
+
+| Level | Where | Who |
+| --- | --- | --- |
+| Theme CSS | A stylesheet in your project | Developer |
+| Site Settings | Admin, **Site Settings** | Editor |
+| Page colors | Page root fields in the editor | Editor |
+| Block colors | A block's color fields in the editor | Editor |
+
+## Design tokens
+
+```css
+:root {
+  --olgax-color-bg: #ffffff;
+  --olgax-color-bg-muted: #f4f4f5;
+  --olgax-color-text: #18181b;
+  --olgax-color-text-muted: #52525b;
+  --olgax-color-primary: #18181b;
+  --olgax-color-primary-contrast: #ffffff;
+  --olgax-color-border: #e4e4e7;
+  --olgax-font-family: system-ui, sans-serif;
+  --olgax-radius: 0.5rem;
+  --olgax-spacing: 1rem;
+}
+```
+
+Override any of these in your site's own CSS, for example in `app/(frontend)/globals.css`.
+
+## Site Settings
+
+In the admin, **Site Settings** has three color fields: **primary**, **background** and **text**. Values must be valid
+hex colors. They are validated, then injected on every page as `:root` overrides of `--olgax-color-primary`,
+`--olgax-color-bg` and `--olgax-color-text`. Blank fields leave the defaults alone.
+
+## Per-page and per-block colors
+
+Select nothing in the editor to edit the page's root fields, including color overrides for that page. Select a block
+to see its own color fields. Under the hood the SDK's `colorOverrideStyle()` sets the same `--olgax-color-*` variables
+on that element, so everything inside it follows.
+
+To add the same controls to your own block, see [Custom components](/docs/guides/custom-components).
+
+## Add a theme
+
+Scope overrides under a selector you control: a `data-theme` attribute, a class or a media query.
+
+```css
+[data-theme="dark"] {
+  --olgax-color-bg: #0a0a0a;
+  --olgax-color-bg-muted: #18181b;
+  --olgax-color-text: #fafafa;
+  --olgax-color-text-muted: #a1a1aa;
+  --olgax-color-primary: #fafafa;
+  --olgax-color-primary-contrast: #0a0a0a;
+  --olgax-color-border: #27272a;
+}
+```
+
+Then set `data-theme="dark"` on `<html>` or any ancestor of the rendered blocks.
+
+The package ships this exact theme as `@olgax.com/components/src/themes/dark.css`, which you can import or copy as a
+starting point for your own.
+
+<Callout title="Using tokens in your own blocks">
+  Reference `var(--olgax-color-text)`, `var(--olgax-spacing)` and friends in your CSS and your blocks follow the site
+  theme, Site Settings and per-page overrides automatically.
+</Callout>

@@ -1,7 +1,11 @@
 # @olgax.com/sdk
 
-A thin wrapper around Puck's config API. `registerComponent()` is the only public entry
-point - its whole purpose is making it fast to register a custom component with Puck.
+[Docs](https://dxp.olgax.com/docs/reference/sdk) | [Website](https://dxp.olgax.com) | [Discord](https://discord.gg/EAXcCXgUz2) | [GitHub](https://github.com/OLGAX-com/olgax-dxp)
+
+A thin wrapper around Puck's config API. `registerComponent()` is the main entry
+point - its whole purpose is making it fast to register a custom component with Puck. It also exports
+`colorOverrideFields()`/`colorOverrideStyle()` and `visibilityFields()`/`isVisible()` (see the
+[full reference](https://dxp.olgax.com/docs/reference/sdk)).
 
 ## Usage
 

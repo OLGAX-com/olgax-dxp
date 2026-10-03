@@ -3,6 +3,8 @@
 All notable changes to Olgax DXP are documented here. From this point forward, releases are
 managed by [Changesets](https://github.com/changesets/changesets) - see `CONTRIBUTING.md`.
 
+Website and docs: [dxp.olgax.com](https://dxp.olgax.com) | Community: [Discord](https://discord.gg/EAXcCXgUz2)
+
 ## 0.1.0 - First public release
 
 An open-source, self-hostable page-building layer for Payload CMS + Next.js: Payload for

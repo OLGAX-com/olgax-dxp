@@ -1,0 +1,63 @@
+---
+title: create-olgax-site
+description: CLI reference for create-olgax-site, the command that scaffolds a complete Olgax DXP project with Payload CMS, Next.js and the Puck page builder.
+---
+
+```bash
+npx create-olgax-site <project-name>
+```
+
+Also works with `pnpm dlx create-olgax-site <project-name>`.
+
+## Requirements
+
+- Node.js 20.9 or newer
+- pnpm
+
+## What it does
+
+1. Converts `<project-name>` to a folder name (lowercase, hyphens) and refuses to continue if that folder exists and is
+   not empty.
+2. Copies the project template.
+3. Renames the template's `gitignore` to `.gitignore` and sets the package name.
+4. Creates `.env` from `.env.example` with a freshly generated random `PAYLOAD_SECRET`.
+5. Runs `pnpm install`.
+6. Runs `pnpm seed` to create an admin user, a published `home` page and a reusable `cta-banner` section.
+7. Prints the next steps.
+
+If step 5 or 6 fails, the CLI tells you which command to run yourself.
+
+## After the CLI finishes
+
+```bash
+cd my-site
+pnpm dev
+```
+
+| What | Where |
+| --- | --- |
+| Site | `http://localhost:3000` |
+| Page builder | `http://localhost:3000/home/edit` |
+| Dashboard | `http://localhost:3000/dashboard` |
+| Admin | `http://localhost:3000/admin` |
+| Login | `admin@example.com` and `ChangeMe123!`. Change the password. |
+
+## Scripts in the generated project
+
+| Script | Purpose |
+| --- | --- |
+| `pnpm dev` | Start the dev server |
+| `pnpm build` and `pnpm start` | Build and run for production |
+| `pnpm lint` | Lint the project |
+| `pnpm seed` | Create the admin user and demo content |
+| `pnpm new:component Name` | Generate a custom block. See [Custom components](/docs/guides/custom-components). |
+| `pnpm migrate:create`, `pnpm migrate`, `pnpm migrate:status` | Database migrations. See [Production](/docs/deployment/production). |
+| `pnpm generate:types` | Regenerate Payload's TypeScript types |
+| `pnpm generate:importmap` | Regenerate Payload's admin import map |
+| `pnpm payload` | Run the Payload CLI |
+
+## Links
+
+- npm: [create-olgax-site](https://www.npmjs.com/package/create-olgax-site)
+- Community: [Discord](https://discord.gg/EAXcCXgUz2)
+- Docs: [dxp.olgax.com](https://dxp.olgax.com)

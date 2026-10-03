@@ -1,0 +1,69 @@
+---
+title: Self-hosting
+description: Deploy an Olgax DXP site anywhere that runs Node.js - build and start commands, environment variables, Postgres, migrations, uploaded media and platform notes.
+---
+
+A generated site is a standard Next.js app, so it runs anywhere you can run Node.js 20.9 or newer: a VPS, Docker,
+Coolify, Railway, Fly.io and similar platforms. You own the stack, and there is no Olgax-hosted service to depend on.
+
+## Build and run
+
+```bash
+pnpm install
+pnpm build
+pnpm start
+```
+
+`pnpm start` serves on port 3000. Platforms that provide a `PORT` variable are supported by Next.js.
+
+## Checklist for any platform
+
+<Steps>
+  <Step>
+    ### Provide environment variables
+    At least `PAYLOAD_SECRET`, `DATABASE_URL` and `NEXT_PUBLIC_SITE_URL`. Supply the same values at **build time and run
+    time**. See [Configuration](/docs/getting-started/configuration).
+  </Step>
+  <Step>
+    ### Use Postgres
+    Point `DATABASE_URL` at a managed Postgres instance. See the [Production checklist](/docs/deployment/production).
+  </Step>
+  <Step>
+    ### Run migrations on deploy
+    Run `pnpm migrate` before starting the new version.
+  </Step>
+  <Step>
+    ### Create your first admin
+    Sign in with the seeded user after running `pnpm seed` once, then change the password. Alternatively open `/admin`
+    on a fresh database and create the first user there. Account creation is open only while no users exist.
+  </Step>
+</Steps>
+
+## Uploaded media
+
+Uploads to the `media` collection are written to the server's local disk by default. Container platforms often have
+ephemeral file systems, so uploads disappear on redeploy unless you:
+
+- mount a **persistent volume** for the media folder, or
+- use a [Payload storage adapter](https://payloadcms.com/docs/upload/storage-adapters) for S3-compatible or other
+  cloud storage.
+
+The same applies to the SQLite database file if you stay on SQLite.
+
+## Nixpacks, Coolify and similar
+
+Platforms that auto-detect Node.js projects (Nixpacks, including Coolify, and Railway's builder) work with the
+defaults: install with pnpm, run `pnpm build`, then `pnpm start`. Set the environment variables in the platform's
+settings and add a volume if you use SQLite or local media.
+
+This documentation site is itself a Next.js app, deployed that way at [dxp.olgax.com](https://dxp.olgax.com).
+
+## Docker
+
+Any standard Next.js Docker setup works. The container needs the environment variables above and Node.js 20.9 or newer.
+If you stay on SQLite or local media, mount volumes for them.
+
+## Need a hand?
+
+Deployment questions are welcome in the [Olgax Discord](https://discord.gg/EAXcCXgUz2). Mention your platform and the
+error you see.

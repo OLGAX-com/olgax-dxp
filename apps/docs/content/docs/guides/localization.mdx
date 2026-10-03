@@ -1,0 +1,57 @@
+---
+title: Localization
+description: Serve multilingual Olgax DXP sites with locale-prefixed routes, per-language content, a Site Settings toggle, and how to add a new locale.
+---
+
+Olgax DXP uses Payload's localization for content and locale-prefixed routes for the site. It ships with English
+(`en`, the default) and Spanish (`es`).
+
+## How routing works
+
+| Localization | URLs | Behavior |
+| --- | --- | --- |
+| **On** (default) | `/en`, `/en/pricing`, `/es/pricing` | A request without a locale is redirected to the default locale, so `/pricing` becomes `/en/pricing` |
+| **Off** | `/`, `/pricing` | Only the default locale is served. A locale-prefixed URL redirects to its bare equivalent. |
+
+Routing is handled by `proxy.ts`, which runs on every request except `/admin`, `/api` and Next.js internals.
+
+### Turn localization on or off
+
+Open **Site Settings** in the admin and toggle **localization enabled**. The setting is cached for about 30 seconds.
+An existing site that predates the setting is treated as enabled, so nothing changes out from under it.
+
+All internal links in the dashboard and editor are built with the same setting, so they always point at the right URL.
+
+## What is localized
+
+Page `title` and page `data` (the blocks) are localized fields. Each language has its own copy. Editing happens per
+locale:
+
+```text
+/en/pricing/edit
+/es/pricing/edit
+```
+
+The dashboard has a locale switcher, and shows the page lists for the locale you are in. Sections are localized too.
+
+## Add a language
+
+Add it to `LOCALES` and restart. `payload.config.ts` reads the same list, so Payload's localization stays in sync.
+
+```ts title="lib/i18n.ts"
+export const LOCALES = ["en", "es", "fr"] as const;
+```
+
+No other code changes are needed. The new language works for routes, the editor and the dashboard.
+
+Content that has not been translated yet **falls back to the default locale**, so a new language never shows an empty
+page.
+
+<Callout type="warn" title="Existing databases">
+  Adding a locale to Payload is safe, but changing which fields are localized on a database that already has data can
+  lose existing values. Create and review a migration first. See [Production](/docs/deployment/production).
+</Callout>
+
+## Change the default language
+
+Set `DEFAULT_LOCALE` in `lib/i18n.ts`. Payload's default locale follows it.

@@ -1,5 +1,7 @@
 # @olgax.com/marketplace
 
+Part of [Olgax DXP](https://dxp.olgax.com) | [Discord](https://discord.gg/EAXcCXgUz2)
+
 > **Phase 3 groundwork, not a working feature.** This package only defines the
 > `ComponentManifest` schema and a validator for it. There is no registry backend, no
 > discovery UI, and no install flow yet - building those is real infrastructure work for a

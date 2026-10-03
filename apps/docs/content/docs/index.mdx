@@ -1,0 +1,78 @@
+---
+title: Introduction
+description: Olgax DXP is an open-source, self-hostable page builder for Payload CMS and Next.js. Learn what it is, how it fits together and where to start.
+---
+
+**Olgax DXP** is an open-source, self-hostable page-building layer for **Payload CMS** and **Next.js**.
+
+- [Payload](https://payloadcms.com) manages your content, users, media, drafts and access control.
+- [Puck](https://puckeditor.com) gives editors a drag-and-drop visual canvas.
+- **Olgax** supplies the parts that turn the two into a product: a component library, a renderer, a dashboard,
+  localization, analytics, webhooks and a CLI that scaffolds a working site in minutes.
+
+If you want a self-hosted alternative to hosted page builders, built on tools you already trust, this is for you.
+
+<Callout title="Beta">
+  Olgax DXP is in beta (0.x). It is usable today and moving quickly. Expect rough edges, and tell us about them on
+  [Discord](https://discord.gg/EAXcCXgUz2) or [GitHub](https://github.com/OLGAX-com/olgax-dxp/issues).
+</Callout>
+
+## Try it
+
+```bash
+npx create-olgax-site my-site
+cd my-site
+pnpm dev
+```
+
+The CLI installs dependencies, creates `.env` with a generated secret, and seeds an admin user and a homepage, so the
+first `pnpm dev` shows a real page. See the [Quick start](/docs/getting-started/quick-start) for the full walkthrough.
+
+## What you get
+
+<Cards>
+  <Card title="Visual page builder" href="/docs/guides/page-editor">
+    Drag and drop pages with Puck. Content is stored as plain JSON in Payload.
+  </Card>
+  <Card title="Your own components" href="/docs/guides/custom-components">
+    Generate a block with one command and watch it appear in the editor live.
+  </Card>
+  <Card title="Theming" href="/docs/guides/theming">
+    Retheme a site, a page or a single block with CSS variables and the editor.
+  </Card>
+  <Card title="Drafts and publishing" href="/docs/guides/drafts-and-publishing">
+    Autosaved drafts, explicit publishing and safe public routes.
+  </Card>
+  <Card title="Localization" href="/docs/guides/localization">
+    Locale-prefixed routes, per-language content and automatic fallback.
+  </Card>
+  <Card title="Analytics" href="/docs/guides/analytics">
+    A built-in, privacy-friendly counter, plus optional Umami.
+  </Card>
+  <Card title="Personalization" href="/docs/guides/personalization">
+    Show blocks to new or returning visitors.
+  </Card>
+  <Card title="Webhooks" href="/docs/guides/webhooks">
+    Signed notifications when pages are published or deleted.
+  </Card>
+</Cards>
+
+## How it fits together
+
+A scaffolded site is a normal Next.js app with Payload mounted inside it. Pages are Payload documents whose `data`
+field holds Puck's JSON. The same Puck config powers the editor and the public renderer, so what editors build is what
+visitors see.
+
+| Package | What it does |
+| --- | --- |
+| [`create-olgax-site`](/docs/reference/cli) | Scaffolds a new project |
+| [`@olgax.com/payload-preset`](/docs/reference/payload-preset) | Payload collections and globals: users, media, pages, sections, site settings, page views, webhooks |
+| [`@olgax.com/sdk`](/docs/reference/sdk) | `registerComponent()`, color override and visibility helpers |
+| [`@olgax.com/components`](/docs/reference/components) | The default, themeable component library |
+| [`@olgax.com/datasource`](/docs/reference/datasource) | Resolvers that feed real Payload data into components |
+
+## Get help
+
+- Chat with the community on the [official Discord](https://discord.gg/EAXcCXgUz2).
+- Read these docs at [dxp.olgax.com](https://dxp.olgax.com).
+- Report bugs and request features on [GitHub](https://github.com/OLGAX-com/olgax-dxp/issues).
