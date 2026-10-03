@@ -33,8 +33,9 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
-      # Trusted publishing needs npm >=11.5.1; the runner's bundled npm is older.
-      - run: npm install -g npm@latest
+      # Trusted publishing needs npm >=11.5.1. Stay on 11: npm 12 makes `npm info --json`
+      # return an array, which Changesets 2.x misreads as "nothing published yet".
+      - run: npm install -g npm@11
 
       - run: pnpm install --frozen-lockfile
 

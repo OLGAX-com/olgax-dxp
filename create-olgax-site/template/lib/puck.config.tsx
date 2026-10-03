@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import { getRegisteredComponents } from "@olgax.com/sdk";
 import { registerRelatedPages } from "@olgax.com/components";
 import { createCollectionResolverFetch } from "@olgax.com/datasource";
-// Your own blocks: importing this registers everything under components/blocks/.
-import "@/components/blocks";
+// Your own blocks: add them in components/blocks/index.ts (or run `pnpm new:component`).
+import { blocks } from "@/components/blocks";
 
 // Importing @olgax.com/components registers its 8 default blocks as a side effect.
 // RelatedPages uses the fetch-based resolver (not the direct-Payload one) because
@@ -64,7 +64,7 @@ type RootProps = {
 // registered - combines the default component library into the one Puck
 // `Config` this app's editor and render routes share.
 export const config: Config = {
-  components: getRegisteredComponents(),
+  components: { ...getRegisteredComponents(), ...blocks },
   root: {
     fields: {
       title: { type: "text" }, // redeclare to keep Puck's default title field
@@ -101,3 +101,8 @@ export const config: Config = {
     },
   },
 };
+
+// Tells an open editor tab that this config was hot-reloaded, so it can pick up edits to
+// your blocks without a manual refresh (see components/PageEditor.tsx). Dev-only in effect.
+export const CONFIG_UPDATED_EVENT = "olgax:config-updated";
+if (typeof window !== "undefined") window.dispatchEvent(new Event(CONFIG_UPDATED_EVENT));

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Usage: pnpm new:component PromoBanner
-// Creates components/blocks/PromoBanner.tsx + .css and registers it in components/blocks/index.ts.
+// Creates components/blocks/PromoBanner.tsx + .css and adds it to the blocks map in components/blocks/index.ts.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -23,9 +23,10 @@ if (existsSync(tsxPath) || existsSync(cssPath)) {
 }
 
 const className = `site-${name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()}`;
+const configName = `${name[0].toLowerCase()}${name.slice(1)}Block`;
 
-const tsx = `import {
-  registerComponent,
+const tsx = `import type { ComponentConfig } from "@puckeditor/core";
+import {
   colorOverrideFields,
   colorOverrideStyle,
   visibilityFields,
@@ -40,14 +41,14 @@ export type __NAME__Props = {
 } & ColorOverrideProps &
   VisibilityProps;
 
-const __NAME__ = ({ title, ...props }: __NAME__Props) => (
+const __NAME__View = ({ title, ...props }: __NAME__Props) => (
   <section className="__CLASS__" style={colorOverrideStyle(props)}>
     <h2>{title}</h2>
   </section>
 );
 
-// The name below is what shows up in the editor's component list.
-registerComponent<__NAME__Props>("__NAME__", {
+// Listed in components/blocks/index.ts - the key used there is the name shown in the editor.
+export const __CONFIG__: ComponentConfig<{ props: __NAME__Props }> = {
   fields: {
     title: { type: "text" },
     ...colorOverrideFields(),
@@ -57,8 +58,8 @@ registerComponent<__NAME__Props>("__NAME__", {
     title: "__NAME__",
   },
   render: (props) =>
-    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <__NAME__ {...props} /> : <></>,
-});
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <__NAME__View {...props} /> : <></>,
+};
 `;
 
 const css = `.__CLASS__ {
@@ -70,15 +71,28 @@ const css = `.__CLASS__ {
 `;
 
 mkdirSync(blocksDir, { recursive: true });
-writeFileSync(tsxPath, tsx.replaceAll("__NAME__", name).replaceAll("__CLASS__", className));
+writeFileSync(
+  tsxPath,
+  tsx.replaceAll("__NAME__", name).replaceAll("__CLASS__", className).replaceAll("__CONFIG__", configName),
+);
 writeFileSync(cssPath, css.replaceAll("__CLASS__", className));
 
-const importLine = `import "./${name}";`;
+const importMarker = "// new:component imports go above this line";
+const entryMarker = "  // new:component entries go above this line";
 const indexSource = existsSync(indexPath) ? readFileSync(indexPath, "utf8") : "";
-if (!indexSource.includes(importLine)) {
-  const separator = indexSource === "" || indexSource.endsWith("\n") ? "" : "\n";
-  writeFileSync(indexPath, `${indexSource}${separator}${importLine}\n`);
-}
 
-console.log(`Created components/blocks/${name}.tsx and ${name}.css, registered in components/blocks/index.ts.`);
-console.log(`Open any page's /edit URL while "pnpm dev" is running and add "${name}" from the component list.`);
+if (indexSource.includes(importMarker) && indexSource.includes(entryMarker)) {
+  writeFileSync(
+    indexPath,
+    indexSource
+      .replace(importMarker, `import { ${configName} } from "./${name}";\n${importMarker}`)
+      .replace(entryMarker, `  ${name}: block(${configName}),\n${entryMarker}`),
+  );
+  console.log(`Created components/blocks/${name}.tsx and ${name}.css and added it to components/blocks/index.ts.`);
+  console.log(`Open any page's /edit URL while "pnpm dev" is running and add "${name}" from the component list.`);
+} else {
+  console.log(`Created components/blocks/${name}.tsx and ${name}.css.`);
+  console.log("components/blocks/index.ts doesn't have the new:component markers, so add these two lines yourself:");
+  console.log(`  import { ${configName} } from "./${name}";`);
+  console.log(`  ${name}: block(${configName}),   // inside the blocks object`);
+}

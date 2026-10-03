@@ -1,5 +1,5 @@
+import type { ComponentConfig } from "@puckeditor/core";
 import {
-  registerComponent,
   colorOverrideFields,
   colorOverrideStyle,
   visibilityFields,
@@ -19,7 +19,7 @@ export type CalloutProps = {
 
 // Keep this a plain component with no hooks: Puck renders it in the editor (client)
 // and on the public page (server). Add "use client" and hooks only if you need them.
-const Callout = ({ title, body, align, ...props }: CalloutProps) => (
+const CalloutView = ({ title, body, align, ...props }: CalloutProps) => (
   <aside
     className={`site-callout site-callout--${align}`}
     style={colorOverrideStyle(props)}
@@ -29,8 +29,9 @@ const Callout = ({ title, body, align, ...props }: CalloutProps) => (
   </aside>
 );
 
-// The name below is what shows up in the editor's component list, and what is stored in each page.
-registerComponent<CalloutProps>("Callout", {
+// This config is what the page builder uses. It is listed in components/blocks/index.ts,
+// and the key used there is the name shown in the editor's component list.
+export const calloutBlock: ComponentConfig<{ props: CalloutProps }> = {
   fields: {
     title: { type: "text" },
     body: { type: "textarea" },
@@ -50,5 +51,5 @@ registerComponent<CalloutProps>("Callout", {
     align: "left",
   },
   render: (props) =>
-    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <Callout {...props} /> : <></>,
-});
+    isVisible(props.visibility, props.puck?.metadata?.visitor) ? <CalloutView {...props} /> : <></>,
+};

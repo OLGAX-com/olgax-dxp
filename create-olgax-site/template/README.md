@@ -31,7 +31,7 @@ If the homepage says "This site doesn't have a homepage yet", the seed didn't ru
 ```
 app/(frontend)/      Public site, dashboard and the page editor routes
 app/(payload)/       Payload admin panel and API
-components/blocks/   YOUR custom page-builder components (see below)
+components/blocks/   YOUR custom page-builder blocks, listed in components/blocks/index.ts
 components/          App components (editor, renderer, dashboard UI)
 lib/puck.config.tsx  Combines the default components and your blocks into one editor config
 payload.config.ts    Payload config (collections, localization, database)
@@ -40,9 +40,9 @@ scripts/seed.ts      Creates the admin user and the demo homepage
 
 ## Add your own component
 
-Every block in the page builder is a React component registered with `registerComponent()`
-from `@olgax.com/sdk`. Your blocks live in `components/blocks/`. A working example is in
-`components/blocks/Callout.tsx`.
+Every block in the page builder is a Puck component config. Your blocks live in
+`components/blocks/`, and `components/blocks/index.ts` is the list of blocks your site uses.
+A working example is in `components/blocks/Callout.tsx`.
 
 **1. Generate a block**
 
@@ -50,18 +50,22 @@ from `@olgax.com/sdk`. Your blocks live in `components/blocks/`. A working examp
 pnpm new:component PromoBanner
 ```
 
-This creates `components/blocks/PromoBanner.tsx` and `PromoBanner.css`, and adds
-`import "./PromoBanner";` to `components/blocks/index.ts`.
+This creates `components/blocks/PromoBanner.tsx` and `PromoBanner.css`, and adds the block to the
+`blocks` list in `components/blocks/index.ts`. With `pnpm dev` running it shows up in the
+editor's component list straight away, with no restart or reload.
 
-**2. Edit it.** The file has three parts:
+**2. Edit it.** The file exports one config with three parts:
 
 ```tsx
-registerComponent<PromoBannerProps>("PromoBanner", {
-  fields: { title: { type: "text" } },  // the inputs editors fill in
+export const promoBannerBlock: ComponentConfig<{ props: PromoBannerProps }> = {
+  fields: { title: { type: "text" } },   // the inputs editors fill in
   defaultProps: { title: "PromoBanner" }, // values when first dropped on a page
-  render: (props) => <PromoBanner {...props} />, // what visitors see
-});
+  render: (props) => <PromoBannerView {...props} />, // what visitors see
+};
 ```
+
+Save the file and the open editor updates its fields live. Add or rename fields freely; new
+fields show up in the side panel immediately.
 
 - `fields` accepts any [Puck field type](https://puckeditor.com/docs/api-reference/fields)
   (`text`, `textarea`, `number`, `select`, `radio`, `array`, `custom`, ...).
@@ -70,12 +74,16 @@ registerComponent<PromoBannerProps>("PromoBanner", {
 - Style with the `--olgax-*` CSS variables so your block follows the site theme.
 - Don't use hooks in a block unless the file starts with `"use client"`. Blocks render in both
   the editor and on the server.
+- Give new fields a value in `defaultProps` and make the view handle missing values. Pages you
+  already saved don't have the new field until someone edits and saves them again.
 
-**3. Use it.** Run `pnpm dev`, open a page's editor (for example `/home/edit`), and drag your
-block in from the component list. Publish the page to see it on the live site.
+**3. Use it.** Open a page's editor (for example `/home/edit`) and drag your block in from the
+component list. Publish the page to see it on the live site.
 
-Adding a block by hand is the same thing: create the file, call `registerComponent`, and import
-it from `components/blocks/index.ts`. Importing the file is what registers it.
+**Adding a block by hand.** Create the file and export a config like above, then add two lines to
+`components/blocks/index.ts`: an `import` and an entry in the `blocks` object
+(`PromoBanner: block(promoBannerBlock)`). The key is the name shown in the editor and stored in
+each page, so renaming it affects pages that already use the block.
 
 ## Configuration
 
