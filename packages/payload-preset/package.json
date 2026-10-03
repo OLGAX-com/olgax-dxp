@@ -1,6 +1,6 @@
 {
   "name": "@olgax.com/payload-preset",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Pre-configured Payload CMS collections (Users, Media, Pages, Sections, SiteSettings) for Olgax DXP.",
   "keywords": [
     "olgax",
