@@ -1,5 +1,12 @@
 # @olgax.com/components
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [aa9b1ec]
+  - @olgax.com/datasource@0.1.4
+
 ## 0.1.3
 
 ### Patch Changes

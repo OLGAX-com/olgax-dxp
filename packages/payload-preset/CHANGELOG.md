@@ -1,5 +1,11 @@
 # @olgax.com/payload-preset
 
+## 0.1.5
+
+### Patch Changes
+
+- aa9b1ec: Enforce Payload access control and collection allowlists in `@olgax.com/datasource` and `/api/related-pages`, add SSRF URL/IP validation to webhook configuration and dispatch, and require a non-empty `PAYLOAD_SECRET` at production runtime.
+
 ## 0.1.4
 
 ### Patch Changes
