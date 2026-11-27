@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { isEditorOrAdmin } from "@olgax.com/payload-preset";
 import { getPayloadClient, getCurrentUser, getSiteSettings } from "@/lib/payload";
 import { duplicatePage } from "@/lib/actions";
 import { publicUrlForSlug, localizedPath } from "@/lib/pages";
@@ -6,6 +7,7 @@ import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
 import { getViewCountsBySlug } from "@/lib/analytics";
 import { NewPageForm } from "@/components/NewPageForm";
 import { DeletePageButton } from "@/components/DeletePageButton";
+import { UnpublishPageButton } from "@/components/UnpublishPageButton";
 
 export default async function DashboardPages({
   params,
@@ -18,6 +20,7 @@ export default async function DashboardPages({
   if (!isLocale(locale)) notFound();
 
   const user = await getCurrentUser();
+  const canManageLifecycle = isEditorOrAdmin(user);
   const settings = await getSiteSettings();
   const localizationEnabled = resolveLocalizationEnabled(settings.localizationEnabled);
 
@@ -26,23 +29,34 @@ export default async function DashboardPages({
 
   const payload = await getPayloadClient();
   // Read latest drafts so autosaved title edits show up in listings and search.
-  const result = await payload.find({
-    collection: "pages",
-    limit: 100,
-    sort: "-updatedAt",
-    draft: true,
-    locale,
-    overrideAccess: false,
-    user,
-    where: query
-      ? {
-          or: [
-            { title: { contains: query } },
-            { slug: { contains: query } },
-          ],
-        }
-      : undefined,
-  });
+  const [result, sectionsResult] = await Promise.all([
+    payload.find({
+      collection: "pages",
+      limit: 100,
+      sort: "-updatedAt",
+      draft: true,
+      locale,
+      overrideAccess: false,
+      user,
+      where: query
+        ? {
+            or: [
+              { title: { contains: query } },
+              { slug: { contains: query } },
+            ],
+          }
+        : undefined,
+    }),
+    payload.find({
+      collection: "sections",
+      limit: 100,
+      sort: "name",
+      overrideAccess: false,
+      user,
+    }),
+  ]);
+
+  const sectionNames = sectionsResult.docs.map((s) => s.name);
 
   // Check separately which pages currently have a live published version so
   // `View` vs `Preview` reflects what visitors actually see.
@@ -70,7 +84,11 @@ export default async function DashboardPages({
 
   return (
     <div className="flex flex-col gap-6">
-      <NewPageForm locale={locale} localizationEnabled={localizationEnabled} />
+      <NewPageForm
+        locale={locale}
+        localizationEnabled={localizationEnabled}
+        sections={sectionNames}
+      />
 
       <form method="GET" className="flex gap-2">
         <input
@@ -146,7 +164,12 @@ export default async function DashboardPages({
                     Duplicate
                   </button>
                 </form>
-                <DeletePageButton locale={locale} id={page.id} title={page.title} />
+                {canManageLifecycle && hasPublished && (
+                  <UnpublishPageButton locale={locale} id={page.id} title={page.title} />
+                )}
+                {canManageLifecycle && (
+                  <DeletePageButton locale={locale} id={page.id} title={page.title} />
+                )}
               </div>
             </li>
           );

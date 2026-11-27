@@ -93,6 +93,21 @@ export async function deletePage(locale: Locale, id: string | number) {
   revalidatePath(`/${locale}/dashboard/pages`);
 }
 
+export async function unpublishPage(locale: Locale, id: string | number) {
+  const user = await requireEditor();
+  const payload = await getPayloadClient();
+  await payload.update({
+    collection: "pages",
+    id,
+    data: { _status: "draft" },
+    draft: false,
+    locale,
+    overrideAccess: false,
+    user,
+  });
+  revalidatePath(`/${locale}/dashboard/pages`);
+}
+
 // Copies a page's content (for the current locale only - other locales on
 // the copy start untranslated) into a brand-new draft page, appending
 // "-copy" (or "-copy-2", "-copy-3", ...) to the slug until one is free.

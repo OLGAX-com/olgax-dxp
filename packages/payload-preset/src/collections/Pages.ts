@@ -1,5 +1,6 @@
-import type { CollectionConfig } from "payload";
+import { APIError, type CollectionConfig } from "payload";
 import { dispatchWebhooks } from "../webhooks/dispatch";
+import { getUserRole, isEditorOrAdmin } from "../access/roles";
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const RESERVED_SLUGS = new Set(["admin", "api", "dashboard", "pages"]);
@@ -22,12 +23,11 @@ export const Pages: CollectionConfig = {
         or: [{ _status: { equals: "published" } }, { _status: { exists: false } }],
       };
     },
-    // Editing (autosave, publish, admin panel) requires a logged-in Payload
-    // user - these are the actual enforcement point when apps pass
-    // `overrideAccess: false` to the Local API (see apps/demo/lib/actions.ts).
+    // Authors, Editors, and Admins may create/edit drafts; publishing and
+    // deleting require Editor or Admin (enforced below).
     create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => isEditorOrAdmin(req.user),
   },
   admin: {
     useAsTitle: "title",
@@ -40,6 +40,17 @@ export const Pages: CollectionConfig = {
   // consuming app gets webhook support for free. Never fires for plain
   // autosaved drafts (see the `_status` check), only actual publishes.
   hooks: {
+    beforeChange: [
+      ({ data, req }) => {
+        if (req.user && getUserRole(req.user) === "author" && data?._status === "published") {
+          throw new APIError(
+            "Authors cannot publish pages. Save as a draft and ask an Editor or Admin to publish.",
+            403,
+          );
+        }
+        return data;
+      },
+    ],
     afterChange: [
       async ({ doc, req }) => {
         if (doc._status !== "published") return;
@@ -92,6 +103,59 @@ export const Pages: CollectionConfig = {
       type: "json",
       required: true,
       localized: true,
+    },
+    {
+      name: "seo",
+      type: "group",
+      label: "SEO & Metadata",
+      localized: true,
+      fields: [
+        {
+          name: "metaTitle",
+          type: "text",
+          admin: {
+            description: "Optional <title> override for search engines (defaults to page title).",
+          },
+        },
+        {
+          name: "metaDescription",
+          type: "textarea",
+          admin: {
+            description: "Summary shown in search snippets and social previews (120–160 chars).",
+          },
+        },
+        {
+          name: "ogImage",
+          type: "upload",
+          relationTo: "media",
+          admin: {
+            description: "Optional Open Graph social preview image.",
+          },
+        },
+        {
+          name: "canonicalUrl",
+          type: "text",
+          validate: (value?: string | null) => {
+            if (!value) return true;
+            try {
+              const parsed = new URL(value);
+              return parsed.protocol === "https:" || parsed.protocol === "http:"
+                ? true
+                : "Canonical URL must use http or https";
+            } catch {
+              return "Must be a valid absolute URL (e.g. https://example.com/about)";
+            }
+          },
+        },
+        {
+          name: "noIndex",
+          type: "checkbox",
+          defaultValue: false,
+          admin: {
+            description: "Exclude this page from search engines (noindex) and sitemap.xml.",
+          },
+        },
+      ],
     },
     {
       name: "quickLinks",

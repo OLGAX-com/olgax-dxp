@@ -135,6 +135,10 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  /**
+   * Admin: full access including Users, Webhooks, and Site Settings. Editor: manage, publish, and delete Pages, Sections, and Media. Author: create and edit Page drafts only (cannot publish or delete).
+   */
+  role: 'admin' | 'editor' | 'author';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -172,6 +176,16 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -190,6 +204,25 @@ export interface Page {
     | number
     | boolean
     | null;
+  seo?: {
+    /**
+     * Optional <title> override for search engines (defaults to page title).
+     */
+    metaTitle?: string | null;
+    /**
+     * Summary shown in search snippets and social previews (120–160 chars).
+     */
+    metaDescription?: string | null;
+    /**
+     * Optional Open Graph social preview image.
+     */
+    ogImage?: (number | null) | Media;
+    canonicalUrl?: string | null;
+    /**
+     * Exclude this page from search engines (noindex) and sitemap.xml.
+     */
+    noIndex?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -351,6 +384,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -385,6 +419,20 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -394,6 +442,15 @@ export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   data?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+        noIndex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

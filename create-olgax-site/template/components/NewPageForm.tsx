@@ -11,9 +11,11 @@ const RESERVED_SLUGS = new Set(["admin", "api", "dashboard", "pages"]);
 export function NewPageForm({
   locale,
   localizationEnabled,
+  sections = [],
 }: {
   locale: Locale;
   localizationEnabled: boolean;
+  sections?: string[];
 }) {
   const router = useRouter();
   const [slug, setSlug] = useState("");
@@ -64,14 +66,30 @@ export function NewPageForm({
           }}
           className="h-10 w-full rounded-full border border-solid border-black/[.08] px-4 text-sm text-black sm:flex-1 dark:border-white/[.145] dark:bg-black dark:text-zinc-50"
         />
-        <input
-          type="text"
-          aria-label="Start from section"
-          placeholder="start from section (optional)"
-          value={section}
-          onChange={(e) => setSection(e.target.value)}
-          className="h-10 w-full rounded-full border border-solid border-black/[.08] px-4 text-sm text-black sm:flex-1 dark:border-white/[.145] dark:bg-black dark:text-zinc-50"
-        />
+        {sections.length > 0 ? (
+          <select
+            aria-label="Start from section"
+            value={section}
+            onChange={(e) => setSection(e.target.value)}
+            className="h-10 w-full rounded-full border border-solid border-black/[.08] bg-white px-4 text-sm text-black sm:flex-1 dark:border-white/[.145] dark:bg-black dark:text-zinc-50"
+          >
+            <option value="">Start from blank canvas</option>
+            {sections.map((name) => (
+              <option key={name} value={name}>
+                Section: {name}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input
+            type="text"
+            aria-label="Start from section"
+            placeholder="start from section (optional)"
+            value={section}
+            onChange={(e) => setSection(e.target.value)}
+            className="h-10 w-full rounded-full border border-solid border-black/[.08] px-4 text-sm text-black sm:flex-1 dark:border-white/[.145] dark:bg-black dark:text-zinc-50"
+          />
+        )}
         <button
           type="submit"
           className="h-10 shrink-0 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
