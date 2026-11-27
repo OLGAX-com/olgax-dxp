@@ -5,6 +5,7 @@ import {
   visibilityFields,
   isVisible,
   mediaField,
+  resolveMediaAlt,
   safeMediaSrc,
   type ColorOverrideProps,
   type VisibilityProps,
@@ -56,6 +57,22 @@ registerComponent<GalleryProps>("Gallery", {
   },
   defaultProps: {
     images: [],
+  },
+  resolveData: async ({ props }, { changed }) => {
+    if (!changed.images || !Array.isArray(props.images)) {
+      return { props };
+    }
+    let updated = false;
+    const nextImages = await Promise.all(
+      props.images.map(async (img) => {
+        if (!img.src || img.alt.trim()) return img;
+        const defaultAlt = await resolveMediaAlt(img.src);
+        if (!defaultAlt) return img;
+        updated = true;
+        return { ...img, alt: defaultAlt };
+      }),
+    );
+    return updated ? { props: { ...props, images: nextImages } } : { props };
   },
   render: (props) =>
     isVisible(props.visibility, props.puck?.metadata?.visitor) ? <Gallery {...props} /> : <></>,

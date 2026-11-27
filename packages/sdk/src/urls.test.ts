@@ -12,12 +12,16 @@ describe("safeHref", () => {
     expect(safeHref("tel:+15551234567")).toBe("tel:+15551234567");
   });
 
-  it("blocks javascript:, vbscript:, data:, and protocol-relative URLs", () => {
+  it("blocks javascript:, vbscript:, data:, and protocol-relative variants", () => {
     expect(safeHref("javascript:alert(1)")).toBe("#");
     expect(safeHref("  JaVaScRiPt:alert(1)")).toBe("#");
+    expect(safeHref("java\tscript:alert(1)")).toBe("#");
     expect(safeHref("vbscript:msgbox(1)")).toBe("#");
     expect(safeHref("data:text/html,<script>alert(1)</script>")).toBe("#");
     expect(safeHref("//evil.example.com/phish")).toBe("#");
+    expect(safeHref("/\\evil.example.com/phish")).toBe("#");
+    expect(safeHref("/\t/evil.example.com/phish")).toBe("#");
+    expect(safeHref("\\\\evil.example.com\\phish")).toBe("#");
     expect(safeHref("")).toBe("#");
   });
 });
@@ -30,11 +34,13 @@ describe("safeMediaSrc", () => {
     );
   });
 
-  it("rejects javascript:, data:, mailto:, and protocol-relative URLs", () => {
+  it("rejects javascript:, data:, mailto:, and protocol-relative variants", () => {
     expect(safeMediaSrc("javascript:alert(1)")).toBeNull();
     expect(safeMediaSrc("data:image/svg+xml,<svg onload=alert(1)>")).toBeNull();
     expect(safeMediaSrc("mailto:test@example.com")).toBeNull();
     expect(safeMediaSrc("//evil.example.com/x.png")).toBeNull();
+    expect(safeMediaSrc("/\\evil.example.com/x.png")).toBeNull();
+    expect(safeMediaSrc("/\t/evil.example.com/x.png")).toBeNull();
     expect(safeMediaSrc("")).toBeNull();
   });
 });
