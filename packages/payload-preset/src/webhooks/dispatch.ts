@@ -1,6 +1,8 @@
 import { createHmac } from "crypto";
+import http from "node:http";
+import https from "node:https";
 import type { PayloadRequest } from "payload";
-import { validateWebhookUrl } from "./validate";
+import { resolveAndValidateWebhookTarget, type LookupAllFn } from "./validate";
 
 // Outbound webhooks are configured entirely in the `webhooks` collection
 // (URL, secret, which events) - no specific third-party vendor is hardcoded.
@@ -17,9 +19,58 @@ export type WebhookPayload = {
   timestamp: string;
 };
 
+const WEBHOOK_TIMEOUT_MS = 5000;
+
 // Exported for unit testing - same sha256=<hex> convention GitHub/Stripe use.
 export function sign(secret: string, body: string): string {
   return `sha256=${createHmac("sha256", secret).update(body).digest("hex")}`;
+}
+
+/**
+ * Resolves and validates the target address, binds the TCP connection to that
+ * exact validated IP (while preserving the original Host header and TLS SNI),
+ * and never follows HTTP redirects.
+ */
+export async function postWebhook(
+  rawUrl: string,
+  secret: string,
+  event: WebhookEvent,
+  body: string,
+  lookupFn?: LookupAllFn,
+): Promise<{ statusCode: number }> {
+  const target = await resolveAndValidateWebhookTarget(rawUrl, lookupFn);
+  const client = target.url.protocol === "https:" ? https : http;
+
+  return new Promise((resolve, reject) => {
+    const req = client.request(
+      target.url,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(body),
+          "X-Olgax-Event": event,
+          "X-Olgax-Signature": sign(secret, body),
+        },
+        // Pin socket connection to the pre-validated IP address to prevent DNS rebinding
+        // while keeping `target.url.hostname` as Host header and TLS SNI servername.
+        lookup: (_hostname, _options, callback) => {
+          callback(null, target.address, target.family);
+        },
+      },
+      (res) => {
+        res.resume();
+        resolve({ statusCode: res.statusCode ?? 0 });
+      },
+    );
+
+    req.setTimeout(WEBHOOK_TIMEOUT_MS, () => {
+      req.destroy(new Error("Webhook request timed out"));
+    });
+    req.on("error", reject);
+    req.write(body);
+    req.end();
+  });
 }
 
 // Fires every enabled webhook subscribed to `event`, in parallel, and never
@@ -42,20 +93,14 @@ export async function dispatchWebhooks(req: PayloadRequest, payload: WebhookPayl
     const body = JSON.stringify(payload);
 
     await Promise.allSettled(
-      result.docs
-        .filter((webhook) => validateWebhookUrl(webhook.url as string) === true)
-        .map((webhook) =>
-          fetch(webhook.url as string, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Olgax-Event": payload.event,
-              "X-Olgax-Signature": sign(webhook.secret as string, body),
-            },
-            body,
-            signal: AbortSignal.timeout(5000),
-          }),
+      result.docs.map((webhook) =>
+        postWebhook(
+          webhook.url as string,
+          webhook.secret as string,
+          payload.event,
+          body,
         ),
+      ),
     );
   } catch {
     // Swallow - a webhook dispatch failure must never surface to the editor.

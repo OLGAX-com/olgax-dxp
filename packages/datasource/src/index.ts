@@ -59,9 +59,10 @@ function shouldResolve(props: CollectionQueryProps, changed: Partial<Record<stri
 }
 
 function normalizeLimit(raw: unknown, maxLimit: number): number {
+  const safeMax = Number.isFinite(maxLimit) && maxLimit >= 1 ? Math.floor(maxLimit) : 50;
   const parsed = Number(raw ?? 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) return Math.min(10, maxLimit);
-  return Math.min(Math.floor(parsed), maxLimit);
+  if (!Number.isFinite(parsed) || parsed <= 0) return Math.min(10, safeMax);
+  return Math.max(1, Math.min(Math.floor(parsed), safeMax));
 }
 
 /**

@@ -24,9 +24,16 @@ test.describe("Security boundaries", () => {
     for (const doc of docs) {
       expect(doc._status).not.toBe("draft");
     }
+
+    // Fractional limit below 1 clamps to 1 rather than flooring to 0
+    const fractionalRes = await request.get("/api/related-pages?collection=pages&limit=0.5");
+    expect(fractionalRes.status()).toBe(200);
+    const fractionalDocs = await fractionalRes.json();
+    expect(Array.isArray(fractionalDocs)).toBe(true);
+    expect(fractionalDocs.length).toBeLessThanOrEqual(1);
   });
 
-  test("rejects SSRF webhook URLs targeting private or metadata endpoints", async ({
+  test("rejects SSRF webhook URLs targeting private, mapped-IPv6, or metadata endpoints", async ({
     request,
   }) => {
     const login = await request
@@ -36,16 +43,22 @@ test.describe("Security boundaries", () => {
       .then((r) => r.json());
     const headers = { Authorization: `JWT ${login.token}`, "Content-Type": "application/json" };
 
-    const ssrfWebhook = await request.post("/api/webhooks", {
-      headers,
-      data: {
-        name: "Blocked metadata hook",
-        url: "http://169.254.169.254/latest/meta-data/",
-        secret: "test-secret",
-        events: ["page.published"],
-        enabled: true,
-      },
-    });
-    expect(ssrfWebhook.status()).toBe(400);
+    for (const url of [
+      "http://169.254.169.254/latest/meta-data/",
+      "http://[::ffff:127.0.0.1]/hook",
+      "http://[::ffff:169.254.169.254]/latest/meta-data/",
+    ]) {
+      const ssrfWebhook = await request.post("/api/webhooks", {
+        headers,
+        data: {
+          name: "Blocked SSRF hook",
+          url,
+          secret: "test-secret",
+          events: ["page.published"],
+          enabled: true,
+        },
+      });
+      expect(ssrfWebhook.status()).toBe(400);
+    }
   });
 });
