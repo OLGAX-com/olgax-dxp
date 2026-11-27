@@ -138,7 +138,7 @@ export interface User {
   /**
    * Admin: full access including Users, Webhooks, and Site Settings. Editor: manage, publish, and delete Pages, Sections, and Media. Author: create and edit Page drafts only (cannot publish or delete).
    */
-  role: 'admin' | 'editor' | 'author';
+  role?: ('admin' | 'editor' | 'author') | null;
   updatedAt: string;
   createdAt: string;
   email: string;

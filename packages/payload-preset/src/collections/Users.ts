@@ -45,7 +45,7 @@ export const Users: CollectionConfig = {
         if (existing.totalDocs === 0) {
           return { ...data, role: "admin" };
         }
-        return data;
+        return { ...data, role: data.role ?? "editor" };
       },
     ],
   },
@@ -53,7 +53,6 @@ export const Users: CollectionConfig = {
     {
       name: "role",
       type: "select",
-      required: true,
       defaultValue: "editor",
       options: USER_ROLES,
       access: {

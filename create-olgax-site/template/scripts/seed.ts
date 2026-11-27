@@ -11,7 +11,7 @@ async function seed() {
   if (existingUsers.docs.length === 0) {
     await payload.create({
       collection: "users",
-      data: { email: "admin@example.com", password: "ChangeMe123!" },
+      data: { email: "admin@example.com", password: "ChangeMe123!", role: "admin" },
     });
     console.log("Created admin user: admin@example.com / ChangeMe123!");
   } else {
