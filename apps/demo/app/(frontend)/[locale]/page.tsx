@@ -11,12 +11,15 @@ import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
 // an editor manages content, not this route.
 export default async function RootPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
+  const { preview } = await searchParams;
   const user = await getCurrentUser();
   const settings = await getSiteSettings();
   const localizationEnabled = resolveLocalizationEnabled(settings.localizationEnabled);
@@ -26,6 +29,7 @@ export default async function RootPage({
       locale={locale}
       slug={HOME_SLUG}
       localizationEnabled={localizationEnabled}
+      preview={preview === "true"}
       fallback={
         <div className="flex flex-1 flex-col items-center justify-center gap-4 bg-zinc-50 px-6 py-32 text-center dark:bg-black">
           <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">

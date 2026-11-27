@@ -25,30 +25,38 @@ async function globalSetup() {
     headers: { Authorization: `JWT ${token}` },
   }).then((r) => r.json());
 
+  const homeData = {
+    title: "Home",
+    slug: "home",
+    _status: "published",
+    data: {
+      root: { props: { title: "Home" } },
+      content: [
+        {
+          type: "Hero",
+          props: {
+            id: "e2e-hero",
+            heading: "E2E smoke test heading",
+            subheading: "Seeded by e2e/global-setup.ts",
+            ctaLabel: "",
+            ctaHref: "",
+          },
+        },
+      ],
+    },
+  };
+
   if (pages.docs?.length === 0) {
     await fetch(`${baseURL}/api/pages`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `JWT ${token}` },
-      body: JSON.stringify({
-        title: "Home",
-        slug: "home",
-        _status: "published",
-        data: {
-          root: {},
-          content: [
-            {
-              type: "Hero",
-              props: {
-                id: "e2e-hero",
-                heading: "E2E smoke test heading",
-                subheading: "Seeded by e2e/global-setup.ts",
-                ctaLabel: "",
-                ctaHref: "",
-              },
-            },
-          ],
-        },
-      }),
+      body: JSON.stringify(homeData),
+    });
+  } else if (pages.docs?.[0]?.id) {
+    await fetch(`${baseURL}/api/pages/${pages.docs[0].id}?draft=false`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `JWT ${token}` },
+      body: JSON.stringify(homeData),
     });
   }
 }

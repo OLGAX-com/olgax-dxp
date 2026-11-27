@@ -9,6 +9,7 @@ import { EditThisPageLink } from "@/components/EditThisPageLink";
 import { UmamiPageView } from "@/components/UmamiPageView";
 import { recordPageView } from "@/lib/analytics";
 import { getVisitorState } from "@/lib/personalization";
+import { localizedPath } from "@/lib/pages";
 import type { Locale } from "@/lib/i18n";
 
 // Shared by the root "/[locale]" route (renders the HOME_SLUG page) and the
@@ -19,53 +20,81 @@ export async function PageRenderer({
   locale,
   slug,
   localizationEnabled,
+  preview = false,
   fallback,
 }: {
   locale: Locale;
   slug: string;
   localizationEnabled: boolean;
+  preview?: boolean;
   fallback?: ReactNode;
 }) {
   const payload = await getPayloadClient();
+  const user = await getCurrentUser();
+  const isDraftPreview = Boolean(user && preview);
 
-  // Explicit `_status` filter: the Local API bypasses access control by
-  // default, and Payload's `draft` param on find/findByID does NOT filter
-  // by status on its own - this is the actual guard against showing
-  // unpublished drafts on the public route. `locale` returns the requested
-  // locale's content, falling back to the default locale for untranslated
-  // fields (payload.config.ts's `localization.fallback: true`).
+  // Explicit `_status` filter for public renders: the Local API bypasses
+  // access control by default, and Payload's `draft` param on find/findByID
+  // does NOT filter by status on its own - this is the actual guard against
+  // showing unpublished drafts on the public route. Logged-in editors may
+  // explicitly request `?preview=true` to inspect unpublished drafts.
   const result = await payload.find({
     collection: "pages",
-    where: {
-      slug: { equals: slug },
-      _status: { equals: "published" },
-    },
+    where: isDraftPreview
+      ? { slug: { equals: slug } }
+      : {
+          slug: { equals: slug },
+          _status: { equals: "published" },
+        },
+    draft: isDraftPreview,
     limit: 1,
     locale,
   });
 
   const page = result.docs[0];
-  const user = await getCurrentUser();
 
   if (!page) {
     if (fallback) return <>{fallback}</>;
     notFound();
   }
 
-  // Anonymous traffic only - skip counting the editor's own visits while
-  // working on the site. Scheduled via `after()` so it runs post-response
-  // without adding latency, but is still guaranteed to complete (unlike a
-  // plain un-awaited call, which some hosting platforms can cut off).
-  if (!user) {
+  // Anonymous traffic only (never draft previews) - skip counting the editor's
+  // own visits while working on the site.
+  if (!user && !isDraftPreview) {
     after(() => recordPageView(slug, locale));
   }
 
   const visitor = await getVisitorState();
+  const localePrefix = localizationEnabled ? `/${locale}` : "";
 
   return (
     <>
-      <Render config={config} data={page.data as Data} metadata={{ visitor }} />
-      <UmamiPageView skip={Boolean(user)} />
+      {isDraftPreview && (
+        <div
+          role="status"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "8px 16px",
+            background: "#18181b",
+            color: "#fafafa",
+            fontSize: 13,
+          }}
+        >
+          <span>
+            Draft preview ({page._status === "published" ? "latest draft" : "unpublished draft"})
+          </span>
+          <a
+            href={localizedPath(locale, localizationEnabled, `/${slug}/edit`)}
+            style={{ color: "#fafafa", textDecoration: "underline", fontWeight: 600 }}
+          >
+            Edit in Puck →
+          </a>
+        </div>
+      )}
+      <Render config={config} data={page.data as Data} metadata={{ visitor, localePrefix }} />
+      <UmamiPageView skip={Boolean(user || isDraftPreview)} />
       {user && (
         <EditThisPageLink locale={locale} slug={slug} localizationEnabled={localizationEnabled} />
       )}

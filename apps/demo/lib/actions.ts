@@ -19,6 +19,7 @@ async function findPageBySlug(slug: string) {
     collection: "pages",
     where: { slug: { equals: slug } },
     limit: 1,
+    draft: true,
   });
   return { payload, existing: result.docs[0] };
 }

@@ -20,9 +20,11 @@ export function PageQuickLinks() {
     return <p style={{ fontSize: 13, opacity: 0.7 }}>Save with a slug to get quick links.</p>;
   }
 
+  const liveHref = slug === "home" ? "/" : `/${slug}`;
+
   return (
     <div>
-      <a href={`/${slug}`} target="_blank" rel="noreferrer" style={linkStyle}>
+      <a href={liveHref} target="_blank" rel="noreferrer" style={linkStyle}>
         View live page ↗
       </a>
       <a href={`/${slug}/edit`} target="_blank" rel="noreferrer" style={linkStyle}>

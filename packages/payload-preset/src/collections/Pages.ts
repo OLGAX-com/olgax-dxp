@@ -1,6 +1,9 @@
 import type { CollectionConfig } from "payload";
 import { dispatchWebhooks } from "../webhooks/dispatch";
 
+const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const RESERVED_SLUGS = new Set(["admin", "api", "dashboard", "pages"]);
+
 // `data` holds Puck's own `Data` JSON shape (content + root props) verbatim -
 // Payload does not need to understand its internal structure.
 export const Pages: CollectionConfig = {
@@ -73,6 +76,16 @@ export const Pages: CollectionConfig = {
       required: true,
       unique: true,
       index: true,
+      validate: (value?: string | null) => {
+        if (!value) return "Slug is required";
+        if (!SLUG_REGEX.test(value)) {
+          return "Slug must be lowercase letters, numbers, and hyphens only (e.g. about-us)";
+        }
+        if (RESERVED_SLUGS.has(value)) {
+          return `Slug "${value}" is reserved by the system`;
+        }
+        return true;
+      },
     },
     {
       name: "data",
