@@ -1,5 +1,11 @@
 # @olgax.com/components
 
+## 0.1.5
+
+### Patch Changes
+
+- 021fb81: Sync Puck page title edits to Payload, add authenticated draft preview (`?preview=true`), fix `RelatedPages` locale links and SDK theming/visibility support, validate/sanitize page slugs, fix mobile `NewPageForm` input sizing, and add Puck save/publish status feedback.
+
 ## 0.1.4
 
 ### Patch Changes
