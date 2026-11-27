@@ -1,13 +1,15 @@
-import type { ComponentConfig, DefaultComponentProps } from "@puckeditor/core";
-
 export { colorOverrideFields, colorOverrideStyle } from "./theming";
 export type { ColorOverrideProps } from "./theming";
 export { visibilityFields, isVisible } from "./personalization";
 export type { VisibilityProps, VisibilityRule, VisitorState } from "./personalization";
+export { mediaField, resolveMediaAlt } from "./media";
+export { safeHref, safeMediaSrc } from "./urls";
 
 // A single shared registry that `packages/components` (and any third-party
 // component package) registers into, and that a consuming app's Puck config
 // reads from - so registering a component never requires touching the SDK.
+import type { ComponentConfig, DefaultComponentProps } from "@puckeditor/core";
+
 const registry: Record<string, ComponentConfig<DefaultComponentProps>> = {};
 
 /**
@@ -21,9 +23,6 @@ const registry: Record<string, ComponentConfig<DefaultComponentProps>> = {};
  */
 export function registerComponent<Props extends DefaultComponentProps>(
   name: string,
-  // Wrapping Props in the `{ props: Props }` "params" shape sidesteps Puck's
-  // Exact-type constraint on ComponentConfig, which doesn't resolve correctly
-  // against an abstract (non-literal) generic type parameter.
   config: ComponentConfig<{ props: Props }>,
 ) {
   if (!name) {

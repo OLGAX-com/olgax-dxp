@@ -4,6 +4,7 @@ import {
   colorOverrideStyle,
   visibilityFields,
   isVisible,
+  safeHref,
   type ColorOverrideProps,
   type VisibilityProps,
 } from "@olgax.com/sdk";
@@ -35,7 +36,7 @@ const Pricing = ({ plans, ...props }: PricingProps) => (
               <li key={j}>{feature}</li>
             ))}
         </ul>
-        <a className="olgax-pricing__cta" href={plan.ctaHref}>
+        <a className="olgax-pricing__cta" href={safeHref(plan.ctaHref)}>
           {plan.ctaLabel}
         </a>
       </div>

@@ -4,6 +4,7 @@ import {
   colorOverrideStyle,
   visibilityFields,
   isVisible,
+  safeHref,
   type ColorOverrideProps,
   type VisibilityProps,
 } from "@olgax.com/sdk";
@@ -21,7 +22,7 @@ const Header = ({ logoText, links, ...props }: HeaderProps) => (
     <span className="olgax-header__logo">{logoText}</span>
     <nav className="olgax-header__nav">
       {links.map((link, i) => (
-        <a key={i} className="olgax-header__link" href={link.href}>
+        <a key={i} className="olgax-header__link" href={safeHref(link.href)}>
           {link.label}
         </a>
       ))}

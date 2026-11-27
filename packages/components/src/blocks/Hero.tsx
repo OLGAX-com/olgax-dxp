@@ -4,6 +4,7 @@ import {
   colorOverrideStyle,
   visibilityFields,
   isVisible,
+  safeHref,
   type ColorOverrideProps,
   type VisibilityProps,
 } from "@olgax.com/sdk";
@@ -22,7 +23,7 @@ const Hero = ({ heading, subheading, ctaLabel, ctaHref, ...props }: HeroProps) =
     <h1 className="olgax-hero__heading">{heading}</h1>
     <p className="olgax-hero__subheading">{subheading}</p>
     {ctaLabel && (
-      <a className="olgax-hero__cta" href={ctaHref}>
+      <a className="olgax-hero__cta" href={safeHref(ctaHref)}>
         {ctaLabel}
       </a>
     )}
