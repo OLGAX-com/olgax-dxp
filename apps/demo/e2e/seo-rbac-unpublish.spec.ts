@@ -154,6 +154,36 @@ test.describe("SEO metadata, sitemap, RBAC, unpublish, and dashboard UX", () => 
         headers: authorHeaders,
       });
       expect(deleteAttempt.status()).toBe(403);
+
+      // Author cannot unpublish or directly mutate a live published page,
+      // while saving a draft version (?draft=true) is permitted.
+      const pubByAdmin = await request
+        .post("/api/pages", {
+          headers: adminHeaders,
+          data: {
+            title: "Live Page For Author Draft Test",
+            slug: "author-unpublish-blocked",
+            _status: "published",
+            data: { root: {}, content: [] },
+          },
+        })
+        .then((r) => r.json());
+      const liveId = pubByAdmin.doc.id;
+      try {
+        const unpublishAttempt = await request.patch(`/api/pages/${liveId}?draft=false`, {
+          headers: authorHeaders,
+          data: { _status: "draft" },
+        });
+        expect(unpublishAttempt.status()).toBe(403);
+
+        const draftSaveAttempt = await request.patch(`/api/pages/${liveId}?draft=true`, {
+          headers: authorHeaders,
+          data: { title: "Author Draft Edit" },
+        });
+        expect(draftSaveAttempt.status()).toBe(200);
+      } finally {
+        await request.delete(`/api/pages/${liveId}`, { headers: adminHeaders });
+      }
     } finally {
       if (draftPageId) {
         await request.delete(`/api/pages/${draftPageId}`, { headers: adminHeaders });

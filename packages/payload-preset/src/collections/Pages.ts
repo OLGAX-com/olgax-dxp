@@ -40,13 +40,37 @@ export const Pages: CollectionConfig = {
   // consuming app gets webhook support for free. Never fires for plain
   // autosaved drafts (see the `_status` check), only actual publishes.
   hooks: {
+    beforeOperation: [
+      ({ args, operation }) => {
+        if ((operation === "create" || operation === "update") && args.req) {
+          args.req.context.__olgaxDraftArg = "draft" in args ? Boolean(args.draft) : false;
+          args.req.context.__olgaxUnpublishAll =
+            "unpublishAllLocales" in args ? Boolean(args.unpublishAllLocales) : false;
+        }
+        return args;
+      },
+    ],
     beforeChange: [
-      ({ data, req }) => {
-        if (req.user && getUserRole(req.user) === "author" && data?._status === "published") {
-          throw new APIError(
-            "Authors cannot publish pages. Save as a draft and ask an Editor or Admin to publish.",
-            403,
-          );
+      ({ data, operation, originalDoc, req }) => {
+        if (req.user && getUserRole(req.user) === "author") {
+          if (data?._status === "published") {
+            throw new APIError(
+              "Authors cannot publish pages. Save as a draft and ask an Editor or Admin to publish.",
+              403,
+            );
+          }
+          if (
+            operation === "update" &&
+            !req.context.__olgaxDraftArg &&
+            (originalDoc?._status === "published" ||
+              data?._status === "draft" ||
+              req.context.__olgaxUnpublishAll)
+          ) {
+            throw new APIError(
+              "Authors cannot modify or unpublish live pages directly. Save changes as a draft (?draft=true).",
+              403,
+            );
+          }
         }
         return data;
       },

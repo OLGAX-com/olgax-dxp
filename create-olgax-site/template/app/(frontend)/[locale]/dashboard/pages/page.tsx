@@ -29,34 +29,41 @@ export default async function DashboardPages({
 
   const payload = await getPayloadClient();
   // Read latest drafts so autosaved title edits show up in listings and search.
-  const [result, sectionsResult] = await Promise.all([
-    payload.find({
-      collection: "pages",
-      limit: 100,
-      sort: "-updatedAt",
-      draft: true,
-      locale,
-      overrideAccess: false,
-      user,
-      where: query
-        ? {
-            or: [
-              { title: { contains: query } },
-              { slug: { contains: query } },
-            ],
-          }
-        : undefined,
-    }),
-    payload.find({
+  // Fetch all section names (paginated) so NewPageForm datalist never truncates.
+  const sectionNames: string[] = [];
+  let sectionPage = 1;
+  let hasMoreSections = true;
+  while (hasMoreSections) {
+    const sectionsResult = await payload.find({
       collection: "sections",
       limit: 100,
+      page: sectionPage,
       sort: "name",
       overrideAccess: false,
       user,
-    }),
-  ]);
+    });
+    sectionNames.push(...sectionsResult.docs.map((s) => s.name));
+    hasMoreSections = Boolean(sectionsResult.hasNextPage);
+    sectionPage += 1;
+  }
 
-  const sectionNames = sectionsResult.docs.map((s) => s.name);
+  const result = await payload.find({
+    collection: "pages",
+    limit: 100,
+    sort: "-updatedAt",
+    draft: true,
+    locale,
+    overrideAccess: false,
+    user,
+    where: query
+      ? {
+          or: [
+            { title: { contains: query } },
+            { slug: { contains: query } },
+          ],
+        }
+      : undefined,
+  });
 
   // Check separately which pages currently have a live published version so
   // `View` vs `Preview` reflects what visitors actually see.
