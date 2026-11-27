@@ -49,16 +49,35 @@ export default async function EditPage({
   const page = result.docs[0];
   const title = page?.title ?? slug;
 
-  let initialData: Data = (page?.data as Data) ?? { content: [], root: {} };
+  const rawData: Data = (page?.data as Data) ?? { content: [], root: {} };
+  let missingSection: string | undefined;
 
   // Only start from a section for a brand-new page - never overwrite
   // existing content just because a `?section=` param is present.
+  let initialContent = rawData.content;
   if (!page && section) {
     const sectionContent = await getSectionContent(section, locale);
     if (sectionContent) {
-      initialData = { content: sectionContent, root: {} };
+      initialContent = sectionContent;
+    } else {
+      missingSection = section;
     }
   }
+
+  // Always seed Puck's root.props.title from Payload's `Pages.title` so
+  // duplicates ("Home (copy)") and titles edited in Payload Admin are
+  // preserved on subsequent autosaves and publishes.
+  const initialData: Data = {
+    ...rawData,
+    content: initialContent,
+    root: {
+      ...rawData.root,
+      props: {
+        ...(rawData.root?.props ?? {}),
+        title,
+      },
+    },
+  };
 
   return (
     <PageEditor
@@ -67,6 +86,7 @@ export default async function EditPage({
       title={title}
       initialData={initialData}
       localizationEnabled={localizationEnabled}
+      missingSection={missingSection}
     />
   );
 }

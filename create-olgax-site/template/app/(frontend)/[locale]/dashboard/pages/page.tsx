@@ -25,10 +25,12 @@ export default async function DashboardPages({
   const query = q?.trim() ?? "";
 
   const payload = await getPayloadClient();
+  // Read latest drafts so autosaved title edits show up in listings and search.
   const result = await payload.find({
     collection: "pages",
     limit: 100,
     sort: "-updatedAt",
+    draft: true,
     locale,
     overrideAccess: false,
     user,
@@ -42,6 +44,28 @@ export default async function DashboardPages({
       : undefined,
   });
 
+  // Check separately which pages currently have a live published version so
+  // `View` vs `Preview` reflects what visitors actually see.
+  const pageIds = result.docs.map((doc) => doc.id);
+  const publishedResult =
+    pageIds.length > 0
+      ? await payload.find({
+          collection: "pages",
+          limit: pageIds.length,
+          draft: false,
+          locale,
+          overrideAccess: false,
+          user,
+          where: {
+            and: [
+              { id: { in: pageIds } },
+              { _status: { equals: "published" } },
+            ],
+          },
+        })
+      : { docs: [] };
+  const publishedIds = new Set(publishedResult.docs.map((doc) => doc.id));
+
   const viewCounts = await getViewCountsBySlug();
 
   return (
@@ -54,7 +78,7 @@ export default async function DashboardPages({
           name="q"
           defaultValue={query}
           placeholder="Search by title or slug"
-          className="h-10 flex-1 rounded-full border border-solid border-black/[.08] px-4 text-sm dark:border-white/[.145] dark:bg-black"
+          className="h-10 flex-1 rounded-full border border-solid border-black/[.08] px-4 text-sm text-black dark:border-white/[.145] dark:bg-black dark:text-zinc-50"
         />
         <button
           type="submit"
@@ -73,37 +97,60 @@ export default async function DashboardPages({
       </form>
 
       <ul className="flex flex-col divide-y divide-black/[.08] dark:divide-white/[.145]">
-        {result.docs.map((page) => (
-          <li key={page.id} className="flex items-center justify-between py-3">
-            <div>
-              <p className="font-medium text-black dark:text-zinc-50">{page.title}</p>
-              <p className="text-sm text-zinc-500">
-                /{page.slug} · {page._status === "published" ? "Published" : "Draft"} ·{" "}
-                {viewCounts[page.slug] ?? 0} views
-              </p>
-            </div>
-            <div className="flex items-center gap-3 text-sm font-medium">
-              <a
-                href={publicUrlForSlug(locale, page.slug, localizationEnabled)}
-                className="text-zinc-600 hover:underline dark:text-zinc-400"
-              >
-                View
-              </a>
-              <a
-                href={localizedPath(locale, localizationEnabled, `/${page.slug}/edit`)}
-                className="text-zinc-600 hover:underline dark:text-zinc-400"
-              >
-                Edit
-              </a>
-              <form action={duplicatePage.bind(null, locale, page.id)}>
-                <button type="submit" className="text-zinc-600 hover:underline dark:text-zinc-400">
-                  Duplicate
-                </button>
-              </form>
-              <DeletePageButton locale={locale} id={page.id} title={page.title} />
-            </div>
-          </li>
-        ))}
+        {result.docs.map((page) => {
+          const hasPublished = publishedIds.has(page.id);
+          const hasDraftChanges = hasPublished && page._status !== "published";
+          const publicHref = publicUrlForSlug(locale, page.slug, localizationEnabled);
+          const statusLabel = hasPublished
+            ? hasDraftChanges
+              ? "Published (draft changes)"
+              : "Published"
+            : "Draft";
+
+          return (
+            <li
+              key={page.id}
+              className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div>
+                <p className="font-medium text-black dark:text-zinc-50">{page.title}</p>
+                <p className="text-sm text-zinc-500">
+                  /{page.slug} · {statusLabel} · {viewCounts[page.slug] ?? 0} views
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
+                {hasPublished && (
+                  <a
+                    href={publicHref}
+                    className="text-zinc-600 hover:underline dark:text-zinc-400"
+                  >
+                    View
+                  </a>
+                )}
+                {(!hasPublished || hasDraftChanges) && (
+                  <a
+                    href={`${publicHref}?preview=true`}
+                    className="text-zinc-600 hover:underline dark:text-zinc-400"
+                  >
+                    Preview
+                  </a>
+                )}
+                <a
+                  href={localizedPath(locale, localizationEnabled, `/${page.slug}/edit`)}
+                  className="text-zinc-600 hover:underline dark:text-zinc-400"
+                >
+                  Edit
+                </a>
+                <form action={duplicatePage.bind(null, locale, page.id)}>
+                  <button type="submit" className="text-zinc-600 hover:underline dark:text-zinc-400">
+                    Duplicate
+                  </button>
+                </form>
+                <DeletePageButton locale={locale} id={page.id} title={page.title} />
+              </div>
+            </li>
+          );
+        })}
         {result.docs.length === 0 && (
           <p className="py-6 text-center text-sm text-zinc-500">
             {query ? `No pages match "${query}".` : "No pages yet — create one above."}

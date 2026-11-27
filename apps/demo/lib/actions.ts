@@ -19,6 +19,7 @@ async function findPageBySlug(slug: string) {
     collection: "pages",
     where: { slug: { equals: slug } },
     limit: 1,
+    draft: true,
   });
   return { payload, existing: result.docs[0] };
 }
@@ -101,6 +102,7 @@ export async function duplicatePage(locale: Locale, id: string | number) {
   const original = await payload.findByID({
     collection: "pages",
     id,
+    draft: true,
     locale,
     overrideAccess: false,
     user,
@@ -123,9 +125,22 @@ export async function duplicatePage(locale: Locale, id: string | number) {
     suffix++;
   }
 
+  const copyTitle = `${original.title} (copy)`;
+  const rawData = (original.data as Data | undefined) ?? { content: [], root: {} };
+  const copyData: Data = {
+    ...rawData,
+    root: {
+      ...rawData.root,
+      props: {
+        ...(rawData.root?.props ?? {}),
+        title: copyTitle,
+      },
+    },
+  };
+
   await payload.create({
     collection: "pages",
-    data: { title: `${original.title} (copy)`, slug, data: original.data },
+    data: { title: copyTitle, slug, data: copyData },
     locale,
     overrideAccess: false,
     user,
