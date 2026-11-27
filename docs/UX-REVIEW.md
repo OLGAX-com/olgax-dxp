@@ -1,6 +1,6 @@
 # OLGAX DXP – Real-World User Experience Evaluation
 
-This evaluation assesses OLGAX DXP from the perspective of the five core user personas expected to adopt an open-source DXP.
+This evaluation assesses OLGAX DXP (`main` at `8044172`) from the perspective of the five core user personas expected to adopt an open-source DXP.
 
 ---
 
@@ -13,9 +13,9 @@ This evaluation assesses OLGAX DXP from the perspective of the five core user pe
 
 ### Friction & Missing Capabilities
 - **No visual Media Picker inside Puck** ([Issue #24](https://github.com/OLGAX-com/olgax-dxp/issues/24)): Non-technical editors cannot browse or upload images while editing a `Gallery` block; they must leave Puck, upload in `/admin/collections/media`, copy a URL, and paste it into a plain text field.
-- **No mid-edit Section insertion** ([Issue #26](https://github.com/OLGAX-com/olgax-dxp/issues/26)): Sections only work when creating a brand-new empty page via URL query param. Typing a section name manually into `NewPageForm` with no dropdown/autocomplete causes silent empty pages on typos (mitigated with a warning banner, still needs a selector).
+- **No mid-edit Section insertion** ([Issue #26](https://github.com/OLGAX-com/olgax-dxp/issues/26)): Sections only work when creating a brand-new empty page via URL query param. Typing an unknown section name into `NewPageForm` silently opens an empty page with no warning (warning banner fix pending in [PR #32](https://github.com/OLGAX-com/olgax-dxp/pull/32)).
 - **No Unpublish or Version Restore UI** ([Issue #23](https://github.com/OLGAX-com/olgax-dxp/issues/23)): Editors cannot take a live page offline without deleting it, nor compare/revert revisions from the Dashboard.
-- **Puck Outline Contrast & Canvas UX** ([Issue #17](https://github.com/OLGAX-com/olgax-dxp/issues/17)): Selected block text in the Puck Outline panel has low contrast against the light-blue highlight, and empty space below short pages renders dark under dark-mode OS settings (fixed on frontend `body`, still visible inside Puck's canvas when system dark mode is active).
+- **Puck Outline Contrast & Canvas UX** ([Issue #16](https://github.com/OLGAX-com/olgax-dxp/issues/16), [Issue #17](https://github.com/OLGAX-com/olgax-dxp/issues/17)): Selected block text in the Puck Outline panel has low contrast against the light-blue highlight, autosave/publish have no visible status feedback, and empty space below short pages renders dark under dark-mode OS settings (frontend `body` and status pill fixes pending in [PR #32](https://github.com/OLGAX-com/olgax-dxp/pull/32)).
 
 ---
 
@@ -43,7 +43,7 @@ This evaluation assesses OLGAX DXP from the perspective of the five core user pe
 ### Friction & Missing Capabilities
 - **Manual `apps/demo` <-> `create-olgax-site/template` mirroring** ([Issue #19](https://github.com/OLGAX-com/olgax-dxp/issues/19)): Contributors must manually copy changes between two identical app trees with no CI drift check.
 - **Windows contributor friction** ([Issue #18](https://github.com/OLGAX-com/olgax-dxp/issues/18)): Node `<20.19` breaks `vitest` (`rolldown` native binding), and `apps/docs` fails `next build` on Windows.
-- **Datasource DX pitfalls**: `queryCollectionFromSearchParams` defaulted to Payload's `overrideAccess: true` without warnings or safe defaults ([Issue #9](https://github.com/OLGAX-com/olgax-dxp/issues/9), fixed).
+- **Datasource DX pitfalls**: `queryCollectionFromSearchParams` defaults to Payload's `overrideAccess: true` without collection allowlists or safe defaults on `main` ([Issue #9](https://github.com/OLGAX-com/olgax-dxp/issues/9), fix pending in [PR #31](https://github.com/OLGAX-com/olgax-dxp/pull/31)).
 - **Incomplete packages in repo**: `packages/multi-tenancy` and `packages/marketplace` exist in the workspace but are unversioned stubs, which can confuse adopters.
 
 ---

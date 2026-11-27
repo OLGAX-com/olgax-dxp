@@ -1,5 +1,7 @@
 # OLGAX DXP – Technical, Architecture & Security Review
 
+*Evaluated against `OLGAX-com/olgax-dxp` `main` at commit `8044172`.*
+
 ## 1. Architecture Overview
 
 OLGAX DXP is structured as a pnpm + Turborepo monorepo combining three core layers:
@@ -21,25 +23,24 @@ OLGAX DXP is structured as a pnpm + Turborepo monorepo combining three core laye
 
 ## 2. Security Review
 
-### Critical & High Findings
+### Critical & High Findings on `main` (`8044172`)
 
-1. **`[P0]` Unauthenticated Datasource Access Control Bypass (`packages/datasource`, `/api/related-pages`) — FIXED ([Issue #9](https://github.com/OLGAX-com/olgax-dxp/issues/9))**
-   - **Root Cause**: `queryCollectionFromSearchParams` called `payload.find()` without `overrideAccess: false` and without collection/field allowlists. Because Payload's Local API bypasses access control by default, `/api/related-pages?collection=webhooks|users|pages|sections|page-views` exposed all records anonymously, including webhook HMAC secrets, user emails, and unpublished drafts.
-   - **Remediation Applied**: Enforced `overrideAccess: false`, added `allowedCollections`, `allowedFilterFields`, regex validation, limit clamping (`1..50`), and `DatasourceQueryError` (`400`/`403`) handling in `@olgax.com/datasource` and `/api/related-pages/route.ts`.
+1. **`[P0]` Unauthenticated Datasource Access Control Bypass (`packages/datasource`, `/api/related-pages`) — Fix pending in [PR #31](https://github.com/OLGAX-com/olgax-dxp/pull/31) ([Issue #9](https://github.com/OLGAX-com/olgax-dxp/issues/9))**
+   - **Finding**: `queryCollectionFromSearchParams` calls `payload.find()` without `overrideAccess: false` and without collection/field allowlists. Because Payload's Local API bypasses access control by default, `/api/related-pages?collection=webhooks|users|pages|sections|page-views` exposes all records anonymously on `main`, including webhook HMAC secrets, user emails, and unpublished drafts.
+   - **Proposed Remediation ([PR #31](https://github.com/OLGAX-com/olgax-dxp/pull/31))**: Enforce `overrideAccess: false`, `allowedCollections`, `allowedFilterFields`, slug/field regex validation, limit clamping (`1..50`), and `DatasourceQueryError` (`400`/`403`) handling.
 
-2. **`[P0]` Empty `PAYLOAD_SECRET` Fallback (`payload.config.ts`) — FIXED ([Issue #10](https://github.com/OLGAX-com/olgax-dxp/issues/10))**
-   - **Root Cause**: `secret: process.env.PAYLOAD_SECRET || ""` allowed production startups with an empty JWT signing key.
-   - **Remediation Applied**: Fail fast at runtime when `NODE_ENV === "production"` (outside `phase-production-build`) if `PAYLOAD_SECRET` is empty.
+2. **`[P0]` Empty `PAYLOAD_SECRET` Fallback (`payload.config.ts`) — Fix pending in [PR #31](https://github.com/OLGAX-com/olgax-dxp/pull/31) ([Issue #10](https://github.com/OLGAX-com/olgax-dxp/issues/10))**
+   - **Finding**: `secret: process.env.PAYLOAD_SECRET || ""` allows production startups with an empty JWT signing key.
+   - **Proposed Remediation ([PR #31](https://github.com/OLGAX-com/olgax-dxp/pull/31))**: Fail fast at runtime when `NODE_ENV === "production"` (outside `phase-production-build`) if `PAYLOAD_SECRET` is empty.
 
-3. **`[P1]` Webhook SSRF & Plaintext Secret Exposure (`packages/payload-preset`) — PARTIALLY FIXED ([Issue #11](https://github.com/OLGAX-com/olgax-dxp/issues/11))**
-   - **Root Cause**: `Webhooks.url` only checked `new URL(value)`, allowing `http://169.254.169.254/...`, `127.0.0.1`, and private IPs. Additionally, `secret` is readable in plaintext via `GET /api/webhooks/:id`.
-   - **Remediation Applied**: Added `validateWebhookUrl()` blocking non-HTTP(S) schemes, loopback, link-local/metadata, and RFC1918 private IPs at both schema validation and `dispatchWebhooks()` dispatch time.
-   - **Remaining**: Mask/write-only handling for `Webhooks.secret` on read responses and DNS-rebinding-safe IP resolution on fetch.
+3. **`[P1]` Webhook SSRF & Plaintext Secret Exposure (`packages/payload-preset`) — SSRF fix pending in [PR #31](https://github.com/OLGAX-com/olgax-dxp/pull/31) ([Issue #11](https://github.com/OLGAX-com/olgax-dxp/issues/11))**
+   - **Finding**: `Webhooks.url` only checks `new URL(value)`, allowing `http://169.254.169.254/...`, `127.0.0.1`, and private IPs, and `fetch()` follows redirects by default. Additionally, `secret` is readable in plaintext via `GET /api/webhooks/:id`.
+   - **Proposed Remediation ([PR #31](https://github.com/OLGAX-com/olgax-dxp/pull/31))**: Validate HTTP(S) URLs, private/loopback/IPv4-mapped IPv6/metadata ranges, resolve DNS and bind connections to the validated IP, and disable redirect following. Secret masking on read responses remains open.
 
 4. **`[P1]` Missing RBAC Separation of Duties ([Issue #21](https://github.com/OLGAX-com/olgax-dxp/issues/21))**
    - **Risk**: Every authenticated user in `Users` can read/modify `Webhooks` secrets, delete any `User`, alter `SiteSettings`, and publish/delete any `Page`.
 
-5. **Positive Security Controls Observed**
+5. **Positive Security Controls Verified on `main`**
    - `colorOverrideStyle` and `SiteSettings` strictly validate hex colors (`HEX_COLOR`) before interpolating into `<style>` tags.
    - `Users.create` restricts unauthenticated registration strictly to first-user bootstrap (`totalDocs === 0`).
    - `PageViews` denies public `create`/`update` via API (`() => false`).
@@ -55,7 +56,7 @@ OLGAX DXP is structured as a pnpm + Turborepo monorepo combining three core laye
 2. **Synchronous Webhook Dispatch in `afterChange` Hook**
    - `Pages.hooks.afterChange` awaits `dispatchWebhooks()` with a `5000ms` timeout per webhook. Slow webhook receivers add up to 5 seconds of latency to the editor's Publish button. Moving dispatch to a background queue / Next `after()` or job runner would decouple publish latency.
 3. **Proxy Settings Fetch Latency**
-   - `proxy.ts` performs an internal HTTP `fetch(${origin}/api/globals/site-settings?depth=0)` on cache miss every 30s (`CACHE_TTL_MS = 30_000`), failing open to `true`. Note also that toggling `localizationEnabled` in Admin takes up to 30 seconds per worker instance to take effect.
+   - `proxy.ts` performs an internal HTTP `fetch(${origin}/api/globals/site-settings?depth=0)` on cache miss every 30s (`CACHE_TTL_MS = 30_000`), failing open to `true`. Toggling `localizationEnabled` in Admin takes up to 30 seconds per worker instance to take effect.
 4. **No Caching / Revalidation Strategy for Public Pages**
    - Public routes (`[locale]/page.tsx`, `[locale]/[slug]/page.tsx`) dynamically query Payload on every request (`ƒ Dynamic`) with no `unstable_cache` / tag revalidation on publish.
 

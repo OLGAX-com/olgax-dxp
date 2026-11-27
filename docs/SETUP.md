@@ -1,6 +1,6 @@
 # OLGAX DXP – Verified Local Setup Guide
 
-This guide documents the verified local development setup for the `OLGAX-com/olgax-dxp` monorepo on Windows, macOS, and Linux.
+This guide documents the verified local development setup for the `OLGAX-com/olgax-dxp` monorepo on Windows, macOS, and Linux (verified against `main` at commit `8044172`).
 
 ## Prerequisites
 
@@ -38,7 +38,6 @@ DATABASE_URL=file:./payload.db
 - **Database**: Defaults to local SQLite (`file:./payload.db`) with zero external services. Setting `DATABASE_URL=postgres://...` switches `apps/demo/payload.config.ts` to `@payloadcms/db-postgres` automatically.
 - **Datasource SSR (`NEXT_PUBLIC_SITE_URL`)**: Optional locally (`http://localhost:3000` default); required in production if `@olgax.com/datasource`'s `createCollectionResolverFetch` runs during SSR.
 - **Umami Analytics (`NEXT_PUBLIC_UMAMI_*`)**: Optional. Leave unset to use only the built-in `PageViews` collection. If enabled, run `docker compose -f apps/demo/docker-compose.umami.yml up -d`.
-- **Private Webhooks (`OLGAX_ALLOW_PRIVATE_WEBHOOKS`)**: Private/loopback/metadata webhook URLs are blocked by default for SSRF protection. Set `OLGAX_ALLOW_PRIVATE_WEBHOOKS=true` only in trusted local testing environments if testing against `localhost`/`127.0.0.1`.
 
 ## 3. Seed the Database
 
@@ -82,7 +81,7 @@ pnpm lint
 # Production build of the demo app
 pnpm --filter demo build
 
-# Playwright E2E suite (runs on port 3100 against an isolated payload.e2e.db)
+# Playwright E2E smoke suite (runs on port 3100 against an isolated payload.e2e.db)
 pnpm --filter demo exec playwright install chromium
 pnpm --filter demo test:e2e
 
