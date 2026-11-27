@@ -62,7 +62,7 @@ export function NewPageForm({
             setSlug(e.target.value);
             if (error) setError(null);
           }}
-          className="h-10 w-full rounded-full border border-solid border-black/[.08] px-4 text-sm sm:flex-1 dark:border-white/[.145] dark:bg-black"
+          className="h-10 w-full rounded-full border border-solid border-black/[.08] px-4 text-sm text-black sm:flex-1 dark:border-white/[.145] dark:bg-black dark:text-zinc-50"
         />
         <input
           type="text"
@@ -70,7 +70,7 @@ export function NewPageForm({
           placeholder="start from section (optional)"
           value={section}
           onChange={(e) => setSection(e.target.value)}
-          className="h-10 w-full rounded-full border border-solid border-black/[.08] px-4 text-sm sm:flex-1 dark:border-white/[.145] dark:bg-black"
+          className="h-10 w-full rounded-full border border-solid border-black/[.08] px-4 text-sm text-black sm:flex-1 dark:border-white/[.145] dark:bg-black dark:text-zinc-50"
         />
         <button
           type="submit"

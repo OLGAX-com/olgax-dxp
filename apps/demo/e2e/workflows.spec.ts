@@ -111,4 +111,60 @@ test.describe("Editorial workflows & validation", () => {
     await page.getByRole("button", { name: "New page" }).click();
     await expect(page.getByText(/lowercase letters, numbers, and hyphens/)).toBeVisible();
   });
+
+  test("dashboard shows draft title updates alongside live View link and preserves duplicate titles", async ({
+    page,
+    request,
+  }) => {
+    const login = await request
+      .post("/api/users/login", {
+        data: { email: "e2e@example.com", password: "E2eTestPass123!" },
+      })
+      .then((r) => r.json());
+    const headers = { Authorization: `JWT ${login.token}`, "Content-Type": "application/json" };
+
+    const created = await request
+      .post("/api/pages", {
+        headers,
+        data: {
+          title: "Published Title",
+          slug: "draft-title-sync",
+          _status: "published",
+          data: {
+            root: { props: { title: "Published Title" } },
+            content: [],
+          },
+        },
+      })
+      .then((r) => r.json());
+    const id = created.doc.id;
+
+    try {
+      // Save a newer draft with an updated title
+      await request.patch(`/api/pages/${id}?draft=true`, {
+        headers,
+        data: {
+          title: "Autosaved Draft Title",
+          data: {
+            root: { props: { title: "Autosaved Draft Title" } },
+            content: [],
+          },
+        },
+      });
+
+      await page.goto("/admin/login");
+      await page.getByLabel("Email").fill("e2e@example.com");
+      await page.getByLabel("Password", { exact: true }).fill("E2eTestPass123!");
+      await page.getByRole("button", { name: "Login" }).click();
+      await page.waitForURL("**/admin");
+
+      await page.goto("/en/dashboard/pages?q=Autosaved");
+      await expect(page.getByText("Autosaved Draft Title")).toBeVisible();
+      await expect(page.getByText("Published (draft changes)")).toBeVisible();
+      await expect(page.locator('a[href="/en/draft-title-sync"]')).toBeVisible();
+      await expect(page.locator('a[href="/en/draft-title-sync?preview=true"]')).toBeVisible();
+    } finally {
+      await request.delete(`/api/pages/${id}`, { headers });
+    }
+  });
 });

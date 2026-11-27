@@ -64,8 +64,9 @@ export default async function EditPage({
     }
   }
 
-  // Ensure Puck's root.props.title mirrors Payload's `Pages.title` on load so
-  // editing "Page title" in Puck stays synced with the Dashboard and Admin.
+  // Always seed Puck's root.props.title from Payload's `Pages.title` so
+  // duplicates ("Home (copy)") and titles edited in Payload Admin are
+  // preserved on subsequent autosaves and publishes.
   const initialData: Data = {
     ...rawData,
     content: initialContent,
@@ -73,7 +74,7 @@ export default async function EditPage({
       ...rawData.root,
       props: {
         ...(rawData.root?.props ?? {}),
-        title: (rawData.root?.props as { title?: string } | undefined)?.title || title,
+        title,
       },
     },
   };
