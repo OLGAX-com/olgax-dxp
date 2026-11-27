@@ -1,5 +1,11 @@
 # @olgax.com/payload-preset
 
+## 0.2.0
+
+### Minor Changes
+
+- 328a0d3: Add Role-Based Access Control (`admin`, `editor`, `author` on `Users` and across collections/globals), per-page localized `seo` metadata fields with `generateMetadata()` and dynamic `/sitemap.xml` & `/robots.txt`, `Media` MIME allowlists and thumbnail `imageSizes`, an Unpublish action in the dashboard, a `Sign out` button, and a `Sections` dropdown in `NewPageForm`.
+
 ## 0.1.6
 
 ### Patch Changes
