@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { validateWebhookUrl } from "../webhooks/validate";
 
 const EVENTS = [
   { label: "Page published", value: "page.published" },
@@ -37,15 +38,7 @@ export const Webhooks: CollectionConfig = {
       name: "url",
       type: "text",
       required: true,
-      validate: (value?: string | null) => {
-        if (!value) return "Required";
-        try {
-          new URL(value);
-          return true;
-        } catch {
-          return "Must be a valid URL";
-        }
-      },
+      validate: (value?: string | null) => validateWebhookUrl(value),
       admin: { description: "The endpoint that receives the POSTed event payload." },
     },
     {
