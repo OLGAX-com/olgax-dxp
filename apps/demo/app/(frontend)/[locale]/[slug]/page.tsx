@@ -1,8 +1,20 @@
+import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { PageRenderer } from "@/components/PageRenderer";
 import { HOME_SLUG, localizedPath } from "@/lib/pages";
 import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/payload";
+import { getPageMetadata } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+  if (!isLocale(locale) || slug === HOME_SLUG) return {};
+  return getPageMetadata(locale, slug);
+}
 
 export default async function PublicPage({
   params,

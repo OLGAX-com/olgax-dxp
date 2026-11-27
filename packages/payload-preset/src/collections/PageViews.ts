@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { isAdminUser } from "../access/roles";
 
 // One row per (slug, locale, day) - incremented in place rather than one row
 // per view, so traffic doesn't produce unbounded row growth. No PII is
@@ -25,7 +26,7 @@ export const PageViews: CollectionConfig = {
     read: ({ req }) => Boolean(req.user),
     create: () => false,
     update: () => false,
-    delete: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => isAdminUser(req.user),
   },
   fields: [
     {

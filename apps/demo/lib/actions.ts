@@ -2,13 +2,22 @@
 
 import type { Data } from "@puckeditor/core";
 import { revalidatePath } from "next/cache";
+import { isEditorOrAdmin } from "@olgax.com/payload-preset";
 import { getPayloadClient, getCurrentUser } from "./payload";
 import type { Locale } from "./i18n";
 
-async function requireEditor() {
+async function requireAuthenticatedUser() {
   const user = await getCurrentUser();
   if (!user) {
     throw new Error("You must be logged in to edit pages.");
+  }
+  return user;
+}
+
+async function requireEditorOrAdmin() {
+  const user = await requireAuthenticatedUser();
+  if (!isEditorOrAdmin(user)) {
+    throw new Error("You must be an Editor or Admin to perform this action.");
   }
   return user;
 }
@@ -30,7 +39,7 @@ async function findPageBySlug(slug: string) {
 // to that locale's `title`/`data` (both `localized: true` on Pages) without
 // touching other locales' content.
 export async function saveDraftPageData(locale: Locale, slug: string, title: string, data: Data) {
-  const user = await requireEditor();
+  const user = await requireAuthenticatedUser();
   const { payload, existing } = await findPageBySlug(slug);
 
   if (existing) {
@@ -59,7 +68,7 @@ export async function saveDraftPageData(locale: Locale, slug: string, title: str
 // Publishes the page - this is what the public render route shows. Called
 // from PageEditor's `onPublish`.
 export async function publishPageData(locale: Locale, slug: string, title: string, data: Data) {
-  const user = await requireEditor();
+  const user = await requireEditorOrAdmin();
   const { payload, existing } = await findPageBySlug(slug);
 
   if (existing) {
@@ -84,12 +93,27 @@ export async function publishPageData(locale: Locale, slug: string, title: strin
 }
 
 // Called from the /dashboard/pages tab - `overrideAccess: false` + `user`
-// means Payload's own Pages access control (login required) is the real
+// means Payload's own Pages access control (Editor/Admin required) is the real
 // enforcement, not just this action existing behind an authed page.
 export async function deletePage(locale: Locale, id: string | number) {
-  const user = await requireEditor();
+  const user = await requireEditorOrAdmin();
   const payload = await getPayloadClient();
   await payload.delete({ collection: "pages", id, overrideAccess: false, user });
+  revalidatePath(`/${locale}/dashboard/pages`);
+}
+
+export async function unpublishPage(locale: Locale, id: string | number) {
+  const user = await requireEditorOrAdmin();
+  const payload = await getPayloadClient();
+  await payload.update({
+    collection: "pages",
+    id,
+    data: { _status: "draft" },
+    draft: false,
+    locale,
+    overrideAccess: false,
+    user,
+  });
   revalidatePath(`/${locale}/dashboard/pages`);
 }
 
@@ -97,7 +121,7 @@ export async function deletePage(locale: Locale, id: string | number) {
 // the copy start untranslated) into a brand-new draft page, appending
 // "-copy" (or "-copy-2", "-copy-3", ...) to the slug until one is free.
 export async function duplicatePage(locale: Locale, id: string | number) {
-  const user = await requireEditor();
+  const user = await requireAuthenticatedUser();
   const payload = await getPayloadClient();
   const original = await payload.findByID({
     collection: "pages",

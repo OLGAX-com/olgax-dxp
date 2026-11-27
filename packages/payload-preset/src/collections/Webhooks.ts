@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { validateWebhookUrl } from "../webhooks/validate";
+import { isAdminUser } from "../access/roles";
 
 const EVENTS = [
   { label: "Page published", value: "page.published" },
@@ -19,13 +20,12 @@ export const Webhooks: CollectionConfig = {
     defaultColumns: ["name", "url", "events", "enabled"],
     description: "Notify an external URL when content changes - see docs for the payload shape.",
   },
-  // Contains a signing secret - read/write both require login, unlike most
-  // other collections' public-read defaults.
+  // Contains a signing secret - restricted to Admin users only.
   access: {
-    read: ({ req }) => Boolean(req.user),
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    read: ({ req }) => isAdminUser(req.user),
+    create: ({ req }) => isAdminUser(req.user),
+    update: ({ req }) => isAdminUser(req.user),
+    delete: ({ req }) => isAdminUser(req.user),
   },
   fields: [
     {

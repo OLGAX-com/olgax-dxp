@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { isAdminUser } from "../access/roles";
 
 const hexColor = (value?: string | null) => {
   if (!value) return true; // optional - blank keeps packages/components' tokens.css default
@@ -20,7 +21,7 @@ export const SiteSettings: GlobalConfig = {
   label: "Site Settings",
   access: {
     read: () => true,
-    update: ({ req }) => Boolean(req.user),
+    update: ({ req }) => isAdminUser(req.user),
   },
   fields: [
     {

@@ -5,6 +5,7 @@ import { getCurrentUser, getSiteSettings } from "@/lib/payload";
 import { localizedPath } from "@/lib/pages";
 import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
 import { DashboardNav } from "@/components/DashboardNav";
+import { LogoutButton } from "@/components/LogoutButton";
 
 // Single auth guard + shared chrome for every /dashboard/* tab (Overview,
 // Pages, Analytics, Settings) - consolidates what used to be one flat
@@ -42,6 +43,7 @@ export default async function DashboardLayout({
             <Link href="/admin" className="text-zinc-600 hover:underline dark:text-zinc-400">
               Payload admin
             </Link>
+            <LogoutButton />
           </div>
         </div>
 

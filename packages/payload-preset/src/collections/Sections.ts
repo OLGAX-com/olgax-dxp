@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { isEditorOrAdmin } from "../access/roles";
 
 // A named, reusable group of Puck blocks (a slice of `Data.content`) that a
 // consuming app can use to start a new page from, instead of an empty canvas.
@@ -14,9 +15,9 @@ export const Sections: CollectionConfig = {
   // required, not optional.
   access: {
     read: ({ req }) => Boolean(req.user),
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    create: ({ req }) => isEditorOrAdmin(req.user),
+    update: ({ req }) => isEditorOrAdmin(req.user),
+    delete: ({ req }) => isEditorOrAdmin(req.user),
   },
   fields: [
     {

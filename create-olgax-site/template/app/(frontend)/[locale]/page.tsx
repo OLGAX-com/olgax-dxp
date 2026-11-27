@@ -1,9 +1,21 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUser, getSiteSettings } from "@/lib/payload";
+import { getPageMetadata } from "@/lib/seo";
 import { PageRenderer } from "@/components/PageRenderer";
 import { HOME_SLUG, localizedPath } from "@/lib/pages";
 import { isLocale, resolveLocalizationEnabled } from "@/lib/i18n";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  return getPageMetadata(locale, HOME_SLUG);
+}
 
 // The real production homepage: whatever's published at HOME_SLUG (see
 // lib/pages.ts). Falls back to a first-run state (rather than a 404) for a
