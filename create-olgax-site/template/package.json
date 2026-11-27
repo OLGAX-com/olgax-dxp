@@ -21,7 +21,7 @@
   "dependencies": {
     "@olgax.com/components": "^0.1.6",
     "@olgax.com/datasource": "^0.1.4",
-    "@olgax.com/payload-preset": "^0.1.6",
+    "@olgax.com/payload-preset": "^0.2.0",
     "@olgax.com/sdk": "^0.2.0",
     "@payloadcms/db-postgres": "3.87.1",
     "@payloadcms/db-sqlite": "3.87.1",
