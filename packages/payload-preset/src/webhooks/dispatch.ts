@@ -1,5 +1,6 @@
 import { createHmac } from "crypto";
 import type { PayloadRequest } from "payload";
+import { validateWebhookUrl } from "./validate";
 
 // Outbound webhooks are configured entirely in the `webhooks` collection
 // (URL, secret, which events) - no specific third-party vendor is hardcoded.
@@ -41,18 +42,20 @@ export async function dispatchWebhooks(req: PayloadRequest, payload: WebhookPayl
     const body = JSON.stringify(payload);
 
     await Promise.allSettled(
-      result.docs.map((webhook) =>
-        fetch(webhook.url as string, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Olgax-Event": payload.event,
-            "X-Olgax-Signature": sign(webhook.secret as string, body),
-          },
-          body,
-          signal: AbortSignal.timeout(5000),
-        }),
-      ),
+      result.docs
+        .filter((webhook) => validateWebhookUrl(webhook.url as string) === true)
+        .map((webhook) =>
+          fetch(webhook.url as string, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Olgax-Event": payload.event,
+              "X-Olgax-Signature": sign(webhook.secret as string, body),
+            },
+            body,
+            signal: AbortSignal.timeout(5000),
+          }),
+        ),
     );
   } catch {
     // Swallow - a webhook dispatch failure must never surface to the editor.

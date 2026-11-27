@@ -28,6 +28,15 @@ const db = /^postgres(ql)?:\/\//.test(databaseURL)
   ? postgresAdapter({ pool: { connectionString: databaseURL }, migrationDir })
   : sqliteAdapter({ client: { url: databaseURL }, migrationDir });
 
+const secret = process.env.PAYLOAD_SECRET || "";
+if (
+  process.env.NODE_ENV === "production" &&
+  process.env.NEXT_PHASE !== "phase-production-build" &&
+  !secret
+) {
+  throw new Error("PAYLOAD_SECRET must be set in production.");
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -46,7 +55,7 @@ export default buildConfig({
     defaultLocale: DEFAULT_LOCALE,
     fallback: true,
   },
-  secret: process.env.PAYLOAD_SECRET || "",
+  secret,
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },

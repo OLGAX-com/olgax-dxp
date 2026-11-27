@@ -1,5 +1,5 @@
 import type { ComponentConfig, DefaultComponentProps } from "@puckeditor/core";
-import type { Payload } from "payload";
+import type { Payload, PayloadRequest } from "payload";
 
 // Deliberately narrow: collection + a single equality filter + limit. No general
 // query language (no and/or, no operators).
@@ -10,6 +10,30 @@ export type CollectionQueryProps = {
   limit?: number;
   items?: unknown[];
 };
+
+export type QueryCollectionOptions = {
+  /** Explicit allowlist of collection slugs that may be queried. */
+  allowedCollections?: readonly string[];
+  /** Optional explicit allowlist of field names allowed in `filterField`. */
+  allowedFilterFields?: readonly string[];
+  /** Optional authenticated user; defaults to anonymous access (`null`). */
+  user?: PayloadRequest["user"] | null;
+  /** Maximum number of items returned per query (default: 50). */
+  maxLimit?: number;
+};
+
+export class DatasourceQueryError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status = 400) {
+    super(message);
+    this.name = "DatasourceQueryError";
+    this.status = status;
+  }
+}
+
+const SLUG_PATTERN = /^[a-z0-9-]+$/;
+const FIELD_PATTERN = /^[a-zA-Z0-9_.]+$/;
 
 /**
  * Puck field definitions for the four scalar props a component author fills in to
@@ -34,9 +58,18 @@ function shouldResolve(props: CollectionQueryProps, changed: Partial<Record<stri
   return Boolean(changed.collection || changed.filterField || changed.filterValue || changed.limit);
 }
 
+function normalizeLimit(raw: unknown, maxLimit: number): number {
+  const parsed = Number(raw ?? 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return Math.min(10, maxLimit);
+  return Math.min(Math.floor(parsed), maxLimit);
+}
+
 /**
  * Builds a Puck `resolveData` function that re-runs a Payload Local API `find()` whenever
  * the query props change, and writes the results into a read-only `items` prop.
+ *
+ * Enforces Payload access control (`overrideAccess: false`) so server renders only ever
+ * return records readable in the current context.
  *
  * **Server-only.** `getPayload` (and the `payload` package it comes from) must never end up
  * in a browser bundle - only use this inside a `resolveData` for a config that exclusively
@@ -45,9 +78,23 @@ function shouldResolve(props: CollectionQueryProps, changed: Partial<Record<stri
  */
 export function createCollectionResolver<Props extends CollectionQueryProps>(
   getPayload: () => Promise<Payload>,
+  options: Pick<QueryCollectionOptions, "allowedCollections" | "allowedFilterFields" | "maxLimit"> = {},
 ): ResolveDataFn<Props> {
   return (async ({ props }: { props: Props }, { changed }: { changed: Partial<Record<string, boolean>> }) => {
     if (!shouldResolve(props, changed)) return { props };
+    if (!SLUG_PATTERN.test(props.collection)) {
+      return { props: { ...props, items: [] }, readOnly: { items: true } };
+    }
+    if (options.allowedCollections && !options.allowedCollections.includes(props.collection)) {
+      return { props: { ...props, items: [] }, readOnly: { items: true } };
+    }
+    if (
+      props.filterField &&
+      (!FIELD_PATTERN.test(props.filterField) ||
+        (options.allowedFilterFields && !options.allowedFilterFields.includes(props.filterField)))
+    ) {
+      return { props: { ...props, items: [] }, readOnly: { items: true } };
+    }
 
     const payload = await getPayload();
     const where =
@@ -55,12 +102,11 @@ export function createCollectionResolver<Props extends CollectionQueryProps>(
         ? { [props.filterField]: { equals: props.filterValue } }
         : {};
 
-    // `collection` is deliberately a plain string (this package doesn't know a
-    // consuming app's generated collection-slug union), so it's cast here.
     const result = await payload.find({
       collection: props.collection as Parameters<Payload["find"]>[0]["collection"],
       where,
-      limit: props.limit ?? 10,
+      limit: normalizeLimit(props.limit, options.maxLimit ?? 50),
+      overrideAccess: false,
     });
 
     return {
@@ -107,25 +153,50 @@ export function createCollectionResolverFetch<Props extends CollectionQueryProps
 
 /**
  * Server-only helper for the Route Handler that `createCollectionResolverFetch` calls into -
- * parses the query string it produces and runs the equivalent Payload `find()`.
+ * validates query parameters, enforces Payload access control (`overrideAccess: false`),
+ * and runs the Payload `find()`.
  */
 export async function queryCollectionFromSearchParams(
   getPayload: () => Promise<Payload>,
   searchParams: URLSearchParams,
+  options: QueryCollectionOptions = {},
 ) {
-  const collection = searchParams.get("collection");
+  const collection = searchParams.get("collection")?.trim();
   if (!collection) return [];
 
-  const filterField = searchParams.get("filterField");
+  if (!SLUG_PATTERN.test(collection)) {
+    throw new DatasourceQueryError("Invalid collection parameter.", 400);
+  }
+  if (options.allowedCollections && !options.allowedCollections.includes(collection)) {
+    throw new DatasourceQueryError(`Collection "${collection}" is not permitted.`, 403);
+  }
+
+  const filterField = searchParams.get("filterField")?.trim();
   const filterValue = searchParams.get("filterValue");
-  const limit = Number(searchParams.get("limit") ?? 10);
+  if (filterField) {
+    if (!FIELD_PATTERN.test(filterField)) {
+      throw new DatasourceQueryError("Invalid filterField parameter.", 400);
+    }
+    if (options.allowedFilterFields && !options.allowedFilterFields.includes(filterField)) {
+      throw new DatasourceQueryError(`Filter field "${filterField}" is not permitted.`, 403);
+    }
+  }
+
+  const maxLimit = options.maxLimit ?? 50;
+  const limit = normalizeLimit(searchParams.get("limit"), maxLimit);
 
   const payload = await getPayload();
+  if (!(collection in payload.collections)) {
+    throw new DatasourceQueryError(`Unknown collection "${collection}".`, 400);
+  }
+
   const where = filterField && filterValue ? { [filterField]: { equals: filterValue } } : {};
   const result = await payload.find({
     collection: collection as Parameters<Payload["find"]>[0]["collection"],
     where,
     limit,
+    overrideAccess: false,
+    user: options.user ?? undefined,
   });
   return result.docs;
 }
