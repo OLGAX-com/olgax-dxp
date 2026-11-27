@@ -3,6 +3,18 @@
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: var(--olgax-spacing, 1rem);
   padding: calc(var(--olgax-spacing, 1rem) * 2);
+  background: var(--olgax-color-bg, transparent);
+}
+
+.olgax-gallery--empty {
+  display: block;
+}
+
+.olgax-gallery__empty {
+  margin: 0;
+  color: var(--olgax-color-text-muted, #52525b);
+  font-size: 0.875rem;
+  font-family: var(--olgax-font-family, system-ui, sans-serif);
 }
 
 .olgax-gallery__image {

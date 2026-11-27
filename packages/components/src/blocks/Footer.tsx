@@ -4,6 +4,7 @@ import {
   colorOverrideStyle,
   visibilityFields,
   isVisible,
+  safeHref,
   type ColorOverrideProps,
   type VisibilityProps,
 } from "@olgax.com/sdk";
@@ -21,7 +22,7 @@ const Footer = ({ text, links, ...props }: FooterProps) => (
     <span className="olgax-footer__text">{text}</span>
     <nav className="olgax-footer__nav">
       {links.map((link, i) => (
-        <a key={i} className="olgax-footer__link" href={link.href}>
+        <a key={i} className="olgax-footer__link" href={safeHref(link.href)}>
           {link.label}
         </a>
       ))}

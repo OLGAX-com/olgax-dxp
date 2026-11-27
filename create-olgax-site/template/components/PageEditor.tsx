@@ -168,12 +168,12 @@ export function PageEditor({
                 All pages
               </a>
               <a
-                href={publicUrlForSlug(locale, slug, localizationEnabled)}
+                href={`${publicUrlForSlug(locale, slug, localizationEnabled)}?preview=true`}
                 target="_blank"
                 rel="noreferrer"
                 style={navLinkStyle}
               >
-                View page ↗
+                Preview draft ↗
               </a>
               {children}
             </>

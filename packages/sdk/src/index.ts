@@ -4,6 +4,8 @@ export { colorOverrideFields, colorOverrideStyle } from "./theming";
 export type { ColorOverrideProps } from "./theming";
 export { visibilityFields, isVisible } from "./personalization";
 export type { VisibilityProps, VisibilityRule, VisitorState } from "./personalization";
+export { mediaField } from "./media";
+export { safeHref, safeMediaSrc } from "./urls";
 
 // A single shared registry that `packages/components` (and any third-party
 // component package) registers into, and that a consuming app's Puck config
