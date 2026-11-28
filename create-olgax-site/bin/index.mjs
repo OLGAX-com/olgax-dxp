@@ -8,6 +8,15 @@ import { randomBytes } from "node:crypto";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const templateDir = join(__dirname, "..", "template");
+const cliPkg = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf8"));
+
+function printHelp() {
+  console.log(`Usage: npx create-olgax-site [project-name]
+
+Options:
+  -h, --help      Show this help message and exit
+  -v, --version   Show the CLI version and exit`);
+}
 
 function toKebabCase(name) {
   return name
@@ -25,7 +34,23 @@ async function promptForName() {
 }
 
 async function main() {
-  const argName = process.argv[2];
+  const args = process.argv.slice(2);
+  if (args.includes("-h") || args.includes("--help")) {
+    printHelp();
+    process.exit(0);
+  }
+  if (args.includes("-v") || args.includes("--version")) {
+    console.log(cliPkg.version);
+    process.exit(0);
+  }
+  const unknownFlag = args.find((arg) => arg.startsWith("-"));
+  if (unknownFlag) {
+    console.error(`Unknown option: ${unknownFlag}`);
+    printHelp();
+    process.exit(1);
+  }
+
+  const argName = args[0];
   const rawName = argName || (await promptForName());
   const projectName = toKebabCase(rawName);
 

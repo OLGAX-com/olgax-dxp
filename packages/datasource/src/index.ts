@@ -20,6 +20,8 @@ export type QueryCollectionOptions = {
   user?: PayloadRequest["user"] | null;
   /** Maximum number of items returned per query (default: 50). */
   maxLimit?: number;
+  /** Optional Payload locale code (e.g. "en", "es") forwarded to `payload.find()`. */
+  locale?: string;
 };
 
 export class DatasourceQueryError extends Error {
@@ -79,9 +81,16 @@ function normalizeLimit(raw: unknown, maxLimit: number): number {
  */
 export function createCollectionResolver<Props extends CollectionQueryProps>(
   getPayload: () => Promise<Payload>,
-  options: Pick<QueryCollectionOptions, "allowedCollections" | "allowedFilterFields" | "maxLimit"> = {},
+  options: Pick<
+    QueryCollectionOptions,
+    "allowedCollections" | "allowedFilterFields" | "maxLimit" | "locale"
+  > = {},
 ): ResolveDataFn<Props> {
-  return (async ({ props }: { props: Props }, { changed }: { changed: Partial<Record<string, boolean>> }) => {
+  return (async (
+    { props }: { props: Props },
+    params: { changed: Partial<Record<string, boolean>>; metadata?: Record<string, unknown> },
+  ) => {
+    const { changed, metadata } = params;
     if (!shouldResolve(props, changed)) return { props };
     if (!SLUG_PATTERN.test(props.collection)) {
       return { props: { ...props, items: [] }, readOnly: { items: true } };
@@ -97,6 +106,10 @@ export function createCollectionResolver<Props extends CollectionQueryProps>(
       return { props: { ...props, items: [] }, readOnly: { items: true } };
     }
 
+    const locale =
+      options.locale ??
+      (typeof metadata?.locale === "string" && metadata.locale ? metadata.locale : undefined);
+
     const payload = await getPayload();
     const where =
       props.filterField && props.filterValue
@@ -107,6 +120,7 @@ export function createCollectionResolver<Props extends CollectionQueryProps>(
       collection: props.collection as Parameters<Payload["find"]>[0]["collection"],
       where,
       limit: normalizeLimit(props.limit, options.maxLimit ?? 50),
+      ...(locale ? { locale: locale as Parameters<Payload["find"]>[0]["locale"] } : {}),
       overrideAccess: false,
     });
 
