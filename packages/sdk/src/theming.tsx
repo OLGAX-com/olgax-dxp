@@ -2,8 +2,11 @@ import type { CSSProperties } from "react";
 
 export type ColorOverrideProps = {
   backgroundColor?: string;
+  mutedBackgroundColor?: string;
   primaryColor?: string;
+  primaryContrastColor?: string;
   textColor?: string;
+  borderColor?: string;
 };
 
 const HEX_COLOR = /^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
@@ -48,8 +51,11 @@ function colorField(label: string, fallback: string) {
 export function colorOverrideFields() {
   return {
     backgroundColor: colorField("Background color (this block only)", "#ffffff"),
+    mutedBackgroundColor: colorField("Muted surface color (this block only)", "#f4f4f5"),
     primaryColor: colorField("Accent color (this block only)", "#18181b"),
+    primaryContrastColor: colorField("Button text color (this block only)", "#ffffff"),
     textColor: colorField("Text color (this block only)", "#18181b"),
+    borderColor: colorField("Border color (this block only)", "#e4e4e7"),
   };
 }
 
@@ -71,12 +77,21 @@ export function colorOverrideStyle(props: ColorOverrideProps): CSSProperties {
     style["--olgax-color-bg"] = props.backgroundColor;
     style["--olgax-color-bg-muted"] = props.backgroundColor;
   }
+  if (props.mutedBackgroundColor && HEX_COLOR.test(props.mutedBackgroundColor)) {
+    style["--olgax-color-bg-muted"] = props.mutedBackgroundColor;
+  }
   if (props.primaryColor && HEX_COLOR.test(props.primaryColor)) {
     style["--olgax-color-primary"] = props.primaryColor;
+  }
+  if (props.primaryContrastColor && HEX_COLOR.test(props.primaryContrastColor)) {
+    style["--olgax-color-primary-contrast"] = props.primaryContrastColor;
   }
   if (props.textColor && HEX_COLOR.test(props.textColor)) {
     style["--olgax-color-text"] = props.textColor;
     style["--olgax-color-text-muted"] = props.textColor;
+  }
+  if (props.borderColor && HEX_COLOR.test(props.borderColor)) {
+    style["--olgax-color-border"] = props.borderColor;
   }
   return style as CSSProperties;
 }

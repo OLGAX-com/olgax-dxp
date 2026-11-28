@@ -17,6 +17,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const FONT_PRESET_CSS: Record<string, string> = {
+  sans: "var(--font-geist-sans), system-ui, sans-serif",
+  editorial: "Georgia, 'Times New Roman', serif",
+  mono: "var(--font-geist-mono), ui-monospace, monospace",
+};
+
 export const metadata: Metadata = {
   title: "Olgax DXP",
   description: "Olgax DXP - a self-hostable page-building platform.",
@@ -35,14 +41,25 @@ export default async function LocaleLayout({
   const settings = await getSiteSettings();
   const umami = getUmamiConfig();
 
-  // Only ever contains values that passed the SiteSettings global's hex-color
-  // validation (see packages/payload-preset), so it's safe to interpolate
-  // directly - no free-form text ever reaches this template. Blank fields are
-  // omitted entirely, letting packages/components' tokens.css defaults apply.
+  const fontValue = settings.fontPreset ? FONT_PRESET_CSS[settings.fontPreset] : undefined;
+  const schemeRule =
+    settings.colorScheme === "light"
+      ? "color-scheme: light; --background: #ffffff; --foreground: #171717;"
+      : settings.colorScheme === "dark"
+        ? "color-scheme: dark; --background: #0a0a0a; --foreground: #ededed;"
+        : null;
+
+  // Only ever contains validated hex colors or fixed allowlisted enum CSS tokens.
   const overrides = [
+    schemeRule,
     settings.primaryColor && `--olgax-color-primary: ${settings.primaryColor};`,
+    settings.primaryContrastColor &&
+      `--olgax-color-primary-contrast: ${settings.primaryContrastColor};`,
     settings.backgroundColor && `--olgax-color-bg: ${settings.backgroundColor};`,
+    settings.mutedBackgroundColor && `--olgax-color-bg-muted: ${settings.mutedBackgroundColor};`,
     settings.textColor && `--olgax-color-text: ${settings.textColor};`,
+    settings.borderColor && `--olgax-color-border: ${settings.borderColor};`,
+    fontValue && `--olgax-font-family: ${fontValue};`,
   ]
     .filter(Boolean)
     .join(" ");

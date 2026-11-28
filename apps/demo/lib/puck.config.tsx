@@ -56,6 +56,7 @@ function colorField(label: string, fallback: string) {
 type RootProps = {
   title?: string;
   primaryColor?: string;
+  primaryContrastColor?: string;
   backgroundColor?: string;
   textColor?: string;
 };
@@ -69,11 +70,12 @@ export const config: Config = {
     fields: {
       title: { type: "text" }, // redeclare to keep Puck's default title field
       primaryColor: colorField("Primary color (this page only)", "#18181b"),
+      primaryContrastColor: colorField("Button contrast color (this page only)", "#ffffff"),
       backgroundColor: colorField("Background color (this page only)", "#ffffff"),
       textColor: colorField("Text color (this page only)", "#18181b"),
     },
     render: (props: RootProps & { children?: ReactNode; [key: string]: unknown }) => {
-      const { children, primaryColor, backgroundColor, textColor } = props;
+      const { children, primaryColor, primaryContrastColor, backgroundColor, textColor } = props;
       // Values live in the page's own free-form `data` JSON (no Payload field
       // schema to enforce this), so re-validate as strict hex before
       // interpolating into a <style> tag - malformed input is silently
@@ -81,6 +83,9 @@ export const config: Config = {
       const overrides = [
         typeof primaryColor === "string" && HEX_COLOR.test(primaryColor)
           ? `--olgax-color-primary: ${primaryColor};`
+          : null,
+        typeof primaryContrastColor === "string" && HEX_COLOR.test(primaryContrastColor)
+          ? `--olgax-color-primary-contrast: ${primaryContrastColor};`
           : null,
         typeof backgroundColor === "string" && HEX_COLOR.test(backgroundColor)
           ? `--olgax-color-bg: ${backgroundColor};`
