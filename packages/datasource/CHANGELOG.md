@@ -1,5 +1,20 @@
 # @olgax.com/datasource
 
+## 0.2.0
+
+### Minor Changes
+
+- 268b064: - `@olgax.com/datasource`: Add allowlisted `sort`, `page`, `depth`, and `filterOperator` (`equals`, `not_equals`, `contains`) options plus `queryCollectionWithMeta()` returning pagination metadata.
+  - `@olgax.com/payload-preset`: Export `createDraftWorkflowHooks()`, `dispatchWebhooks()`, `createPagesCollection({ reservedSlugs })`, and `createWebhooksCollection({ events })`.
+  - `apps/demo` & `create-olgax-site/template`: Exclude `/rss.xml`, `/feed.xml`, and `/atom.xml` in `proxy.ts`.
+
+### Patch Changes
+
+- 22eea80: - Handle `--help` / `--version` flags and reject unknown flags in `create-olgax-site` CLI instead of scaffolding directories from flags.
+  - Include `pnpm-workspace.yaml` with `allowBuilds` for `esbuild` in the starter template so `pnpm install` passes cleanly on pnpm v11.
+  - Forward `locale` through `@olgax.com/datasource`'s `createCollectionResolver` and re-resolve dynamic `@olgax.com/datasource` blocks on SSR in `PageRenderer` using Puck `resolveAllData()` and Payload Local API.
+  - Clarify Puck RSC rules in `Callout.tsx` and add `--client` mode to `scripts/new-component.mjs` so client blocks never leak `props.puck` functions across RSC boundaries.
+
 ## 0.1.4
 
 ### Patch Changes
