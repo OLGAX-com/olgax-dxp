@@ -30,6 +30,8 @@ export type QueryCollectionOptions = {
   maxLimit?: number;
   /** Maximum relationship population depth allowed (default: 2). */
   maxDepth?: number;
+  /** Optional Payload locale code forwarded to `payload.find()`. */
+  locale?: string;
 };
 
 export type PaginatedCollectionResult<T = unknown> = {
@@ -102,11 +104,15 @@ function normalizePositiveInt(raw: unknown, fallback: number, max: number): numb
   return Math.max(1, Math.min(Math.floor(parsed), safeMax));
 }
 
-function normalizeDepth(raw: unknown, maxDepth: number): number | undefined {
-  if (raw === undefined || raw === null || raw === "") return undefined;
+function normalizeDepth(raw: unknown, maxDepth: number): number {
   const safeMax = Number.isFinite(maxDepth) && maxDepth >= 0 ? Math.floor(maxDepth) : 2;
+  if (raw === undefined || raw === null || raw === "") {
+    return Math.min(2, safeMax);
+  }
   const parsed = Number(raw);
-  if (!Number.isFinite(parsed) || parsed < 0) return undefined;
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    throw new DatasourceQueryError("Invalid depth parameter.", 400);
+  }
   return Math.min(Math.floor(parsed), safeMax);
 }
 
@@ -188,10 +194,14 @@ export function createCollectionResolver<Props extends CollectionQueryProps>(
   getPayload: () => Promise<Payload>,
   options: Pick<
     QueryCollectionOptions,
-    "allowedCollections" | "allowedFilterFields" | "allowedSortFields" | "maxLimit" | "maxDepth"
+    "allowedCollections" | "allowedFilterFields" | "allowedSortFields" | "maxLimit" | "maxDepth" | "locale"
   > = {},
 ): ResolveDataFn<Props> {
-  return (async ({ props }: { props: Props }, { changed }: { changed: Partial<Record<string, boolean>> }) => {
+  return (async (
+    { props }: { props: Props },
+    params: { changed: Partial<Record<string, boolean>>; metadata?: Record<string, unknown> },
+  ) => {
+    const { changed, metadata } = params;
     if (!shouldResolve(props, changed)) return { props };
 
     let validated;
@@ -202,14 +212,19 @@ export function createCollectionResolver<Props extends CollectionQueryProps>(
     }
     if (!validated) return { props };
 
+    const locale =
+      options.locale ??
+      (typeof metadata?.locale === "string" && metadata.locale ? metadata.locale : undefined);
+
     const payload = await getPayload();
     const result = await payload.find({
       collection: validated.collection as Parameters<Payload["find"]>[0]["collection"],
       where: validated.where,
       limit: validated.limit,
       page: validated.page,
+      depth: validated.depth,
       ...(validated.sort ? { sort: validated.sort } : {}),
-      ...(validated.depth !== undefined ? { depth: validated.depth } : {}),
+      ...(locale ? { locale: locale as Parameters<Payload["find"]>[0]["locale"] } : {}),
       overrideAccess: false,
     });
 
@@ -294,8 +309,9 @@ export async function queryCollectionWithMeta(
     where: validated.where,
     limit: validated.limit,
     page: validated.page,
+    depth: validated.depth,
     ...(validated.sort ? { sort: validated.sort } : {}),
-    ...(validated.depth !== undefined ? { depth: validated.depth } : {}),
+    ...(options.locale ? { locale: options.locale as Parameters<Payload["find"]>[0]["locale"] } : {}),
     overrideAccess: false,
     user: options.user ?? undefined,
   });

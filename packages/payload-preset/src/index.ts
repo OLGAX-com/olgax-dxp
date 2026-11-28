@@ -19,4 +19,4 @@ export { SiteSettings } from "./globals/SiteSettings";
 export { USER_ROLES, getUserRole, isAdminUser, isEditorOrAdmin } from "./access/roles";
 export type { UserRole } from "./access/roles";
 export { createDraftWorkflowHooks, type DraftWorkflowOptions } from "./hooks/draftWorkflow";
-export { dispatchWebhooks, type WebhookPayload } from "./webhooks/dispatch";
+export { dispatchWebhooks, type WebhookEvent, type WebhookPayload } from "./webhooks/dispatch";

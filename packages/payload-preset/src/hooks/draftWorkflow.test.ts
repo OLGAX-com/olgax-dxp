@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createDraftWorkflowHooks } from "./draftWorkflow";
 import { createPagesCollection } from "../collections/Pages";
 import { createWebhooksCollection } from "../collections/Webhooks";
+import type { WebhookPayload } from "../index";
 
 describe("createDraftWorkflowHooks", () => {
   it("blocks authors from publishing or unpublishing live docs while allowing drafts and editors", () => {
@@ -67,5 +68,14 @@ describe("collection factories", () => {
       "page.deleted",
       "post.published",
     ]);
+  });
+
+  it("allows custom event names on WebhookPayload without casts", () => {
+    const customPayload: WebhookPayload = {
+      event: "post.published",
+      slug: "hello-world",
+      timestamp: new Date().toISOString(),
+    };
+    expect(customPayload.event).toBe("post.published");
   });
 });

@@ -76,6 +76,26 @@ describe("@olgax.com/datasource", () => {
     );
   });
 
+  it("enforces maxDepth even when depth is omitted and rejects invalid depth", async () => {
+    const payload = makeMockPayload();
+
+    await queryCollectionFromSearchParams(
+      async () => payload as never,
+      new URLSearchParams({ collection: "posts" }),
+      { allowedCollections: ["posts"], maxDepth: 0 },
+    );
+
+    expect(payload.find).toHaveBeenCalledWith(expect.objectContaining({ depth: 0 }));
+
+    await expect(
+      queryCollectionWithMeta(
+        async () => payload as never,
+        new URLSearchParams({ collection: "posts", depth: "-1" }),
+        { allowedCollections: ["posts"], maxDepth: 2 },
+      ),
+    ).rejects.toMatchObject({ status: 400 } satisfies Partial<DatasourceQueryError>);
+  });
+
   it("rejects disallowed sort fields and invalid operators", async () => {
     const payload = makeMockPayload();
 
