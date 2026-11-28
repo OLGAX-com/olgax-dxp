@@ -53,7 +53,7 @@ const Hero = ({
           <img
             className="olgax-hero__bg"
             src={safeBg}
-            alt={backgroundAlt || heading}
+            alt={backgroundAlt ?? ""}
           />
           <div
             aria-hidden="true"

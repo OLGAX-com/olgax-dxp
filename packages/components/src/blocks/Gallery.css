@@ -1,21 +1,36 @@
 .olgax-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
   gap: var(--olgax-spacing, 1rem);
   padding: calc(var(--olgax-spacing, 1rem) * 2);
   background: var(--olgax-color-bg, transparent);
 }
 
 .olgax-gallery--cols-2 {
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .olgax-gallery--cols-3 {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .olgax-gallery--cols-4 {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .olgax-gallery--cols-3,
+  .olgax-gallery--cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .olgax-gallery--cols-2,
+  .olgax-gallery--cols-3,
+  .olgax-gallery--cols-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .olgax-gallery--empty {

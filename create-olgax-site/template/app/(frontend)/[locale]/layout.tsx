@@ -44,9 +44,31 @@ export default async function LocaleLayout({
   const fontValue = settings.fontPreset ? FONT_PRESET_CSS[settings.fontPreset] : undefined;
   const schemeRule =
     settings.colorScheme === "light"
-      ? "color-scheme: light; --background: #ffffff; --foreground: #171717;"
+      ? [
+          "color-scheme: light;",
+          "--background: #ffffff;",
+          "--foreground: #171717;",
+          "--olgax-color-bg: #ffffff;",
+          "--olgax-color-bg-muted: #f4f4f5;",
+          "--olgax-color-text: #18181b;",
+          "--olgax-color-text-muted: #52525b;",
+          "--olgax-color-primary: #18181b;",
+          "--olgax-color-primary-contrast: #ffffff;",
+          "--olgax-color-border: #e4e4e7;",
+        ].join(" ")
       : settings.colorScheme === "dark"
-        ? "color-scheme: dark; --background: #0a0a0a; --foreground: #ededed;"
+        ? [
+            "color-scheme: dark;",
+            "--background: #0a0a0a;",
+            "--foreground: #ededed;",
+            "--olgax-color-bg: #0a0a0a;",
+            "--olgax-color-bg-muted: #18181b;",
+            "--olgax-color-text: #ededed;",
+            "--olgax-color-text-muted: #a1a1aa;",
+            "--olgax-color-primary: #fafafa;",
+            "--olgax-color-primary-contrast: #18181b;",
+            "--olgax-color-border: #27272a;",
+          ].join(" ")
         : null;
 
   // Only ever contains validated hex colors or fixed allowlisted enum CSS tokens.
