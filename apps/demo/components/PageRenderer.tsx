@@ -81,6 +81,7 @@ export async function PageRenderer({
               resolveData: createCollectionResolver(getPayloadClient, {
                 allowedCollections: ["pages"],
                 allowedFilterFields: ["slug", "title"],
+                locale,
               }) as never,
             },
           }
@@ -90,7 +91,11 @@ export async function PageRenderer({
 
   let resolvedData = (page.data as Data) ?? { content: [], root: {} };
   try {
-    resolvedData = await resolveAllData(resolvedData, serverConfig, { visitor, localePrefix });
+    resolvedData = await resolveAllData(resolvedData, serverConfig, {
+      visitor,
+      localePrefix,
+      locale,
+    });
   } catch {
     // Keep stored snapshot if runtime resolution fails for an optional custom block.
   }
