@@ -545,13 +545,27 @@ export interface SiteSetting {
    */
   primaryColor?: string | null;
   /**
+   * Text color on primary buttons/badges (critical when using yellow/gold or bright primaries) - e.g. #1f130e or #ffffff.
+   */
+  primaryContrastColor?: string | null;
+  /**
    * Page background - e.g. #ffffff. Leave blank for the default.
    */
   backgroundColor?: string | null;
   /**
+   * Secondary card/section background - e.g. #f4f4f5. Leave blank for the default.
+   */
+  mutedBackgroundColor?: string | null;
+  /**
    * Body text - e.g. #18181b. Leave blank for the default.
    */
   textColor?: string | null;
+  /**
+   * Subtle border and divider color - e.g. #e4e4e7. Leave blank for the default.
+   */
+  borderColor?: string | null;
+  fontPreset?: ('sans' | 'editorial' | 'mono') | null;
+  colorScheme?: ('auto' | 'light' | 'dark') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -562,8 +576,13 @@ export interface SiteSetting {
 export interface SiteSettingsSelect<T extends boolean = true> {
   localizationEnabled?: T;
   primaryColor?: T;
+  primaryContrastColor?: T;
   backgroundColor?: T;
+  mutedBackgroundColor?: T;
   textColor?: T;
+  borderColor?: T;
+  fontPreset?: T;
+  colorScheme?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -22,6 +22,27 @@ describe("colorOverrideStyle", () => {
     });
   });
 
+  it("supports explicit primaryContrastColor, mutedBackgroundColor, and borderColor", () => {
+    expect(
+      colorOverrideStyle({
+        backgroundColor: "#faf3e3",
+        mutedBackgroundColor: "#f1e3c6",
+        primaryColor: "#d99b26",
+        primaryContrastColor: "#1f130e",
+        textColor: "#1f130e",
+        borderColor: "#5c3723",
+      }),
+    ).toEqual({
+      "--olgax-color-bg": "#faf3e3",
+      "--olgax-color-bg-muted": "#f1e3c6",
+      "--olgax-color-primary": "#d99b26",
+      "--olgax-color-primary-contrast": "#1f130e",
+      "--olgax-color-text": "#1f130e",
+      "--olgax-color-text-muted": "#1f130e",
+      "--olgax-color-border": "#5c3723",
+    });
+  });
+
   it("silently ignores a non-hex value instead of applying it", () => {
     // Guards the actual security boundary: these props live in Payload's
     // free-form `data` JSON with no schema enforcing they're really hex.

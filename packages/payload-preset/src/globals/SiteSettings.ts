@@ -44,11 +44,28 @@ export const SiteSettings: GlobalConfig = {
       },
     },
     {
+      name: "primaryContrastColor",
+      type: "text",
+      validate: hexColor,
+      admin: {
+        description:
+          "Text color on primary buttons/badges (critical when using yellow/gold or bright primaries) - e.g. #1f130e or #ffffff.",
+      },
+    },
+    {
       name: "backgroundColor",
       type: "text",
       validate: hexColor,
       admin: {
         description: "Page background - e.g. #ffffff. Leave blank for the default.",
+      },
+    },
+    {
+      name: "mutedBackgroundColor",
+      type: "text",
+      validate: hexColor,
+      admin: {
+        description: "Secondary card/section background - e.g. #f4f4f5. Leave blank for the default.",
       },
     },
     {
@@ -58,6 +75,34 @@ export const SiteSettings: GlobalConfig = {
       admin: {
         description: "Body text - e.g. #18181b. Leave blank for the default.",
       },
+    },
+    {
+      name: "borderColor",
+      type: "text",
+      validate: hexColor,
+      admin: {
+        description: "Subtle border and divider color - e.g. #e4e4e7. Leave blank for the default.",
+      },
+    },
+    {
+      name: "fontPreset",
+      type: "select",
+      defaultValue: "sans",
+      options: [
+        { label: "Modern Sans (Default)", value: "sans" },
+        { label: "Editorial Serif + Sans", value: "editorial" },
+        { label: "Technical Mono", value: "mono" },
+      ],
+    },
+    {
+      name: "colorScheme",
+      type: "select",
+      defaultValue: "auto",
+      options: [
+        { label: "Auto (Follow visitor OS preference)", value: "auto" },
+        { label: "Light (Always light palette)", value: "light" },
+        { label: "Dark (Always dark palette)", value: "dark" },
+      ],
     },
   ],
 };
