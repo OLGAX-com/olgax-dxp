@@ -9,7 +9,7 @@ import { resolveAndValidateWebhookTarget, type LookupAllFn } from "./validate";
 // Any external system (a rebuild trigger, a Slack incoming webhook, Zapier,
 // a custom endpoint) can subscribe by registering a URL there. This is the
 // integration mechanism itself, not an integration with any one service.
-export type WebhookEvent = "page.published" | "page.deleted";
+export type WebhookEvent = "page.published" | "page.deleted" | (string & {});
 
 export type WebhookPayload = {
   event: WebhookEvent;

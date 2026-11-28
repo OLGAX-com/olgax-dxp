@@ -1,127 +1,96 @@
-import { APIError, type CollectionConfig } from "payload";
+import { type CollectionConfig } from "payload";
 import { dispatchWebhooks } from "../webhooks/dispatch";
-import { getUserRole, isEditorOrAdmin } from "../access/roles";
+import { isEditorOrAdmin } from "../access/roles";
+import { createDraftWorkflowHooks } from "../hooks/draftWorkflow";
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const RESERVED_SLUGS = new Set(["admin", "api", "dashboard", "pages"]);
+export const DEFAULT_RESERVED_SLUGS = ["admin", "api", "dashboard", "pages"] as const;
+
+export type CreatePagesCollectionOptions = {
+  /** Additional top-level route slugs (e.g. `"blog"`, `"menu"`) that pages cannot claim. */
+  reservedSlugs?: readonly string[];
+};
 
 // `data` holds Puck's own `Data` JSON shape (content + root props) verbatim -
 // Payload does not need to understand its internal structure.
-export const Pages: CollectionConfig = {
-  slug: "pages",
-  access: {
-    // Logged-in users (the editor UI) see everything, including drafts.
-    // Anonymous/public requests only ever see published pages - the `draft`
-    // param on find/findByID does NOT filter this by itself, per Payload's
-    // docs, so this access rule is the actual enforcement point for anyone
-    // using REST/GraphQL. The Local API (used by apps/demo's own routes)
-    // bypasses access control by default, so those routes additionally
-    // filter by `_status` explicitly - see the public render route.
-    read: ({ req }) => {
-      if (req.user) return true;
-      return {
-        or: [{ _status: { equals: "published" } }, { _status: { exists: false } }],
-      };
-    },
-    // Authors, Editors, and Admins may create/edit drafts; publishing and
-    // deleting require Editor or Admin (enforced below).
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => isEditorOrAdmin(req.user),
-  },
-  admin: {
-    useAsTitle: "title",
-  },
-  versions: {
-    drafts: true,
-  },
-  // Fires on every save/delete regardless of how it happens (Local API,
-  // REST, admin panel) - not just apps/demo's own server actions - so any
-  // consuming app gets webhook support for free. Never fires for plain
-  // autosaved drafts (see the `_status` check), only actual publishes.
-  hooks: {
-    beforeOperation: [
-      ({ args, operation }) => {
-        if ((operation === "create" || operation === "update") && args.req) {
-          args.req.context.__olgaxDraftArg = "draft" in args ? Boolean(args.draft) : false;
-          args.req.context.__olgaxUnpublishAll =
-            "unpublishAllLocales" in args ? Boolean(args.unpublishAllLocales) : false;
-        }
-        return args;
+export function createPagesCollection(
+  options: CreatePagesCollectionOptions = {},
+): CollectionConfig {
+  const reservedSlugs = new Set([
+    ...DEFAULT_RESERVED_SLUGS,
+    ...(options.reservedSlugs ?? []),
+  ]);
+  const workflowHooks = createDraftWorkflowHooks({ labelPlural: "pages" });
+
+  return {
+    slug: "pages",
+    access: {
+      read: ({ req }) => {
+        if (req.user) return true;
+        return {
+          or: [{ _status: { equals: "published" } }, { _status: { exists: false } }],
+        };
       },
-    ],
-    beforeChange: [
-      ({ data, operation, originalDoc, req }) => {
-        if (req.user && getUserRole(req.user) === "author") {
-          if (data?._status === "published") {
-            throw new APIError(
-              "Authors cannot publish pages. Save as a draft and ask an Editor or Admin to publish.",
-              403,
-            );
+      create: ({ req }) => Boolean(req.user),
+      update: ({ req }) => Boolean(req.user),
+      delete: ({ req }) => isEditorOrAdmin(req.user),
+    },
+    admin: {
+      useAsTitle: "title",
+    },
+    versions: {
+      drafts: true,
+    },
+    hooks: {
+      beforeOperation: workflowHooks.beforeOperation,
+      beforeChange: workflowHooks.beforeChange,
+      afterChange: [
+        async ({ doc, req }) => {
+          if (doc._status !== "published") return;
+          await dispatchWebhooks(req, {
+            event: "page.published",
+            slug: doc.slug as string,
+            locale: req.locale ?? undefined,
+            title: doc.title as string,
+            timestamp: new Date().toISOString(),
+          });
+        },
+      ],
+      afterDelete: [
+        async ({ doc, req }) => {
+          await dispatchWebhooks(req, {
+            event: "page.deleted",
+            slug: doc.slug as string,
+            title: doc.title as string,
+            timestamp: new Date().toISOString(),
+          });
+        },
+      ],
+    },
+    fields: [
+      {
+        name: "title",
+        type: "text",
+        required: true,
+        localized: true,
+      },
+      {
+        name: "slug",
+        type: "text",
+        required: true,
+        unique: true,
+        index: true,
+        validate: (value?: string | null) => {
+          if (!value) return "Slug is required";
+          if (!SLUG_REGEX.test(value)) {
+            return "Slug must be lowercase letters, numbers, and hyphens only (e.g. about-us)";
           }
-          if (
-            operation === "update" &&
-            !req.context.__olgaxDraftArg &&
-            (originalDoc?._status === "published" ||
-              data?._status === "draft" ||
-              req.context.__olgaxUnpublishAll)
-          ) {
-            throw new APIError(
-              "Authors cannot modify or unpublish live pages directly. Save changes as a draft (?draft=true).",
-              403,
-            );
+          if (reservedSlugs.has(value)) {
+            return `Slug "${value}" is reserved by the system`;
           }
-        }
-        return data;
+          return true;
+        },
       },
-    ],
-    afterChange: [
-      async ({ doc, req }) => {
-        if (doc._status !== "published") return;
-        await dispatchWebhooks(req, {
-          event: "page.published",
-          slug: doc.slug as string,
-          locale: req.locale ?? undefined,
-          title: doc.title as string,
-          timestamp: new Date().toISOString(),
-        });
-      },
-    ],
-    afterDelete: [
-      async ({ doc, req }) => {
-        await dispatchWebhooks(req, {
-          event: "page.deleted",
-          slug: doc.slug as string,
-          title: doc.title as string,
-          timestamp: new Date().toISOString(),
-        });
-      },
-    ],
-  },
-  fields: [
-    {
-      name: "title",
-      type: "text",
-      required: true,
-      localized: true,
-    },
-    {
-      name: "slug",
-      type: "text",
-      required: true,
-      unique: true,
-      index: true,
-      validate: (value?: string | null) => {
-        if (!value) return "Slug is required";
-        if (!SLUG_REGEX.test(value)) {
-          return "Slug must be lowercase letters, numbers, and hyphens only (e.g. about-us)";
-        }
-        if (RESERVED_SLUGS.has(value)) {
-          return `Slug "${value}" is reserved by the system`;
-        }
-        return true;
-      },
-    },
     {
       name: "data",
       type: "json",
@@ -185,12 +154,15 @@ export const Pages: CollectionConfig = {
       name: "quickLinks",
       type: "ui",
       label: "Quick links",
-      admin: {
-        position: "sidebar",
-        components: {
-          Field: "@olgax.com/payload-preset/src/components/PageQuickLinks#PageQuickLinks",
+        admin: {
+          position: "sidebar",
+          components: {
+            Field: "@olgax.com/payload-preset/src/components/PageQuickLinks#PageQuickLinks",
+          },
         },
       },
-    },
-  ],
-};
+    ],
+  };
+}
+
+export const Pages: CollectionConfig = createPagesCollection();
