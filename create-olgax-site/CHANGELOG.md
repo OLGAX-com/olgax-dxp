@@ -1,5 +1,11 @@
 # create-olgax-site
 
+## 0.3.1
+
+### Patch Changes
+
+- 78f699b: Fix `@olgax.com/payload-preset` template dependency range from `^0.1.6` to `^0.2.0` so freshly scaffolded sites resolve `isEditorOrAdmin` and build out of the box.
+
 ## 0.3.0
 
 ### Minor Changes
