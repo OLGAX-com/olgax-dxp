@@ -21,6 +21,9 @@
   "bugs": "https://github.com/OLGAX-com/olgax-dxp/issues",
   "homepage": "https://dxp.olgax.com",
   "type": "module",
+  "scripts": {
+    "test": "node --test test/cli.test.mjs"
+  },
   "bin": {
     "create-olgax-site": "./bin/index.mjs"
   },

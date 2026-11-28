@@ -30,7 +30,7 @@ export type QueryCollectionOptions = {
   maxLimit?: number;
   /** Maximum relationship population depth allowed (default: 2). */
   maxDepth?: number;
-  /** Optional Payload locale code forwarded to `payload.find()`. */
+  /** Optional Payload locale code (e.g. "en", "es") forwarded to `payload.find()`. */
   locale?: string;
 };
 

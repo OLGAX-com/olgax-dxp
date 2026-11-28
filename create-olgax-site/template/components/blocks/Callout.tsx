@@ -17,12 +17,22 @@ export type CalloutProps = {
 } & ColorOverrideProps &
   VisibilityProps;
 
-// Keep this a plain component with no hooks: Puck renders it in the editor (client)
-// and on the public page (server). Add "use client" and hooks only if you need them.
-const CalloutView = ({ title, body, align, ...props }: CalloutProps) => (
+// Keep this ComponentConfig file server-safe (no "use client" here): Puck renders it
+// in the editor (client) and on the public page (server). If you need React state or
+// hooks, put them in a separate `"use client"` child component and pass only plain
+// serializable props from `render` (never spread `props.puck` across client boundaries),
+// or scaffold with `pnpm new:component MyBlock --client`.
+const CalloutView = ({
+  title,
+  body,
+  align,
+  primaryColor,
+  backgroundColor,
+  textColor,
+}: CalloutProps) => (
   <aside
     className={`site-callout site-callout--${align}`}
-    style={colorOverrideStyle(props)}
+    style={colorOverrideStyle({ primaryColor, backgroundColor, textColor })}
   >
     <h3 className="site-callout__title">{title}</h3>
     <p className="site-callout__body">{body}</p>

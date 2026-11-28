@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
-import { Render } from "@puckeditor/core";
-import type { Data } from "@puckeditor/core";
+import { Render, resolveAllData } from "@puckeditor/core";
+import type { Config, Data } from "@puckeditor/core";
+import { createCollectionResolver } from "@olgax.com/datasource";
 import { config } from "@/lib/puck.config";
 import { getPayloadClient, getCurrentUser } from "@/lib/payload";
 import { EditThisPageLink } from "@/components/EditThisPageLink";
@@ -67,6 +68,38 @@ export async function PageRenderer({
   const visitor = await getVisitorState();
   const localePrefix = localizationEnabled ? `/${locale}` : "";
 
+  // Re-resolve dynamic datasource blocks on SSR via Payload Local API so
+  // RelatedPages stays fresh whenever new pages are published or deleted.
+  const serverConfig: Config = {
+    ...config,
+    components: {
+      ...config.components,
+      ...(config.components.RelatedPages
+        ? {
+            RelatedPages: {
+              ...config.components.RelatedPages,
+              resolveData: createCollectionResolver(getPayloadClient, {
+                allowedCollections: ["pages"],
+                allowedFilterFields: ["slug", "title"],
+                locale,
+              }) as never,
+            },
+          }
+        : {}),
+    },
+  };
+
+  let resolvedData = (page.data as Data) ?? { content: [], root: {} };
+  try {
+    resolvedData = await resolveAllData(resolvedData, serverConfig, {
+      visitor,
+      localePrefix,
+      locale,
+    });
+  } catch {
+    // Keep stored snapshot if runtime resolution fails for an optional custom block.
+  }
+
   return (
     <>
       {isDraftPreview && (
@@ -93,7 +126,7 @@ export async function PageRenderer({
           </a>
         </div>
       )}
-      <Render config={config} data={page.data as Data} metadata={{ visitor, localePrefix }} />
+      <Render config={serverConfig} data={resolvedData} metadata={{ visitor, localePrefix }} />
       <UmamiPageView skip={Boolean(user || isDraftPreview)} />
       {user && (
         <EditThisPageLink locale={locale} slug={slug} localizationEnabled={localizationEnabled} />
