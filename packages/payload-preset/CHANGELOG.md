@@ -1,5 +1,15 @@
 # @olgax.com/payload-preset
 
+## 0.3.0
+
+### Minor Changes
+
+- 268b064: - `@olgax.com/datasource`: Add allowlisted `sort`, `page`, `depth`, and `filterOperator` (`equals`, `not_equals`, `contains`) options plus `queryCollectionWithMeta()` returning pagination metadata.
+  - `@olgax.com/payload-preset`: Export `createDraftWorkflowHooks()`, `dispatchWebhooks()`, `createPagesCollection({ reservedSlugs })`, and `createWebhooksCollection({ events })`.
+  - `apps/demo` & `create-olgax-site/template`: Exclude `/rss.xml`, `/feed.xml`, and `/atom.xml` in `proxy.ts`.
+- 974aec3: - `@olgax.com/sdk` & `@olgax.com/payload-preset`: Add `primaryContrastColor`, `mutedBackgroundColor`, `borderColor`, `fontPreset`, and `colorScheme` lock to `SiteSettings` and SDK color overrides.
+  - `@olgax.com/components`: Upgrade `Hero` with optional `eyebrow`, `backgroundImage`, `overlayOpacity`, and `secondaryCta`, and upgrade `Gallery` with `columns`, `aspectRatio`, and per-image `caption`.
+
 ## 0.2.0
 
 ### Minor Changes
